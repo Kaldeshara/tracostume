@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// MEMBER browses the gallery; KEEPER has the container key and records movements;
+/// ADMIN and OWNER also manage users.
+enum UserRole {
+  MEMBER
+  KEEPER
+  ADMIN
+  OWNER
+}
+
+enum DisplayLanguage {
+  ENGLISH
+  FRENCH
+}
+
+enum ItemCondition {
+  GOOD
+  TO_WASH
+  TO_REPAIR
+  IN_REPAIR
+  DAMAGED
+  LOST
+  RETIRED
+}
+
+enum MovementType {
+  CREATED
+  STORED
+  MOVED
+  CHECKED_OUT
+  RETURNED
+  CONDITION_CHANGED
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  firstName       String
+  lastName        String
+  phone           String?
+  role            UserRole         @default(MEMBER)
+  displayLanguage DisplayLanguage?
+  passwordHash    String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  sessions       Session[]
+  borrowedLoans  Loan[]      @relation("LoanBorrower")
+  createdLoans   Loan[]      @relation("LoanCreator")
+  returnedLoans  Loan[]      @relation("LoanReturner")
+  movements      Movement[]
+  uploadedPhotos ItemPhoto[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Dimensions and positions are in centimetres and optional until the container is measured.
+/// They feed the future 3D view.
+model Container {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  widthCm     Int?
+  depthCm     Int?
+  heightCm    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  boxes Box[]
+}
+
+model Box {
+  id          String   @id @default(cuid())
+  /// Value encoded in the QR code label.
+  code        String   @unique
+  label       String
+  description String?
+  containerId String
+  /// Free-text position for humans, e.g. "Left shelf, top".
+  shelf       String?
+  posXCm      Int?
+  posYCm      Int?
+  posZCm      Int?
+  widthCm     Int?
+  depthCm     Int?
+  heightCm    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  container     Container  @relation(fields: [containerId], references: [id], onDelete: Restrict)
+  items         Item[]
+  movementsFrom Movement[] @relation("MovementFromBox")
+  movementsTo   Movement[] @relation("MovementToBox")
+
+  @@index([containerId])
+}
+
+model Item {
+  id          String        @id @default(cuid())
+  /// Value encoded in the QR code label. Every physical piece has its own code,
+  /// even when several pieces are identical.
+  code        String        @unique
+  name        String
+  description String?
+  category    String?
+  color       String?
+  size        String?
+  condition   ItemCondition @default(GOOD)
+  /// Null while the item is outside (open loan) or not yet stored.
+  boxId       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  box       Box?           @relation(fields: [boxId], references: [id], onDelete: SetNull)
+  photos    ItemPhoto[]
+  embedding ItemEmbedding?
+  tags      ItemTag[]
+  loans     Loan[]
+  movements Movement[]
+
+  @@index([boxId])
+  @@index([category])
+}
+
+model ItemPhoto {
+  id           String   @id @default(cuid())
+  itemId       String
+  /// Several photos may share one stored file (identical pieces imported from one picture).
+  storageKey   String
+  mimeType     String
+  width        Int?
+  height       Int?
+  position     Int      @default(0)
+  uploadedById String?
+  createdAt    DateTime @default(now())
+
+  item       Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  uploadedBy User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([itemId, position])
+  @@index([storageKey])
+}
+
+/// Semantic-search vector of an item's text, refreshed when the text changes (see embeddings.ts).
+model ItemEmbedding {
+  itemId    String   @id
+  model     String
+  textHash  String
+  vector    Bytes
+  updatedAt DateTime @updatedAt
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  items ItemTag[]
+}
+
+model ItemTag {
+  itemId String
+  tagId  String
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, tagId])
+}
+
+/// An item lent outside the container. Open while returnedAt is null.
+/// The borrower is either a registered user or just a name (dancers without an account).
+model Loan {
+  id             String    @id @default(cuid())
+  itemId         String
+  borrowerUserId String?
+  borrowerName   String?
+  borrowerPhone  String?
+  reason         String?
+  checkedOutAt   DateTime  @default(now())
+  dueAt          DateTime?
+  returnedAt     DateTime?
+  createdById    String?
+  returnedById   String?
+
+  item         Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  borrowerUser User?      @relation("LoanBorrower", fields: [borrowerUserId], references: [id], onDelete: SetNull)
+  createdBy    User?      @relation("LoanCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  returnedBy   User?      @relation("LoanReturner", fields: [returnedById], references: [id], onDelete: SetNull)
+  movements    Movement[]
+
+  @@index([itemId, returnedAt])
+  @@index([returnedAt, dueAt])
+}
+
+/// Append-only history of everything that happened to an item.
+model Movement {
+  id            String         @id @default(cuid())
+  itemId        String
+  type          MovementType
+  fromBoxId     String?
+  toBoxId       String?
+  loanId        String?
+  fromCondition ItemCondition?
+  toCondition   ItemCondition?
+  note          String?
+  userId        String?
+  createdAt     DateTime       @default(now())
+
+  item    Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  loan    Loan? @relation(fields: [loanId], references: [id], onDelete: SetNull)
+  fromBox Box?  @relation("MovementFromBox", fields: [fromBoxId], references: [id], onDelete: SetNull)
+  toBox   Box?  @relation("MovementToBox", fields: [toBoxId], references: [id], onDelete: SetNull)
+  user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([itemId, createdAt])
+}

@@ -1,0 +1,389 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"account_current_password": "Mot de passe actuel",
+	"account_language": "Langue",
+	"account_new_password": "Nouveau mot de passe",
+	"account_password": "Mot de passe",
+	"account_password_wrong": "Le mot de passe actuel est incorrect.",
+	"account_profile": "Profil",
+	"action_cancel": "Annuler",
+	"action_create": "Créer",
+	"action_edit": "Modifier",
+	"action_save": "Enregistrer",
+	"box_contents": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Contenu ({count} pièce)",
+				"countPlural=other": "Contenu ({count} pièces)"
+			}
+		}
+	],
+	"box_delete": "Supprimer la boîte",
+	"box_delete_confirm": "Supprimer définitivement cette boîte ?",
+	"box_delete_not_empty": "Videz la boîte avant de la supprimer.",
+	"box_dimensions": "Dimensions et position (pour la vue 3D)",
+	"box_dimensions_hint": "En centimètres. Position mesurée depuis le coin gauche au fond du container, au sol.",
+	"box_empty": "Cette boîte est vide.",
+	"box_item_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce",
+				"countPlural=other": "{count} pièces"
+			}
+		}
+	],
+	"box_new": "Nouvelle boîte",
+	"boxes_empty": "Aucune boîte pour l'instant.",
+	"boxes_filter": "Filtrer les boîtes…",
+	"boxes_title": "Boîtes",
+	"condition_damaged": "Abîmé",
+	"condition_good": "Bon état",
+	"condition_in_repair": "En réparation",
+	"condition_lost": "Perdu",
+	"condition_retired": "Réformé",
+	"condition_to_repair": "À réparer",
+	"condition_to_wash": "À laver",
+	"container_dimensions_hint": "Dimensions intérieures en centimètres, utilisées pour la future vue 3D.",
+	"field_borrower": "Emprunteur",
+	"field_borrower_name": "Nom de la personne",
+	"field_box": "Boîte",
+	"field_category": "Catégorie",
+	"field_color": "Couleur",
+	"field_condition": "État",
+	"field_depth": "Profondeur",
+	"field_description": "Description",
+	"field_due_at": "Retour prévu",
+	"field_email": "E-mail",
+	"field_first_name": "Prénom",
+	"field_height": "Hauteur",
+	"field_label": "Nom",
+	"field_last_name": "Nom",
+	"field_name": "Nom",
+	"field_note_optional": "Note (facultatif)",
+	"field_password": "Mot de passe",
+	"field_phone": "Téléphone",
+	"field_phone_optional": "Téléphone (facultatif)",
+	"field_photos": "Photos",
+	"field_pos_x": "Position X",
+	"field_pos_y": "Position Y",
+	"field_pos_z": "Hauteur au sol",
+	"field_quantity": "Nombre de pièces",
+	"field_reason": "Motif",
+	"field_reason_placeholder": "Spectacle, répétition…",
+	"field_shelf": "Emplacement",
+	"field_shelf_placeholder": "Étagère gauche, en haut",
+	"field_size": "Taille",
+	"field_tags": "Mots-clés",
+	"field_width": "Largeur",
+	"filter_all_boxes": "Toutes les boîtes",
+	"filter_all_categories": "Toutes les catégories",
+	"filter_all_conditions": "Tous les états",
+	"filter_all_statuses": "Partout",
+	"form_invalid": "Certains champs sont invalides.",
+	"gallery_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce",
+				"countPlural=other": "{count} pièces"
+			}
+		}
+	],
+	"gallery_empty": "Aucune pièce ne correspond.",
+	"gallery_filters": "Filtres",
+	"gallery_search": "Chercher",
+	"gallery_search_placeholder": "Une robe brillante pour un numéro années 20…",
+	"gallery_semantic_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce proche de votre recherche, la plus proche en premier",
+				"countPlural=other": "{count} pièces proches de votre recherche, les plus proches en premier"
+			}
+		}
+	],
+	"gallery_title": "Galerie",
+	"gallery_truncated": "{count} premières affichées, affinez la recherche.",
+	"group_attention": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} à laver/réparer",
+				"countPlural=other": "{count} à laver/réparer"
+			}
+		}
+	],
+	"group_in": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} dans le container",
+				"countPlural=other": "{count} dans le container"
+			}
+		}
+	],
+	"group_out": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} sortie",
+				"countPlural=other": "{count} sorties"
+			}
+		}
+	],
+	"group_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} en retard",
+				"countPlural=other": "{count} en retard"
+			}
+		}
+	],
+	"group_title": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce identique",
+				"countPlural=other": "{count} pièces identiques"
+			}
+		}
+	],
+	"group_unselect_all": "Tout retirer de la sélection",
+	"group_unstored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} non rangée",
+				"countPlural=other": "{count} non rangées"
+			}
+		}
+	],
+	"home_boxes_help": "Contenu et étiquettes des boîtes du container",
+	"home_hello": "Bonjour {name}",
+	"home_loans_help": "Qui a quoi, retards et rappels",
+	"home_my_loans": "Ce que j'ai emprunté",
+	"home_new_item_help": "Photographier et étiqueter un vêtement",
+	"home_scan": "Scanner un QR code",
+	"home_scan_help": "Sortir, ranger ou retrouver une pièce",
+	"home_stat_attention": "À laver ou réparer",
+	"home_stat_items": "Pièces",
+	"home_stat_out": "Sorties",
+	"home_stat_overdue": "En retard",
+	"item_delete": "Supprimer la pièce",
+	"item_delete_confirm": "Supprimer définitivement cette pièce, ses photos et son historique ?",
+	"item_edit": "Modifier",
+	"item_history": "Historique",
+	"item_history_empty": "Rien pour l'instant.",
+	"item_new": "Nouvelle pièce",
+	"item_no_box": "Pas encore rangée",
+	"item_quantity_hint": "Pour plusieurs pièces identiques : chacune aura son propre QR code.",
+	"item_sizes_hint": "Plusieurs tailles ? Séparez-les par des virgules (36, 38, 38, 40) : une pièce sera créée par taille.",
+	"item_tags_hint": "Séparés par des virgules : flamenco, années 50, homme…",
+	"item_where": "Où est-elle ?",
+	"labels_all_boxes": "Toutes les boîtes",
+	"labels_all_items": "Toutes les pièces",
+	"labels_empty": "Aucune étiquette à imprimer. Sélectionnez des pièces ou des boîtes.",
+	"labels_help": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} étiquette. Utilisez « Imprimer » et désactivez les marges du navigateur si besoin.",
+				"countPlural=other": "{count} étiquettes. Utilisez « Imprimer » et désactivez les marges du navigateur si besoin."
+			}
+		}
+	],
+	"labels_print": "Imprimer les étiquettes",
+	"labels_size": "Taille du QR",
+	"labels_title": "Étiquettes QR",
+	"loan_overdue": "En retard",
+	"loan_since": "Sortie le",
+	"loans_all": "Tous les emprunts",
+	"loans_due_soon": "À rendre cette semaine",
+	"loans_empty": "Aucun vêtement sorti.",
+	"loans_later": "Plus tard ou sans date",
+	"loans_mine": "Mes emprunts",
+	"loans_overdue": "En retard",
+	"loans_reminder_text": "Bonjour {name}, petit rappel : merci de rapporter ces costumes de la troupe :",
+	"loans_send_reminder": "Envoyer un rappel",
+	"loans_title": "Emprunts",
+	"location_due": "retour le {date}",
+	"location_out": "Sortie",
+	"location_unstored": "Non rangée",
+	"login_first_account": "Première utilisation ?",
+	"login_invalid": "E-mail ou mot de passe incorrect.",
+	"login_no_account": "Pas encore de compte ?",
+	"login_submit": "Se connecter",
+	"login_title": "Connexion",
+	"map_back": "Fond",
+	"map_door": "Porte",
+	"map_help_editable": "Touchez une boîte pour la sélectionner, faites-la glisser pour la déplacer. Un doigt fait tourner la vue, deux doigts zooment.",
+	"map_help_readonly": "Touchez une boîte pour voir ce qu'elle contient. Un doigt fait tourner la vue, deux doigts zooment.",
+	"map_none_placed": "Aucune boîte n'est encore placée dans le container.",
+	"map_not_measured": "Les dimensions du container ne sont pas renseignées : un container de 20 pieds (590 × 235 × 239 cm) est affiché.",
+	"map_nothing_selected": "Aucune boîte sélectionnée.",
+	"map_open": "Voir dans le container",
+	"map_open_box": "Ouvrir la boîte",
+	"map_place": "Placer",
+	"map_save_error": "Impossible d'enregistrer, réessayez.",
+	"map_saving": "Enregistrement…",
+	"map_selected_items_here": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce sélectionnée ici",
+				"countPlural=other": "{count} pièces sélectionnées ici"
+			}
+		}
+	],
+	"map_set_dimensions": "Renseigner les dimensions",
+	"map_stack": "Poser sur ce qui est dessous",
+	"map_title": "Plan du container",
+	"map_unplace": "Retirer du plan",
+	"map_unplaced": "Boîtes non placées",
+	"map_view_3d": "3D",
+	"map_view_front": "Face",
+	"map_view_top": "Dessus",
+	"map_your_items": "Vos pièces sont dans :",
+	"movement_checked_out": "Sortie",
+	"movement_condition_changed": "Changement d'état",
+	"movement_created": "Créée",
+	"movement_moved": "Déplacée",
+	"movement_returned": "Rendue",
+	"movement_stored": "Rangée",
+	"nav_account": "Mon compte",
+	"nav_boxes": "Boîtes",
+	"nav_container": "Container",
+	"nav_gallery": "Galerie",
+	"nav_home": "Accueil",
+	"nav_labels": "Étiquettes QR",
+	"nav_loans": "Emprunts",
+	"nav_logout": "Se déconnecter",
+	"nav_map": "Plan 3D",
+	"nav_scan": "Scanner",
+	"nav_users": "Membres",
+	"photo_add": "Ajouter les photos",
+	"photo_delete": "Supprimer la photo",
+	"photo_preparing": "Préparation des photos…",
+	"register_back_to_login": "J'ai déjà un compte",
+	"register_error_email_taken": "Un compte existe déjà avec cet e-mail.",
+	"register_error_invalid": "Vérifiez les champs du formulaire.",
+	"register_error_password": "Le mot de passe de la troupe est incorrect.",
+	"register_link": "Créer un compte",
+	"register_password_hint": "8 caractères minimum.",
+	"register_submit": "Créer mon compte",
+	"register_title": "Créer un compte",
+	"register_troupe_password": "Mot de passe de la troupe",
+	"role_admin": "Administrateur",
+	"role_keeper": "Responsable costumes",
+	"role_member": "Membre",
+	"role_owner": "Propriétaire",
+	"saved": "Enregistré.",
+	"scan_already": "{name} est déjà dans la liste.",
+	"scan_box_selected": "Boîte choisie : {box}",
+	"scan_collect_help": "Scannez les pièces une par une. Scannez une boîte pour les y ranger.",
+	"scan_denied": "Accès à la caméra refusé. Autorisez-le dans les réglages du navigateur, ou tapez le code ci-dessous.",
+	"scan_done": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "C'est fait pour {count} pièce.",
+				"countPlural=other": "C'est fait pour {count} pièces."
+			}
+		}
+	],
+	"scan_manual_placeholder": "Code de l'étiquette",
+	"scan_manual_submit": "OK",
+	"scan_mode_collect": "Entrées/sorties",
+	"scan_mode_open": "Consulter",
+	"scan_starting": "Démarrage de la caméra…",
+	"scan_target_box": "Ranger dans",
+	"scan_title": "Scanner",
+	"scan_to_selection": "Ajouter à la sélection",
+	"scan_unknown": "Code inconnu : {code}",
+	"scan_unsupported": "Ce navigateur ne peut pas utiliser la caméra. Tapez le code ci-dessous.",
+	"selection_actions_for": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Actions pour la pièce sélectionnée :",
+				"countPlural=other": "Actions pour les {count} pièces sélectionnées :"
+			}
+		}
+	],
+	"selection_add": "Sélectionner",
+	"selection_add_all": "Tout sélectionner",
+	"selection_clear": "Vider",
+	"selection_empty": "Aucune pièce sélectionnée. Choisissez-en dans la galerie ou scannez-les.",
+	"selection_open": "Où sont-elles ?",
+	"selection_remove": "Retirer",
+	"selection_title": "Sélection",
+	"status_in": "Dans le container",
+	"status_out": "Sorties",
+	"status_overdue": "En retard",
+	"status_unstored": "Non rangées",
+	"stock_borrower_other": "Autre personne…",
+	"stock_checkout": "Sortir",
+	"stock_choose_box": "Choisir une boîte",
+	"stock_condition": "Changer l'état",
+	"stock_done_checkout": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce sortie.",
+				"countPlural=other": "{count} pièces sorties."
+			}
+		}
+	],
+	"stock_done_condition": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce mise à jour.",
+				"countPlural=other": "{count} pièces mises à jour."
+			}
+		}
+	],
+	"stock_done_place": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce rangée.",
+				"countPlural=other": "{count} pièces rangées."
+			}
+		}
+	],
+	"stock_error_already_out": "Déjà sorties, rangez-les d'abord : {codes}",
+	"stock_place": "Ranger dans une boîte",
+	"stock_return": "Rendre / ranger",
+	"users_borrowed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} emprunt en cours",
+				"countPlural=other": "{count} emprunts en cours"
+			}
+		}
+	],
+	"users_roles_help": "Les responsables costumes ont la clé du container : ils enregistrent les entrées et sorties. Les membres consultent la galerie."
+}

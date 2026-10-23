@@ -1,0 +1,389 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"account_current_password": "Current password",
+	"account_language": "Language",
+	"account_new_password": "New password",
+	"account_password": "Password",
+	"account_password_wrong": "The current password is wrong.",
+	"account_profile": "Profile",
+	"action_cancel": "Cancel",
+	"action_create": "Create",
+	"action_edit": "Edit",
+	"action_save": "Save",
+	"box_contents": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Contents ({count} item)",
+				"countPlural=other": "Contents ({count} items)"
+			}
+		}
+	],
+	"box_delete": "Delete box",
+	"box_delete_confirm": "Delete this box permanently?",
+	"box_delete_not_empty": "Empty the box before deleting it.",
+	"box_dimensions": "Size and position (for the 3D view)",
+	"box_dimensions_hint": "In centimetres. Position measured from the back-left corner of the container, at floor level.",
+	"box_empty": "This box is empty.",
+	"box_item_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item",
+				"countPlural=other": "{count} items"
+			}
+		}
+	],
+	"box_new": "New box",
+	"boxes_empty": "No boxes yet.",
+	"boxes_filter": "Filter boxes…",
+	"boxes_title": "Boxes",
+	"condition_damaged": "Damaged",
+	"condition_good": "Good",
+	"condition_in_repair": "In repair",
+	"condition_lost": "Lost",
+	"condition_retired": "Retired",
+	"condition_to_repair": "To repair",
+	"condition_to_wash": "To wash",
+	"container_dimensions_hint": "Inside dimensions in centimetres, used for the future 3D view.",
+	"field_borrower": "Borrower",
+	"field_borrower_name": "Person's name",
+	"field_box": "Box",
+	"field_category": "Category",
+	"field_color": "Colour",
+	"field_condition": "Condition",
+	"field_depth": "Depth",
+	"field_description": "Description",
+	"field_due_at": "Due back",
+	"field_email": "Email",
+	"field_first_name": "First name",
+	"field_height": "Height",
+	"field_label": "Name",
+	"field_last_name": "Last name",
+	"field_name": "Name",
+	"field_note_optional": "Note (optional)",
+	"field_password": "Password",
+	"field_phone": "Phone",
+	"field_phone_optional": "Phone (optional)",
+	"field_photos": "Photos",
+	"field_pos_x": "Position X",
+	"field_pos_y": "Position Y",
+	"field_pos_z": "Height from floor",
+	"field_quantity": "Number of pieces",
+	"field_reason": "Reason",
+	"field_reason_placeholder": "Show, rehearsal…",
+	"field_shelf": "Location",
+	"field_shelf_placeholder": "Left shelf, top",
+	"field_size": "Size",
+	"field_tags": "Tags",
+	"field_width": "Width",
+	"filter_all_boxes": "All boxes",
+	"filter_all_categories": "All categories",
+	"filter_all_conditions": "All conditions",
+	"filter_all_statuses": "Anywhere",
+	"form_invalid": "Some fields are invalid.",
+	"gallery_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item",
+				"countPlural=other": "{count} items"
+			}
+		}
+	],
+	"gallery_empty": "No items match.",
+	"gallery_filters": "Filters",
+	"gallery_search": "Search",
+	"gallery_search_placeholder": "A sparkly dress for a 1920s number…",
+	"gallery_semantic_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece close to your search, closest first",
+				"countPlural=other": "{count} pieces close to your search, closest first"
+			}
+		}
+	],
+	"gallery_title": "Gallery",
+	"gallery_truncated": "Showing the first {count}; refine your search.",
+	"group_attention": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} to wash/repair",
+				"countPlural=other": "{count} to wash/repair"
+			}
+		}
+	],
+	"group_in": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} in the container",
+				"countPlural=other": "{count} in the container"
+			}
+		}
+	],
+	"group_out": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} out",
+				"countPlural=other": "{count} out"
+			}
+		}
+	],
+	"group_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} overdue",
+				"countPlural=other": "{count} overdue"
+			}
+		}
+	],
+	"group_title": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} identical piece",
+				"countPlural=other": "{count} identical pieces"
+			}
+		}
+	],
+	"group_unselect_all": "Remove all from selection",
+	"group_unstored": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} not stored",
+				"countPlural=other": "{count} not stored"
+			}
+		}
+	],
+	"home_boxes_help": "Contents and labels of the container's boxes",
+	"home_hello": "Hello {name}",
+	"home_loans_help": "Who has what, overdue items and reminders",
+	"home_my_loans": "What I borrowed",
+	"home_new_item_help": "Photograph and label a piece of clothing",
+	"home_scan": "Scan a QR code",
+	"home_scan_help": "Check out, store or find an item",
+	"home_stat_attention": "To wash or repair",
+	"home_stat_items": "Items",
+	"home_stat_out": "Out",
+	"home_stat_overdue": "Overdue",
+	"item_delete": "Delete item",
+	"item_delete_confirm": "Delete this item, its photos and its history permanently?",
+	"item_edit": "Edit",
+	"item_history": "History",
+	"item_history_empty": "Nothing yet.",
+	"item_new": "New item",
+	"item_no_box": "Not stored yet",
+	"item_quantity_hint": "For several identical pieces: each one gets its own QR code.",
+	"item_sizes_hint": "Several sizes? Separate them with commas (36, 38, 38, 40): one item is created per size.",
+	"item_tags_hint": "Comma-separated: flamenco, 1950s, men…",
+	"item_where": "Where is it?",
+	"labels_all_boxes": "All boxes",
+	"labels_all_items": "All items",
+	"labels_empty": "No labels to print. Select items or boxes.",
+	"labels_help": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} label. Use Print and turn off the browser's margins if needed.",
+				"countPlural=other": "{count} labels. Use Print and turn off the browser's margins if needed."
+			}
+		}
+	],
+	"labels_print": "Print labels",
+	"labels_size": "QR size",
+	"labels_title": "QR labels",
+	"loan_overdue": "Overdue",
+	"loan_since": "Out since",
+	"loans_all": "All loans",
+	"loans_due_soon": "Due this week",
+	"loans_empty": "Nothing is checked out.",
+	"loans_later": "Later or no date",
+	"loans_mine": "My loans",
+	"loans_overdue": "Overdue",
+	"loans_reminder_text": "Hi {name}, a quick reminder to bring back these troupe costumes:",
+	"loans_send_reminder": "Send a reminder",
+	"loans_title": "Loans",
+	"location_due": "due {date}",
+	"location_out": "Out",
+	"location_unstored": "Not stored",
+	"login_first_account": "First time here?",
+	"login_invalid": "Wrong email or password.",
+	"login_no_account": "No account yet?",
+	"login_submit": "Sign in",
+	"login_title": "Sign in",
+	"map_back": "Back",
+	"map_door": "Door",
+	"map_help_editable": "Tap a box to select it, drag it to move it. One finger turns the view, two fingers zoom.",
+	"map_help_readonly": "Tap a box to see what is in it. One finger turns the view, two fingers zoom.",
+	"map_none_placed": "No box has been placed in the container yet.",
+	"map_not_measured": "The container's dimensions are not set: a 20 ft container (590 × 235 × 239 cm) is shown.",
+	"map_nothing_selected": "No box selected.",
+	"map_open": "See in the container",
+	"map_open_box": "Open box",
+	"map_place": "Place",
+	"map_save_error": "Could not save, try again.",
+	"map_saving": "Saving…",
+	"map_selected_items_here": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} selected item here",
+				"countPlural=other": "{count} selected items here"
+			}
+		}
+	],
+	"map_set_dimensions": "Set the dimensions",
+	"map_stack": "Rest on what is below",
+	"map_title": "Container map",
+	"map_unplace": "Remove from map",
+	"map_unplaced": "Boxes not placed yet",
+	"map_view_3d": "3D",
+	"map_view_front": "Front",
+	"map_view_top": "Top",
+	"map_your_items": "Your items are in:",
+	"movement_checked_out": "Checked out",
+	"movement_condition_changed": "Condition changed",
+	"movement_created": "Created",
+	"movement_moved": "Moved",
+	"movement_returned": "Returned",
+	"movement_stored": "Stored",
+	"nav_account": "My account",
+	"nav_boxes": "Boxes",
+	"nav_container": "Container",
+	"nav_gallery": "Gallery",
+	"nav_home": "Home",
+	"nav_labels": "QR labels",
+	"nav_loans": "Loans",
+	"nav_logout": "Sign out",
+	"nav_map": "3D map",
+	"nav_scan": "Scan",
+	"nav_users": "Members",
+	"photo_add": "Add photos",
+	"photo_delete": "Delete photo",
+	"photo_preparing": "Preparing photos…",
+	"register_back_to_login": "I already have an account",
+	"register_error_email_taken": "An account already exists with this email.",
+	"register_error_invalid": "Check the form fields.",
+	"register_error_password": "The troupe password is wrong.",
+	"register_link": "Create an account",
+	"register_password_hint": "At least 8 characters.",
+	"register_submit": "Create my account",
+	"register_title": "Create an account",
+	"register_troupe_password": "Troupe password",
+	"role_admin": "Admin",
+	"role_keeper": "Costume keeper",
+	"role_member": "Member",
+	"role_owner": "Owner",
+	"saved": "Saved.",
+	"scan_already": "{name} is already in the list.",
+	"scan_box_selected": "Box selected: {box}",
+	"scan_collect_help": "Scan the items one by one. Scan a box to store them in it.",
+	"scan_denied": "Camera access denied. Allow it in the browser settings, or type the code below.",
+	"scan_done": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Done for {count} item.",
+				"countPlural=other": "Done for {count} items."
+			}
+		}
+	],
+	"scan_manual_placeholder": "Label code",
+	"scan_manual_submit": "OK",
+	"scan_mode_collect": "In/out",
+	"scan_mode_open": "Look up",
+	"scan_starting": "Starting the camera…",
+	"scan_target_box": "Store in",
+	"scan_title": "Scan",
+	"scan_to_selection": "Add to selection",
+	"scan_unknown": "Unknown code: {code}",
+	"scan_unsupported": "This browser cannot use the camera. Type the code below.",
+	"selection_actions_for": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Actions for the selected item:",
+				"countPlural=other": "Actions for the {count} selected items:"
+			}
+		}
+	],
+	"selection_add": "Select",
+	"selection_add_all": "Select all",
+	"selection_clear": "Clear",
+	"selection_empty": "No items selected. Pick some in the gallery or scan them.",
+	"selection_open": "Where are they?",
+	"selection_remove": "Remove",
+	"selection_title": "Selection",
+	"status_in": "In the container",
+	"status_out": "Out",
+	"status_overdue": "Overdue",
+	"status_unstored": "Not stored",
+	"stock_borrower_other": "Someone else…",
+	"stock_checkout": "Check out",
+	"stock_choose_box": "Choose a box",
+	"stock_condition": "Change condition",
+	"stock_done_checkout": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item checked out.",
+				"countPlural=other": "{count} items checked out."
+			}
+		}
+	],
+	"stock_done_condition": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item updated.",
+				"countPlural=other": "{count} items updated."
+			}
+		}
+	],
+	"stock_done_place": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item stored.",
+				"countPlural=other": "{count} items stored."
+			}
+		}
+	],
+	"stock_error_already_out": "Already out, store them first: {codes}",
+	"stock_place": "Store in a box",
+	"stock_return": "Return / store",
+	"users_borrowed": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} open loan",
+				"countPlural=other": "{count} open loans"
+			}
+		}
+	],
+	"users_roles_help": "Costume keepers have the container key: they record items going in and out. Members can browse the gallery."
+}
