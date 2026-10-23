@@ -3,6 +3,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { canManageStock } from '#lib/roles.ts';
 	import BoxFields from '#lib/components/BoxFields.svelte';
+	import { KIND_ICONS } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -51,7 +52,7 @@
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 			{#each container.boxes.filter(matches) as box (box.id)}
 				<a href="/boxes/{box.id}" class="card flex items-center gap-3 p-4 hover:border-brand-200">
-					<span class="text-3xl text-stone-400">▣</span>
+					<span class="text-3xl">{KIND_ICONS[box.kind]}</span>
 					<div class="min-w-0 flex-1">
 						<div class="truncate font-medium">{box.label}</div>
 						<div class="text-xs text-stone-500">

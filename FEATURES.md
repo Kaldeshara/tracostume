@@ -9,11 +9,12 @@
 - Selection: "where are they?" grouped by box and borrower, bulk actions
 - Loans with due dates, overdue badges, reminder text messages
 - Natural-language search (local embedding model), identical pieces grouped in the gallery
-- 3D map of the container: place and drag boxes, highlight where selected pieces are
+- 3D map of the container: storage units of several kinds (boxes, bags, clothes rails), drag and
+  stack them, editable container size and door side, highlight where selected pieces are
 
 # TODO
 
-- 3D map: shelves as objects, several containers, photos on boxes
+- 3D map: shelving units, several containers, photos on boxes
 - Search by what is visible in the photos (image model)
 - Email or push reminders for overdue loans
 - Share accounts with Tracster

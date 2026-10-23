@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { BoxKind } from '../../generated/prisma/enums';
+import { BOX_KINDS } from '#lib/map.ts';
 import { prisma } from './db';
 
 /** The troupe has a single container for now; it is created on first use. */
@@ -24,6 +26,7 @@ export const boxSchema = z.object({
 	label: z.string().trim().min(1).max(200),
 	description: optionalText(2000),
 	shelf: optionalText(200),
+	kind: z.enum(BOX_KINDS as [BoxKind, ...BoxKind[]]).default('PLASTIC_BOX'),
 	widthCm: optionalCm,
 	depthCm: optionalCm,
 	heightCm: optionalCm,

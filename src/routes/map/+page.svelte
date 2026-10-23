@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
+	import type { BoxKind, DoorSide } from '../../generated/prisma/enums';
 	import { hasRole } from '#lib/roles.ts';
-	import { DEFAULT_BOX, freeFloorSpot, stackHeight, type Placed } from '#lib/map.ts';
+	import { doorSideLabel, kindLabel, KIND_ICONS } from '#lib/format.ts';
+	import {
+		BOX_KINDS,
+		DOOR_SIDES,
+		freeFloorSpot,
+		KIND_DEFAULTS,
+		nearestRestLevel,
+		type Placed
+	} from '#lib/map.ts';
 	import ContainerMap, { type MapBox } from '#lib/components/ContainerMap.svelte';
 	import type { PageProps } from './$types';
 
@@ -9,18 +18,26 @@
 
 	type Box = (typeof data.boxes)[number];
 
-	// Local copy: edits apply immediately in the scene and are saved in the background.
+	// Local copies: edits apply immediately in the scene and are saved in the background.
 	// svelte-ignore state_referenced_locally
 	let boxes = $state<Box[]>(structuredClone(data.boxes));
 	// svelte-ignore state_referenced_locally
+	let container = $state(structuredClone(data.container));
+	// svelte-ignore state_referenced_locally
+	let measured = $state(data.measured);
+	// svelte-ignore state_referenced_locally
 	let selectedId = $state<string | null>(data.initialBoxId);
-	let saving = $state<string | null>(null);
-	let saveError = $state(false);
+	let saving = $state(false);
+	let saveError = $state<string | null>(null);
+	let editingContainer = $state(false);
+	let adding = $state(false);
+	let newLabel = $state('');
+	let newKind = $state<BoxKind>('PLASTIC_BOX');
 
 	const dims = (box: Box) => ({
-		widthCm: box.widthCm ?? DEFAULT_BOX.widthCm,
-		depthCm: box.depthCm ?? DEFAULT_BOX.depthCm,
-		heightCm: box.heightCm ?? DEFAULT_BOX.heightCm
+		widthCm: box.widthCm ?? KIND_DEFAULTS[box.kind].widthCm,
+		depthCm: box.depthCm ?? KIND_DEFAULTS[box.kind].depthCm,
+		heightCm: box.heightCm ?? KIND_DEFAULTS[box.kind].heightCm
 	});
 	const isPlaced = (box: Box) => box.posXCm != null && box.posYCm != null;
 
@@ -30,6 +47,7 @@
 			code: box.code,
 			label: box.label,
 			shelf: box.shelf,
+			kind: box.kind,
 			posXCm: box.posXCm!,
 			posYCm: box.posYCm!,
 			posZCm: box.posZCm ?? 0,
@@ -44,56 +62,78 @@
 			.map((box) => ({ box, count: data.highlighted[box.id] }))
 	);
 
-	async function save(box: Box) {
-		saving = box.id;
-		saveError = false;
+	async function request(url: string, method: string, body: unknown) {
+		saving = true;
+		saveError = null;
 		try {
-			const response = await fetch(`/map/boxes/${box.id}`, {
-				method: 'PUT',
+			const response = await fetch(url, {
+				method,
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({
-					posXCm: box.posXCm,
-					posYCm: box.posYCm,
-					posZCm: box.posZCm,
-					widthCm: box.widthCm,
-					depthCm: box.depthCm,
-					heightCm: box.heightCm
-				})
+				body: JSON.stringify(body)
 			});
-			saveError = !response.ok;
+			if (!response.ok) {
+				saveError = response.status === 409 ? m.map_delete_not_empty() : m.map_save_error();
+				return null;
+			}
+			return response;
 		} catch {
-			saveError = true;
+			saveError = m.map_save_error();
+			return null;
 		} finally {
-			saving = null;
+			saving = false;
 		}
+	}
+
+	const saveBox = (box: Box) =>
+		request(`/map/boxes/${box.id}`, 'PUT', {
+			label: box.label,
+			kind: box.kind,
+			posXCm: box.posXCm,
+			posYCm: box.posYCm,
+			posZCm: box.posZCm,
+			widthCm: box.widthCm,
+			depthCm: box.depthCm,
+			heightCm: box.heightCm
+		});
+
+	/** Puts the unit on the surface closest to its current height (floor, box top). */
+	function rest(box: Box) {
+		const me = placed.find((other) => other.id === box.id);
+		if (me) box.posZCm = nearestRestLevel(me, placed);
 	}
 
 	function onmove(id: string, pos: { posXCm: number; posYCm: number }) {
 		const box = boxes.find((other) => other.id === id);
 		if (!box) return;
 		Object.assign(box, pos);
+		rest(box);
 		selectedId = id;
-		save(box);
+		saveBox(box);
 	}
 
 	function place(box: Box) {
-		const spot = freeFloorSpot({ id: box.id, ...dims(box) }, placed, data.container);
+		const spot = freeFloorSpot({ id: box.id, ...dims(box) }, placed, container);
 		Object.assign(box, { ...spot, posZCm: 0, ...dims(box) });
 		selectedId = box.id;
-		save(box);
+		saveBox(box);
 	}
 
 	function unplace(box: Box) {
 		Object.assign(box, { posXCm: null, posYCm: null, posZCm: null });
 		selectedId = null;
-		save(box);
+		saveBox(box);
 	}
 
-	function stack(box: Box) {
-		const me = placed.find((other) => other.id === box.id);
-		if (!me) return;
-		box.posZCm = Math.min(stackHeight(me, placed), data.container.heightCm - me.heightCm);
-		save(box);
+	function setKind(box: Box, kind: BoxKind) {
+		const wasDefault =
+			box.widthCm === KIND_DEFAULTS[box.kind].widthCm &&
+			box.depthCm === KIND_DEFAULTS[box.kind].depthCm &&
+			box.heightCm === KIND_DEFAULTS[box.kind].heightCm;
+		box.kind = kind;
+		// Sizes that were just the old kind's defaults follow the new kind.
+		if (wasDefault || box.widthCm == null) Object.assign(box, KIND_DEFAULTS[kind]);
+		if (isPlaced(box)) rest(box);
+		saveBox(box);
 	}
 
 	function setField(
@@ -104,7 +144,63 @@
 		const value = Math.round(Number(event.currentTarget.value));
 		if (!Number.isFinite(value) || value < 0) return;
 		box[key] = value;
-		save(box);
+		saveBox(box);
+	}
+
+	function setLabel(box: Box, event: Event & { currentTarget: HTMLInputElement }) {
+		const value = event.currentTarget.value.trim();
+		if (!value || value === box.label) return;
+		box.label = value;
+		saveBox(box);
+	}
+
+	async function addUnit() {
+		const label = newLabel.trim();
+		if (!label) return;
+		const defaults = KIND_DEFAULTS[newKind];
+		const spot = freeFloorSpot({ id: 'new', ...defaults }, placed, container);
+		const response = await request('/map/boxes', 'POST', {
+			label,
+			kind: newKind,
+			...defaults,
+			...spot,
+			posZCm: 0
+		});
+		if (!response) return;
+		const created = (await response.json()) as Box;
+		boxes.push(created);
+		selectedId = created.id;
+		newLabel = '';
+		adding = false;
+	}
+
+	async function deleteUnit(box: Box) {
+		if (!confirm(m.map_delete_confirm())) return;
+		const response = await request(`/map/boxes/${box.id}`, 'DELETE', undefined);
+		if (!response) return;
+		boxes = boxes.filter((other) => other.id !== box.id);
+		selectedId = null;
+	}
+
+	async function saveContainer(event: SubmitEvent) {
+		event.preventDefault();
+		const form = new FormData(event.currentTarget as HTMLFormElement);
+		const next = {
+			name: String(form.get('name') ?? '').trim() || container.name,
+			widthCm: Math.round(Number(form.get('widthCm'))),
+			depthCm: Math.round(Number(form.get('depthCm'))),
+			heightCm: Math.round(Number(form.get('heightCm'))),
+			doorSide: String(form.get('doorSide')) as DoorSide
+		};
+		if ([next.widthCm, next.depthCm, next.heightCm].some((v) => !Number.isFinite(v) || v < 50)) {
+			saveError = m.form_invalid();
+			return;
+		}
+		const response = await request('/map/container', 'PUT', next);
+		if (!response) return;
+		container = next;
+		measured = true;
+		editingContainer = false;
 	}
 
 	const geometryFields = [
@@ -122,22 +218,13 @@
 <div class="mb-3 flex flex-wrap items-center gap-3">
 	<h1 class="flex-1">{m.map_title()}</h1>
 	{#if saving}<span class="text-sm text-stone-500">{m.map_saving()}</span>{/if}
-	{#if saveError}<span class="text-sm text-red-700">{m.map_save_error()}</span>{/if}
+	{#if saveError}<span class="text-sm text-red-700">{saveError}</span>{/if}
 </div>
 
-{#if !data.measured}
-	<p class="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-		{m.map_not_measured()}
-		{#if hasRole(data.user?.role, 'ADMIN')}
-			<a class="link ml-1" href="/container">{m.map_set_dimensions()}</a>
-		{/if}
-	</p>
-{/if}
-
 <div class="grid gap-4 md:grid-cols-[1fr_320px]">
-	<div class="h-[55vh] min-h-80 md:h-[70vh]">
+	<div class="h-[55vh] min-h-80 md:h-[75vh]">
 		<ContainerMap
-			container={data.container}
+			{container}
 			boxes={placed}
 			highlighted={data.highlighted}
 			bind:selectedId
@@ -147,6 +234,66 @@
 	</div>
 
 	<aside class="flex flex-col gap-4">
+		<section class="card p-3">
+			<div class="flex items-start gap-2">
+				<div class="min-w-0 flex-1">
+					<h2 class="truncate">{container.name}</h2>
+					<p class="text-sm text-stone-600">
+						{container.widthCm} × {container.depthCm} × {container.heightCm} cm ·
+						{m.field_door_side()} : {doorSideLabel(container.doorSide).toLowerCase()}
+					</p>
+					{#if !measured}
+						<p class="mt-1 text-xs text-amber-700">{m.map_not_measured()}</p>
+					{/if}
+				</div>
+				{#if data.editable}
+					<button
+						type="button"
+						class="btn px-2 py-1 text-xs"
+						onclick={() => (editingContainer = !editingContainer)}
+					>
+						{m.action_edit()}
+					</button>
+				{/if}
+			</div>
+			{#if editingContainer}
+				<form class="mt-3 flex flex-col gap-2" onsubmit={saveContainer}>
+					<input class="input" name="name" value={container.name} aria-label={m.field_name()} />
+					<div class="grid grid-cols-3 gap-2">
+						{#each [['widthCm', m.field_width], ['depthCm', m.field_depth], ['heightCm', m.field_height]] as const as [key, label] (key)}
+							<div>
+								<label class="label text-xs" for="container-{key}">{label()}</label>
+								<input
+									class="input"
+									id="container-{key}"
+									name={key}
+									type="number"
+									min="50"
+									inputmode="numeric"
+									value={container[key]}
+								/>
+							</div>
+						{/each}
+					</div>
+					<div>
+						<label class="label text-xs" for="container-door">{m.field_door_side()}</label>
+						<select class="input" id="container-door" name="doorSide" value={container.doorSide}>
+							{#each DOOR_SIDES as side (side)}
+								<option value={side}>{doorSideLabel(side)}</option>
+							{/each}
+						</select>
+					</div>
+					<p class="text-xs text-stone-500">{m.container_dimensions_hint()}</p>
+					<div class="flex gap-2">
+						<button class="btn btn-primary">{m.action_save()}</button>
+						<button type="button" class="btn" onclick={() => (editingContainer = false)}>
+							{m.action_cancel()}
+						</button>
+					</div>
+				</form>
+			{/if}
+		</section>
+
 		<p class="text-sm text-stone-600">
 			{data.editable ? m.map_help_editable() : m.map_help_readonly()}
 		</p>
@@ -166,6 +313,7 @@
 								onclick={() => (selectedId = box.id)}
 							>
 								<span class="chip bg-brand-700 text-white">{count}</span>
+								<span>{KIND_ICONS[box.kind]}</span>
 								<span class="font-mono">{box.code}</span>
 								<span class="truncate">{box.label}</span>
 								{#if !isPlaced(box)}
@@ -181,9 +329,21 @@
 		<section class="card p-3">
 			{#if selected}
 				<div class="flex items-start gap-2">
+					<span class="text-2xl">{KIND_ICONS[selected.kind]}</span>
 					<div class="min-w-0 flex-1">
-						<div class="font-mono text-xs text-stone-500">{selected.code}</div>
-						<h2 class="truncate">{selected.label}</h2>
+						<div class="font-mono text-xs text-stone-500">
+							{selected.code} · {kindLabel(selected.kind)}
+						</div>
+						{#if data.editable}
+							<input
+								class="input mt-1 font-semibold"
+								value={selected.label}
+								aria-label={m.field_label()}
+								onchange={(event) => setLabel(selected!, event)}
+							/>
+						{:else}
+							<h2 class="truncate">{selected.label}</h2>
+						{/if}
 						{#if selected.shelf}<div class="text-sm text-stone-500">{selected.shelf}</div>{/if}
 						<div class="text-sm text-stone-500">
 							{m.box_item_count({ count: selected.itemCount })}
@@ -204,8 +364,21 @@
 				<a class="btn mt-3" href="/boxes/{selected.id}">{m.map_open_box()}</a>
 
 				{#if data.editable}
+					<div class="mt-3">
+						<label class="label text-xs" for="unit-kind">{m.field_kind()}</label>
+						<select
+							class="input"
+							id="unit-kind"
+							value={selected.kind}
+							onchange={(event) => setKind(selected!, event.currentTarget.value as BoxKind)}
+						>
+							{#each BOX_KINDS as kind (kind)}
+								<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
+							{/each}
+						</select>
+					</div>
 					{#if isPlaced(selected)}
-						<div class="mt-4 grid grid-cols-3 gap-2">
+						<div class="mt-3 grid grid-cols-3 gap-2">
 							{#each geometryFields as [key, label] (key)}
 								<div>
 									<label class="label text-xs" for="geo-{key}">{label()}</label>
@@ -216,21 +389,33 @@
 										min="0"
 										inputmode="numeric"
 										value={selected[key] ??
-											(key.endsWith('Cm') && key.startsWith('pos')
+											(key.startsWith('pos')
 												? 0
-												: DEFAULT_BOX[key as keyof typeof DEFAULT_BOX])}
+												: KIND_DEFAULTS[selected.kind][key as 'widthCm' | 'depthCm' | 'heightCm'])}
 										onchange={(event) => setField(selected!, key, event)}
 									/>
 								</div>
 							{/each}
 						</div>
 						<div class="mt-3 flex flex-wrap gap-2">
-							<button type="button" class="btn" onclick={() => stack(selected!)}>
+							<button
+								type="button"
+								class="btn"
+								onclick={() => {
+									rest(selected!);
+									saveBox(selected!);
+								}}
+							>
 								{m.map_stack()}
 							</button>
-							<button type="button" class="btn btn-danger" onclick={() => unplace(selected!)}>
+							<button type="button" class="btn" onclick={() => unplace(selected!)}>
 								{m.map_unplace()}
 							</button>
+							{#if hasRole(data.user?.role, 'ADMIN')}
+								<button type="button" class="btn btn-danger" onclick={() => deleteUnit(selected!)}>
+									{m.map_delete_unit()}
+								</button>
+							{/if}
 						</div>
 					{:else}
 						<button type="button" class="btn btn-primary mt-3" onclick={() => place(selected!)}>
@@ -244,6 +429,44 @@
 				</p>
 			{/if}
 		</section>
+
+		{#if data.editable}
+			<section class="card p-3">
+				{#if adding}
+					<form
+						class="flex flex-col gap-2"
+						onsubmit={(event) => {
+							event.preventDefault();
+							addUnit();
+						}}
+					>
+						<h2 class="text-sm">{m.map_add_unit()}</h2>
+						<input
+							class="input"
+							bind:value={newLabel}
+							placeholder={m.field_label()}
+							required
+							aria-label={m.field_label()}
+						/>
+						<select class="input" bind:value={newKind} aria-label={m.field_kind()}>
+							{#each BOX_KINDS as kind (kind)}
+								<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
+							{/each}
+						</select>
+						<div class="flex gap-2">
+							<button class="btn btn-primary">{m.map_add()}</button>
+							<button type="button" class="btn" onclick={() => (adding = false)}>
+								{m.action_cancel()}
+							</button>
+						</div>
+					</form>
+				{:else}
+					<button type="button" class="btn w-full" onclick={() => (adding = true)}>
+						+ {m.map_add_unit()}
+					</button>
+				{/if}
+			</section>
+		{/if}
 
 		{#if unplaced.length}
 			<section class="card p-3">
@@ -259,6 +482,7 @@
 									: ''}"
 								onclick={() => (selectedId = box.id)}
 							>
+								<span>{KIND_ICONS[box.kind]}</span>
 								<span class="font-mono">{box.code}</span>
 								<span class="truncate">{box.label}</span>
 							</button>

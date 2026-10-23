@@ -1,6 +1,12 @@
 import { getLocale } from '#lib/paraglide/runtime.js';
 import { m } from '#lib/paraglide/messages.js';
-import type { ItemCondition, MovementType, UserRole } from '../generated/prisma/enums';
+import type {
+	BoxKind,
+	DoorSide,
+	ItemCondition,
+	MovementType,
+	UserRole
+} from '../generated/prisma/enums';
 
 const intlLocale = () => (getLocale() === 'fr' ? 'fr-FR' : 'en-GB');
 
@@ -68,4 +74,31 @@ export function movementLabel(type: MovementType) {
 		RETURNED: m.movement_returned,
 		CONDITION_CHANGED: m.movement_condition_changed
 	}[type]();
+}
+
+export function kindLabel(kind: BoxKind) {
+	return {
+		PLASTIC_BOX: m.kind_plastic_box,
+		CARDBOARD_BOX: m.kind_cardboard_box,
+		CANVAS_BAG: m.kind_canvas_bag,
+		RACK: m.kind_rack,
+		OTHER: m.kind_other
+	}[kind]();
+}
+
+export const KIND_ICONS: Record<BoxKind, string> = {
+	PLASTIC_BOX: '🧊',
+	CARDBOARD_BOX: '📦',
+	CANVAS_BAG: '👜',
+	RACK: '🧥',
+	OTHER: '▣'
+};
+
+export function doorSideLabel(side: DoorSide) {
+	return {
+		FRONT: m.door_front,
+		BACK: m.door_back,
+		LEFT: m.door_left,
+		RIGHT: m.door_right
+	}[side]();
 }

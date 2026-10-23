@@ -31,10 +31,12 @@ container and who has it.
   with sizes `36, 38, 38, 40` creates one piece per size and opens their labels for printing.
 - **Boxes in the container** — each box has a QR code, a location ("left shelf, top") and, optionally,
   dimensions and a position in the container.
-- **3D map** (`/map`) — the container drawn with Three.js, boxes placed inside it. Keepers drag boxes
-  to move them (5 cm snapping), set sizes and heights, or rest a box on the one below. Opened from a
-  selection, it highlights the boxes holding the selected pieces. Set the container's inside
-  dimensions in **Container** (admins); until then a 20 ft container is assumed.
+- **3D map** (`/map`) — the container drawn with Three.js (corrugated walls seen from inside, plywood
+  floor, door on the side you choose) with the storage units inside: plastic boxes, cardboard boxes,
+  canvas bags, clothes rails, or other. Keepers add units, drag them (5 cm snapping; a unit rests on
+  whatever is below it), set sizes, and edit the container's name, inside dimensions and door side.
+  Opened from a selection, it highlights the units holding the selected pieces. Until the container
+  is measured, a 20 ft container is assumed.
 - **In and out** — keepers check pieces out to a member or anyone else (with a due date and a
   reason), return them to a box, move them, and track their condition (to wash, to repair…).
   Every change is kept in the piece's history.

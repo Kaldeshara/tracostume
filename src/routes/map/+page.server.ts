@@ -14,6 +14,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 				code: true,
 				label: true,
 				shelf: true,
+				kind: true,
 				posXCm: true,
 				posYCm: true,
 				posZCm: true,
@@ -25,7 +26,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		})
 	]);
 
-	// ?items=a,b,c highlights the boxes holding those items ("where are they?" in 3D).
+	// ?items=a,b,c highlights the units holding those items ("where are they?" in 3D).
 	const itemIds = (url.searchParams.get('items') ?? '').split(',').filter(Boolean).slice(0, 500);
 	const highlighted: Record<string, number> = {};
 	if (itemIds.length) {
@@ -39,13 +40,22 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const measured =
 		container.widthCm != null && container.depthCm != null && container.heightCm != null;
 	return {
-		container: measured
-			? { widthCm: container.widthCm!, depthCm: container.depthCm!, heightCm: container.heightCm! }
-			: DEFAULT_CONTAINER,
+		container: {
+			name: container.name,
+			doorSide: container.doorSide,
+			...(measured
+				? {
+						widthCm: container.widthCm!,
+						depthCm: container.depthCm!,
+						heightCm: container.heightCm!
+					}
+				: DEFAULT_CONTAINER)
+		},
 		measured,
 		boxes: boxes.map(({ _count, ...box }) => ({ ...box, itemCount: _count.items })),
 		highlighted,
 		initialBoxId: url.searchParams.get('box'),
-		editable: canManageStock(locals.user?.role)
+		editable: canManageStock(locals.user?.role),
+		admin: !!locals.user && locals.user.role !== 'MEMBER' && locals.user.role !== 'KEEPER'
 	};
 };

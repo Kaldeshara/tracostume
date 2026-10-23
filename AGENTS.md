@@ -33,8 +33,10 @@ before relying on SvelteKit 2 habits. Differences met so far:
 - The selection (`#lib/selection.svelte.ts`) is browser-only state: never mutate it during SSR.
 - The 3D map (`ContainerMap.svelte`) uses Three.js directly, imported dynamically in `onMount`.
   Units are cm; box positions are the back-left-bottom corner from the container's back-left floor
-  corner (x = width, y = depth, z = height; the door is at y = depth). Geometry edits are saved
-  through `PUT /map/boxes/[id]`; pure geometry helpers live in `src/lib/map.ts` with unit tests.
+  corner (x = width, y = depth, z = height; FRONT = y max, the door side is a container setting).
+  Each `Box` has a `kind` (plastic box, cardboard box, canvas bag, clothes rail, other) that drives
+  its look; edits go through `PUT /map/boxes/[id]`, `POST /map/boxes` and `PUT /map/container`.
+  Pure geometry helpers (rest levels, free spots, kind defaults) live in `src/lib/map.ts` with tests.
 - Several `ItemPhoto` rows may share one `storageKey` (identical pieces imported from one photo):
   delete stored files only through `src/lib/server/photos.ts`, which checks for other users of the key.
 - Search is hybrid (`src/lib/server/search.ts`): Postgres full-text keywords + semantic

@@ -18,6 +18,7 @@ export const load: PageServerLoad = async () => {
 					code: true,
 					label: true,
 					shelf: true,
+					kind: true,
 					description: true,
 					_count: { select: { items: true } }
 				}

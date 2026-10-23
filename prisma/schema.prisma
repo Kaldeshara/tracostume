@@ -31,6 +31,23 @@ enum ItemCondition {
   RETIRED
 }
 
+/// What a storage unit physically is; drives its look on the 3D map. RACK is a clothes rail.
+enum BoxKind {
+  PLASTIC_BOX
+  CARDBOARD_BOX
+  CANVAS_BAG
+  RACK
+  OTHER
+}
+
+/// Wall of the container holding the door, as seen on the 3D map (FRONT = y max).
+enum DoorSide {
+  FRONT
+  BACK
+  LEFT
+  RIGHT
+}
+
 enum MovementType {
   CREATED
   STORED
@@ -79,6 +96,7 @@ model Container {
   widthCm     Int?
   depthCm     Int?
   heightCm    Int?
+  doorSide    DoorSide @default(FRONT)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -91,6 +109,7 @@ model Box {
   code        String   @unique
   label       String
   description String?
+  kind        BoxKind  @default(PLASTIC_BOX)
   containerId String
   /// Free-text position for humans, e.g. "Left shelf, top".
   shelf       String?

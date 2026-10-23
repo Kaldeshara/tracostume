@@ -5,6 +5,7 @@
 	import { selection } from '#lib/selection.svelte.ts';
 	import BoxFields from '#lib/components/BoxFields.svelte';
 	import ItemCard from '#lib/components/ItemCard.svelte';
+	import { kindLabel, KIND_ICONS } from '#lib/format.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -22,7 +23,10 @@
 
 <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-start">
 	<div class="flex-1">
-		<p class="text-sm text-stone-500">{box.container.name}{box.shelf ? ` · ${box.shelf}` : ''}</p>
+		<p class="text-sm text-stone-500">
+			{KIND_ICONS[box.kind]}
+			{kindLabel(box.kind)} · {box.container.name}{box.shelf ? ` · ${box.shelf}` : ''}
+		</p>
 		<h1>{box.label}</h1>
 		<p class="mt-1 font-mono text-stone-500">{box.code}</p>
 		{#if box.description}<p class="mt-2 text-stone-700">{box.description}</p>{/if}
@@ -64,6 +68,7 @@
 		<BoxFields
 			values={form?.values ?? {
 				label: box.label,
+				kind: box.kind,
 				description: box.description,
 				shelf: box.shelf,
 				widthCm: box.widthCm,

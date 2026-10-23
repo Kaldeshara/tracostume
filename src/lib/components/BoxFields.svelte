@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
+	import { BOX_KINDS } from '#lib/map.ts';
+	import { kindLabel, KIND_ICONS } from '#lib/format.ts';
 
 	let { values = {} }: { values?: Record<string, string | number | null> } = $props();
 
@@ -10,6 +12,14 @@
 	<div>
 		<label class="label" for="label">{m.field_label()} *</label>
 		<input class="input" id="label" name="label" required value={value('label')} />
+	</div>
+	<div>
+		<label class="label" for="kind">{m.field_kind()}</label>
+		<select class="input" id="kind" name="kind" value={value('kind') || 'PLASTIC_BOX'}>
+			{#each BOX_KINDS as option (option)}
+				<option value={option}>{KIND_ICONS[option]} {kindLabel(option)}</option>
+			{/each}
+		</select>
 	</div>
 	<div>
 		<label class="label" for="shelf">{m.field_shelf()}</label>
