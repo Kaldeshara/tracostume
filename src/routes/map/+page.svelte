@@ -221,8 +221,8 @@
 	{#if saveError}<span class="text-sm text-red-700">{saveError}</span>{/if}
 </div>
 
-<div class="grid gap-4 md:grid-cols-[1fr_320px]">
-	<div class="h-[55vh] min-h-80 md:h-[75vh]">
+<div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_320px]">
+	<div class="relative h-[60vh] min-h-80 min-w-0 md:h-[75vh]">
 		<ContainerMap
 			{container}
 			boxes={placed}
@@ -231,6 +231,13 @@
 			editable={data.editable}
 			{onmove}
 		/>
+		{#if selected}
+			<div
+				class="absolute inset-x-2 bottom-2 max-h-[60%] overflow-y-auto rounded-xl bg-white/95 p-3 shadow-lg ring-1 ring-black/10 backdrop-blur md:hidden"
+			>
+				{@render selectedPanel('sheet')}
+			</div>
+		{/if}
 	</div>
 
 	<aside class="flex flex-col gap-4">
@@ -326,109 +333,8 @@
 			</section>
 		{/if}
 
-		<section class="card p-3">
-			{#if selected}
-				<div class="flex items-start gap-2">
-					<span class="text-2xl">{KIND_ICONS[selected.kind]}</span>
-					<div class="min-w-0 flex-1">
-						<div class="font-mono text-xs text-stone-500">
-							{selected.code} · {kindLabel(selected.kind)}
-						</div>
-						{#if data.editable}
-							<input
-								class="input mt-1 font-semibold"
-								value={selected.label}
-								aria-label={m.field_label()}
-								onchange={(event) => setLabel(selected!, event)}
-							/>
-						{:else}
-							<h2 class="truncate">{selected.label}</h2>
-						{/if}
-						{#if selected.shelf}<div class="text-sm text-stone-500">{selected.shelf}</div>{/if}
-						<div class="text-sm text-stone-500">
-							{m.box_item_count({ count: selected.itemCount })}
-						</div>
-					</div>
-					<button
-						type="button"
-						class="text-stone-400"
-						aria-label={m.action_cancel()}
-						onclick={() => (selectedId = null)}>✕</button
-					>
-				</div>
-				{#if data.highlighted[selected.id]}
-					<p class="mt-2 text-sm font-medium text-brand-700">
-						{m.map_selected_items_here({ count: data.highlighted[selected.id] })}
-					</p>
-				{/if}
-				<a class="btn mt-3" href="/boxes/{selected.id}">{m.map_open_box()}</a>
-
-				{#if data.editable}
-					<div class="mt-3">
-						<label class="label text-xs" for="unit-kind">{m.field_kind()}</label>
-						<select
-							class="input"
-							id="unit-kind"
-							value={selected.kind}
-							onchange={(event) => setKind(selected!, event.currentTarget.value as BoxKind)}
-						>
-							{#each BOX_KINDS as kind (kind)}
-								<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
-							{/each}
-						</select>
-					</div>
-					{#if isPlaced(selected)}
-						<div class="mt-3 grid grid-cols-3 gap-2">
-							{#each geometryFields as [key, label] (key)}
-								<div>
-									<label class="label text-xs" for="geo-{key}">{label()}</label>
-									<input
-										class="input"
-										id="geo-{key}"
-										type="number"
-										min="0"
-										inputmode="numeric"
-										value={selected[key] ??
-											(key.startsWith('pos')
-												? 0
-												: KIND_DEFAULTS[selected.kind][key as 'widthCm' | 'depthCm' | 'heightCm'])}
-										onchange={(event) => setField(selected!, key, event)}
-									/>
-								</div>
-							{/each}
-						</div>
-						<div class="mt-3 flex flex-wrap gap-2">
-							<button
-								type="button"
-								class="btn"
-								onclick={() => {
-									rest(selected!);
-									saveBox(selected!);
-								}}
-							>
-								{m.map_stack()}
-							</button>
-							<button type="button" class="btn" onclick={() => unplace(selected!)}>
-								{m.map_unplace()}
-							</button>
-							{#if hasRole(data.user?.role, 'ADMIN')}
-								<button type="button" class="btn btn-danger" onclick={() => deleteUnit(selected!)}>
-									{m.map_delete_unit()}
-								</button>
-							{/if}
-						</div>
-					{:else}
-						<button type="button" class="btn btn-primary mt-3" onclick={() => place(selected!)}>
-							{m.map_place()}
-						</button>
-					{/if}
-				{/if}
-			{:else}
-				<p class="text-sm text-stone-500">
-					{placed.length ? m.map_nothing_selected() : m.map_none_placed()}
-				</p>
-			{/if}
-		</section>
+		<!-- On phones the selected unit shows in a sheet over the map (see below). -->
+		<section class="card hidden p-3 md:block">{@render selectedPanel('side')}</section>
 
 		{#if data.editable}
 			<section class="card p-3">
@@ -498,3 +404,107 @@
 		{/if}
 	</aside>
 </div>
+
+{#snippet selectedPanel(prefix: string)}
+	{#if selected}
+		<div class="flex items-start gap-2">
+			<span class="text-2xl">{KIND_ICONS[selected.kind]}</span>
+			<div class="min-w-0 flex-1">
+				<div class="font-mono text-xs text-stone-500">
+					{selected.code} · {kindLabel(selected.kind)}
+				</div>
+				{#if data.editable}
+					<input
+						class="input mt-1 font-semibold"
+						value={selected.label}
+						aria-label={m.field_label()}
+						onchange={(event) => setLabel(selected!, event)}
+					/>
+				{:else}
+					<h2 class="truncate">{selected.label}</h2>
+				{/if}
+				{#if selected.shelf}<div class="text-sm text-stone-500">{selected.shelf}</div>{/if}
+				<div class="text-sm text-stone-500">
+					{m.box_item_count({ count: selected.itemCount })}
+				</div>
+			</div>
+			<button
+				type="button"
+				class="text-stone-400"
+				aria-label={m.action_cancel()}
+				onclick={() => (selectedId = null)}>✕</button
+			>
+		</div>
+		{#if data.highlighted[selected.id]}
+			<p class="mt-2 text-sm font-medium text-brand-700">
+				{m.map_selected_items_here({ count: data.highlighted[selected.id] })}
+			</p>
+		{/if}
+		<a class="btn mt-3" href="/boxes/{selected.id}">{m.map_open_box()}</a>
+
+		{#if data.editable}
+			<div class="mt-3">
+				<label class="label text-xs" for="{prefix}-unit-kind">{m.field_kind()}</label>
+				<select
+					class="input"
+					id="{prefix}-unit-kind"
+					value={selected.kind}
+					onchange={(event) => setKind(selected!, event.currentTarget.value as BoxKind)}
+				>
+					{#each BOX_KINDS as kind (kind)}
+						<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
+					{/each}
+				</select>
+			</div>
+			{#if isPlaced(selected)}
+				<div class="mt-3 grid grid-cols-3 gap-2">
+					{#each geometryFields as [key, label] (key)}
+						<div>
+							<label class="label text-xs" for="{prefix}-geo-{key}">{label()}</label>
+							<input
+								class="input"
+								id="{prefix}-geo-{key}"
+								type="number"
+								min="0"
+								inputmode="numeric"
+								value={selected[key] ??
+									(key.startsWith('pos')
+										? 0
+										: KIND_DEFAULTS[selected.kind][key as 'widthCm' | 'depthCm' | 'heightCm'])}
+								onchange={(event) => setField(selected!, key, event)}
+							/>
+						</div>
+					{/each}
+				</div>
+				<div class="mt-3 flex flex-wrap gap-2">
+					<button
+						type="button"
+						class="btn"
+						onclick={() => {
+							rest(selected!);
+							saveBox(selected!);
+						}}
+					>
+						{m.map_stack()}
+					</button>
+					<button type="button" class="btn" onclick={() => unplace(selected!)}>
+						{m.map_unplace()}
+					</button>
+					{#if hasRole(data.user?.role, 'ADMIN')}
+						<button type="button" class="btn btn-danger" onclick={() => deleteUnit(selected!)}>
+							{m.map_delete_unit()}
+						</button>
+					{/if}
+				</div>
+			{:else}
+				<button type="button" class="btn btn-primary mt-3" onclick={() => place(selected!)}>
+					{m.map_place()}
+				</button>
+			{/if}
+		{/if}
+	{:else}
+		<p class="text-sm text-stone-500">
+			{placed.length ? m.map_nothing_selected() : m.map_none_placed()}
+		</p>
+	{/if}
+{/snippet}
