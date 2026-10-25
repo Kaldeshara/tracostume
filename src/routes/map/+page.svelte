@@ -233,7 +233,7 @@
 		/>
 		{#if selected}
 			<div
-				class="absolute inset-x-2 bottom-2 max-h-[60%] overflow-y-auto rounded-xl bg-white/95 p-3 shadow-lg ring-1 ring-black/10 backdrop-blur md:hidden"
+				class="absolute inset-x-2 bottom-2 z-10 max-h-[60%] overflow-y-auto rounded-xl bg-white/95 p-3 shadow-lg ring-1 ring-black/10 backdrop-blur md:hidden"
 			>
 				{@render selectedPanel('sheet')}
 			</div>
