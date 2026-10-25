@@ -11,19 +11,13 @@ export const load: PageServerLoad = async ({ url }) => {
 	const filters = readItemFilters(url.searchParams);
 	const { where, rankedIds, semantic } = await buildItemWhere(filters);
 
-	const [items, total, categories, boxes] = await Promise.all([
+	const [items, total, boxes] = await Promise.all([
 		prisma.item.findMany({
 			where,
 			select: itemCardSelect,
 			orderBy: [{ name: 'asc' }, { size: 'asc' }, { code: 'asc' }]
 		}),
 		prisma.item.count({ where }),
-		prisma.item.findMany({
-			where: { category: { not: null } },
-			distinct: ['category'],
-			select: { category: true },
-			orderBy: { category: 'asc' }
-		}),
 		prisma.box.findMany({
 			select: { id: true, code: true, label: true },
 			orderBy: { label: 'asc' }
@@ -37,7 +31,6 @@ export const load: PageServerLoad = async ({ url }) => {
 		groupTotal: groups.length,
 		total,
 		semantic,
-		categories: categories.map((row) => row.category!),
 		boxes
 	};
 };

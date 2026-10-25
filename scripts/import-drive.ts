@@ -7,6 +7,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
 import { randomCode } from '../src/lib/codes';
+import { classify } from '../src/lib/categories';
 
 // One-off import of the association's Google Drive inventory (see data/import/README.md).
 //
@@ -139,7 +140,7 @@ async function main() {
 				data: {
 					code: await uniqueItemCode(),
 					name: record.name,
-					category: record.category,
+					category: classify(record.name, record.category),
 					color: record.colors.length ? record.colors.join(', ') : null,
 					description: describe(record),
 					photos: {

@@ -2,6 +2,12 @@
 	import { enhance } from '$app/forms';
 	import { m } from '#lib/paraglide/messages.js';
 	import { CONDITIONS, conditionLabel } from '#lib/format.ts';
+	import {
+		CATEGORIES_BY_GROUP,
+		CATEGORY_GROUPS,
+		categoryGroupLabel,
+		categoryLabel
+	} from '#lib/categories.ts';
 	import type { ItemFormValues } from '#lib/server/item-form.ts';
 	import PhotoInput from './PhotoInput.svelte';
 
@@ -9,7 +15,6 @@
 		values: ItemFormValues;
 		options: {
 			boxes: { id: string; code: string; label: string }[];
-			categories: string[];
 			colors: string[];
 			tags: string[];
 		};
@@ -42,16 +47,15 @@
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 		<div>
 			<label class="label" for="category">{m.field_category()}</label>
-			<input
-				class="input"
-				id="category"
-				name="category"
-				list="categories"
-				value={values.category}
-			/>
-			<datalist id="categories">
-				{#each options.categories as value (value)}<option {value}></option>{/each}
-			</datalist>
+			<select class="input" id="category" name="category" value={values.category || 'UNSORTED'}>
+				{#each CATEGORY_GROUPS as group (group)}
+					<optgroup label={categoryGroupLabel(group)}>
+						{#each CATEGORIES_BY_GROUP[group] as category (category)}
+							<option value={category}>{categoryLabel(category)}</option>
+						{/each}
+					</optgroup>
+				{/each}
+			</select>
 		</div>
 		<div>
 			<label class="label" for="color">{m.field_color()}</label>

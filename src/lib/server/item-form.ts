@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { CONDITIONS } from '#lib/format.ts';
-import type { ItemCondition } from '../../generated/prisma/enums';
+import { CATEGORIES } from '#lib/categories.ts';
+import type { ItemCategory, ItemCondition } from '../../generated/prisma/enums';
 import { prisma } from './db';
 
 const optionalText = (max: number) =>
@@ -13,7 +14,7 @@ const optionalText = (max: number) =>
 export const itemSchema = z.object({
 	name: z.string().trim().min(1).max(200),
 	description: optionalText(4000),
-	category: optionalText(100),
+	category: z.enum(CATEGORIES as [ItemCategory, ...ItemCategory[]]),
 	color: optionalText(100),
 	size: optionalText(200),
 	condition: z.enum(CONDITIONS as [ItemCondition, ...ItemCondition[]]),
@@ -49,16 +50,10 @@ export function tagsWrite(tags: string[]) {
 
 /** Suggestions for the item form's free-text fields. */
 export async function itemFormOptions() {
-	const [boxes, categories, colors, tags] = await Promise.all([
+	const [boxes, colors, tags] = await Promise.all([
 		prisma.box.findMany({
 			select: { id: true, code: true, label: true },
 			orderBy: { label: 'asc' }
-		}),
-		prisma.item.findMany({
-			where: { category: { not: null } },
-			distinct: ['category'],
-			select: { category: true },
-			orderBy: { category: 'asc' }
 		}),
 		prisma.item.findMany({
 			where: { color: { not: null } },
@@ -70,7 +65,6 @@ export async function itemFormOptions() {
 	]);
 	return {
 		boxes,
-		categories: categories.map((row) => row.category!),
 		colors: colors.map((row) => row.color!),
 		tags: tags.map((row) => row.name)
 	};

@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { MODELS_DIR } from '$app/env/private';
+import type { ItemCategory } from '../../generated/prisma/enums';
+import { categorySearchText } from '#lib/categories.ts';
 import { prisma } from './db';
 import { asPassage, asQuery, dot, embed, MODEL_ID } from '#lib/embeddings/model.ts';
 import type { Scored } from '#lib/search-rank.ts';
@@ -18,7 +20,7 @@ const hashOf = (text: string) => createHash('sha1').update(MODEL_ID).update(text
 type ItemText = {
 	id: string;
 	name: string;
-	category: string | null;
+	category: ItemCategory;
 	color: string | null;
 	size: string | null;
 	description: string | null;
@@ -34,7 +36,7 @@ export function itemText(item: ItemText) {
 		.trim();
 	return [
 		item.name,
-		[item.category, item.color, item.size].filter(Boolean).join(' '),
+		[categorySearchText(item.category), item.color, item.size].filter(Boolean).join(' '),
 		item.tags.map(({ tag }) => tag.name).join(', '),
 		description
 	]

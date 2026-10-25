@@ -22,7 +22,7 @@
 	const selected = $derived(selectedCount === ids.length);
 	const href = $derived(
 		many
-			? `/items/group?name=${encodeURIComponent(item.name)}&category=${encodeURIComponent(item.category ?? '')}&color=${encodeURIComponent(item.color ?? '')}`
+			? `/items/group?name=${encodeURIComponent(item.name)}&category=${encodeURIComponent(item.category)}&color=${encodeURIComponent(item.color ?? '')}`
 			: `/items/${item.id}`
 	);
 	const overdue = $derived(

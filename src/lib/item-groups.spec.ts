@@ -7,7 +7,7 @@ const piece = (overrides: Partial<ItemCard>): ItemCard => ({
 	id: Math.random().toString(36).slice(2),
 	code: 'X',
 	name: 'Jupe rose',
-	category: 'Jupe',
+	category: 'SKIRT',
 	color: 'rose',
 	size: null,
 	condition: 'GOOD',

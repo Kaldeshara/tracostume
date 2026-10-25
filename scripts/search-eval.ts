@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
+import { categoryLabel } from '../src/lib/categories';
 
 // Compares embedding models on the real catalogue with a few natural-language queries and the
 // pieces they should find. Prints, per query, the best matches and where the expected ones rank.
@@ -42,7 +43,9 @@ async function main() {
 		distinct: ['name', 'category', 'color']
 	});
 	const texts = items.map((i) =>
-		[i.name, [i.category, i.color].filter(Boolean).join(' ')].filter(Boolean).join('. ')
+		[i.name, [categoryLabel(i.category, 'fr'), i.color].filter(Boolean).join(' ')]
+			.filter(Boolean)
+			.join('. ')
 	);
 
 	const embed = async (list: string[]) => {

@@ -2,6 +2,15 @@ import { Prisma } from '../../generated/prisma/client';
 import { prisma } from './db';
 import { semanticSearch } from './embeddings';
 import { rankResults } from '#lib/search-rank.ts';
+import { CATEGORIES, categorySearchText } from '#lib/categories.ts';
+
+// Category labels in both languages, so "skirt" and "jupe" both match the enum value.
+const categoryTextSql = Prisma.sql`CASE i.category ${Prisma.join(
+	CATEGORIES.map(
+		(category) => Prisma.sql`WHEN ${category}::"ItemCategory" THEN ${categorySearchText(category)}`
+	),
+	' '
+)} END`;
 
 // Full-text search over items, accent-insensitive and with French stemming, so that
 // "jupes rouges" finds "Jupe rouge à volants". Every word must match, and each word
@@ -46,7 +55,7 @@ export async function keywordSearchIds(text: string): Promise<string[]> {
 		LEFT JOIN "Box" b ON b.id = i."boxId"
 		CROSS JOIN LATERAL (
 			SELECT to_tsvector('french', unaccent(concat_ws(' ',
-				i.code, i.name, i.description, i.category, i.color, i.size, b.label, b.code, b.shelf,
+				i.code, i.name, i.description, ${categoryTextSql}, i.color, i.size, b.label, b.code, b.shelf,
 				(SELECT string_agg(t.name, ' ') FROM "ItemTag" it JOIN "Tag" t ON t.id = it."tagId" WHERE it."itemId" = i.id)
 			))) AS doc
 		) d

@@ -1,0 +1,78 @@
+-- Replaces the free-text category of items with a fixed, translated taxonomy
+-- (see src/lib/categories.ts). Existing pieces are classified from their name and old category.
+
+CREATE TYPE "ItemCategory" AS ENUM ('T_SHIRT', 'SHIRT', 'TANK_TOP', 'BODYSUIT', 'SWEATER', 'VEST', 'POLO', 'CROP_TOP', 'CORSET', 'TUNIC', 'TOP_OTHER', 'TROUSERS', 'JEANS', 'SHORTS', 'SKIRT', 'LEGGINGS', 'BOTTOM_OTHER', 'DRESS', 'JUMPSUIT', 'DUNGAREES', 'SET', 'FULL_COSTUME', 'JACKET', 'BLAZER', 'COAT', 'CAPE', 'TAILCOAT', 'TRACKSUIT', 'OUTERWEAR_OTHER', 'HAT', 'TOP_HAT', 'CAP', 'HOOD', 'WIG', 'HEADWEAR_OTHER', 'SCARF', 'BELT', 'GLOVES', 'MASK', 'SOCKS', 'JEWELRY', 'BOA', 'PROP', 'DECORATION', 'ACCESSORY_OTHER', 'SHOES', 'BOOTS', 'FOOTWEAR_OTHER', 'UNSORTED');
+
+ALTER TABLE "Item" ADD COLUMN "categoryCode" "ItemCategory" NOT NULL DEFAULT 'UNSORTED';
+
+UPDATE "Item" SET "categoryCode" = CASE
+  WHEN replace(unaccent(lower(name)), 'pentalon', 'pantalon') ~ '\mcostumes?\M' AND replace(unaccent(lower(name)), 'pentalon', 'pantalon') NOT LIKE '%veste%' THEN (CASE WHEN category = 'Ensemble' THEN 'FULL_COSTUME' ELSE 'SET' END)::"ItemCategory"
+  WHEN category = 'Salopette' THEN 'DUNGAREES'::"ItemCategory"
+  WHEN replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pantalon%' AND replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%veste%' THEN 'SET'::"ItemCategory"
+  WHEN replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pantalon%' AND replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%chemise%' THEN 'SET'::"ItemCategory"
+  WHEN replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%haut%' AND replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pantalon%' THEN 'SET'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%haut de forme%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%haut-de-forme%') THEN 'TOP_HAT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%calot%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%casquette%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%beret%') THEN 'CAP'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%capuche%') THEN 'HOOD'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%chapeau%') THEN 'HAT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%perruque%') THEN 'WIG'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%masque%') THEN 'MASK'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%foulard%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%echarpe%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%bandana%') THEN 'SCARF'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%ceinture%') THEN 'BELT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%gant%') THEN 'GLOVES'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%chaussette%') THEN 'SOCKS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%boa %') THEN 'BOA'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%boa%') THEN 'BOA'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%guirlande%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%bolduc%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%fleurs%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%decoration%') THEN 'DECORATION'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%nez clown%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%brassard%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%epaulette%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%patch%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%elastique%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%goodies%') THEN 'PROP'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%queue de pie%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%queue-de-pie%') THEN 'TAILCOAT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%cape%') THEN 'CAPE'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%manteau%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%imper%') THEN 'COAT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%survetement%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%jogging%') THEN 'TRACKSUIT'::"ItemCategory"
+  WHEN replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%veste%' AND replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%costume%' THEN 'BLAZER'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%veste%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%blouson%') THEN 'JACKET'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%gilet%') THEN 'VEST'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%combinaison%') THEN 'JUMPSUIT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%salopette%') THEN 'DUNGAREES'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%robe%') THEN 'DRESS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%deguisement%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%tenue%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%starwars%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%star wars%') THEN 'FULL_COSTUME'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%ensemble%') THEN 'SET'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%t-shirt%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%tshirt%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%tee-shirt%') THEN 'T_SHIRT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%marcel%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%debardeur%') THEN 'TANK_TOP'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%chemise%') THEN 'SHIRT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%body%') THEN 'BODYSUIT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pull%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%col roule%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%sweat%') THEN 'SWEATER'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%polo%') THEN 'POLO'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%crop top%') THEN 'CROP_TOP'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%corset%') THEN 'CORSET'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%tunique%') THEN 'TUNIC'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%haut%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%dos nu%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%top%') THEN 'TOP_OTHER'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%short%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%bermuda%') THEN 'SHORTS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%jean%') THEN 'JEANS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%jupe%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%jupon%') THEN 'SKIRT'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%legging%') THEN 'LEGGINGS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pantalon%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pantacourt%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%jambiere%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%pentalon%') THEN 'TROUSERS'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%chaussure%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%basket%' OR replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%escarpin%') THEN 'SHOES'::"ItemCategory"
+  WHEN (replace(unaccent(lower(name)), 'pentalon', 'pantalon') LIKE '%botte%') THEN 'BOOTS'::"ItemCategory"
+  WHEN category = 'Haut' THEN 'TOP_OTHER'::"ItemCategory"
+  WHEN category = 'Jupe' THEN 'SKIRT'::"ItemCategory"
+  WHEN category = 'Pantalon' THEN 'TROUSERS'::"ItemCategory"
+  WHEN category = 'Short' THEN 'SHORTS'::"ItemCategory"
+  WHEN category = 'Robe' THEN 'DRESS'::"ItemCategory"
+  WHEN category = 'Combinaison' THEN 'JUMPSUIT'::"ItemCategory"
+  WHEN category = 'Salopette' THEN 'DUNGAREES'::"ItemCategory"
+  WHEN category = 'Veste' THEN 'JACKET'::"ItemCategory"
+  WHEN category = 'Ensemble' THEN 'SET'::"ItemCategory"
+  WHEN category = 'Accessoire' THEN 'ACCESSORY_OTHER'::"ItemCategory"
+  WHEN category = 'Chapeau' THEN 'HAT'::"ItemCategory"
+  WHEN category = 'Foulard' THEN 'SCARF'::"ItemCategory"
+  WHEN category = 'Guirlande' THEN 'DECORATION'::"ItemCategory"
+  WHEN category = 'Masque' THEN 'MASK'::"ItemCategory"
+  WHEN category = 'Perruque' THEN 'WIG'::"ItemCategory"
+  ELSE 'UNSORTED'::"ItemCategory"
+END;
+
+DROP INDEX IF EXISTS "Item_category_idx";
+ALTER TABLE "Item" DROP COLUMN "category";
+ALTER TABLE "Item" RENAME COLUMN "categoryCode" TO "category";
+CREATE INDEX "Item_category_idx" ON "Item"("category");

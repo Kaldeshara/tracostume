@@ -2,6 +2,7 @@ import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
+import type { ItemCategory } from '../src/generated/prisma/enums';
 
 // Demo data for local development. Safe to run several times: it only adds what is missing.
 
@@ -87,7 +88,7 @@ async function main() {
 
 	const pieces: {
 		name: string;
-		category: string;
+		category: ItemCategory;
 		color: string;
 		sizes: string[];
 		box: (typeof boxes)[number];
@@ -96,7 +97,7 @@ async function main() {
 	}[] = [
 		{
 			name: 'Jupe flamenco rouge à volants',
-			category: 'Jupe',
+			category: 'SKIRT',
 			color: 'Rouge',
 			sizes: ['36', '38', '38', '40', '42'],
 			box: skirts,
@@ -105,7 +106,7 @@ async function main() {
 		},
 		{
 			name: 'Jupe flamenco noire',
-			category: 'Jupe',
+			category: 'SKIRT',
 			color: 'Noir',
 			sizes: ['36', '38', '40'],
 			box: skirts,
@@ -113,7 +114,7 @@ async function main() {
 		},
 		{
 			name: 'Chemise blanche à jabot',
-			category: 'Chemise',
+			category: 'SHIRT',
 			color: 'Blanc',
 			sizes: ['M', 'L', 'L', 'XL'],
 			box: shirts,
@@ -121,7 +122,7 @@ async function main() {
 		},
 		{
 			name: 'Robe swing à pois bleue',
-			category: 'Robe',
+			category: 'DRESS',
 			color: 'Bleu',
 			sizes: ['S', 'M'],
 			box: dresses,
@@ -129,7 +130,7 @@ async function main() {
 		},
 		{
 			name: 'Robe vichy rose',
-			category: 'Robe',
+			category: 'DRESS',
 			color: 'Rose',
 			sizes: ['M'],
 			box: dresses,
@@ -137,7 +138,7 @@ async function main() {
 		},
 		{
 			name: 'Châle brodé à franges',
-			category: 'Accessoire',
+			category: 'SCARF',
 			color: 'Noir',
 			sizes: ['Unique', 'Unique'],
 			box: accessories,
@@ -145,7 +146,7 @@ async function main() {
 		},
 		{
 			name: 'Chapeau cordobés',
-			category: 'Chapeau',
+			category: 'HAT',
 			color: 'Noir',
 			sizes: ['57', '58'],
 			box: hats,

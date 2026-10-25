@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import { selection } from '#lib/selection.svelte.ts';
+	import { categoryLabel } from '#lib/categories.ts';
 	import ConditionBadge from '#lib/components/ConditionBadge.svelte';
 	import Location from '#lib/components/Location.svelte';
 	import type { PageProps } from './$types';
@@ -21,7 +22,7 @@
 	</div>
 	<div class="flex-1">
 		<p class="text-sm text-stone-500">
-			{[group.category, group.color].filter(Boolean).join(' · ')}
+			{[categoryLabel(group.category), group.color].filter(Boolean).join(' · ')}
 		</p>
 		<h1>{group.name}</h1>
 		<p class="mt-1 text-stone-600">{m.group_title({ count: group.count })}</p>

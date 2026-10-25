@@ -9,6 +9,7 @@
 		movementLabel
 	} from '#lib/format.ts';
 	import { canManageStock, hasRole } from '#lib/roles.ts';
+	import { categoryLabel } from '#lib/categories.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import ConditionBadge from '#lib/components/ConditionBadge.svelte';
 	import Location from '#lib/components/Location.svelte';
@@ -149,8 +150,8 @@
 		{/if}
 
 		<dl class="card grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 p-4 text-sm">
-			{#if item.category}<dt class="text-stone-500">{m.field_category()}</dt>
-				<dd>{item.category}</dd>{/if}
+			<dt class="text-stone-500">{m.field_category()}</dt>
+			<dd>{categoryLabel(item.category)}</dd>
 			{#if item.color}<dt class="text-stone-500">{m.field_color()}</dt>
 				<dd>{item.color}</dd>{/if}
 			{#if item.size}<dt class="text-stone-500">{m.field_size()}</dt>

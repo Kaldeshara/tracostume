@@ -48,6 +48,59 @@ enum DoorSide {
   RIGHT
 }
 
+/// Type of a piece; grouped and translated in src/lib/categories.ts.
+enum ItemCategory {
+  T_SHIRT
+  SHIRT
+  TANK_TOP
+  BODYSUIT
+  SWEATER
+  VEST
+  POLO
+  CROP_TOP
+  CORSET
+  TUNIC
+  TOP_OTHER
+  TROUSERS
+  JEANS
+  SHORTS
+  SKIRT
+  LEGGINGS
+  BOTTOM_OTHER
+  DRESS
+  JUMPSUIT
+  DUNGAREES
+  SET
+  FULL_COSTUME
+  JACKET
+  BLAZER
+  COAT
+  CAPE
+  TAILCOAT
+  TRACKSUIT
+  OUTERWEAR_OTHER
+  HAT
+  TOP_HAT
+  CAP
+  HOOD
+  WIG
+  HEADWEAR_OTHER
+  SCARF
+  BELT
+  GLOVES
+  MASK
+  SOCKS
+  JEWELRY
+  BOA
+  PROP
+  DECORATION
+  ACCESSORY_OTHER
+  SHOES
+  BOOTS
+  FOOTWEAR_OTHER
+  UNSORTED
+}
+
 enum MovementType {
   CREATED
   STORED
@@ -137,7 +190,7 @@ model Item {
   code        String        @unique
   name        String
   description String?
-  category    String?
+  category    ItemCategory  @default(UNSORTED)
   color       String?
   size        String?
   condition   ItemCondition @default(GOOD)

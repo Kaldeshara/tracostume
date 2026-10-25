@@ -3,6 +3,12 @@
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { CONDITIONS, conditionLabel } from '#lib/format.ts';
+	import {
+		CATEGORIES_BY_GROUP,
+		CATEGORY_GROUPS,
+		categoryGroupLabel,
+		categoryLabel
+	} from '#lib/categories.ts';
 	import { canManageStock } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import ItemCard from '#lib/components/ItemCard.svelte';
@@ -67,7 +73,13 @@
 	<div class="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
 		<select class="input" name="category" value={data.filters.category} onchange={applyFilter}>
 			<option value="">{m.filter_all_categories()}</option>
-			{#each data.categories as category (category)}<option>{category}</option>{/each}
+			{#each CATEGORY_GROUPS as group (group)}
+				<optgroup label={categoryGroupLabel(group)}>
+					{#each CATEGORIES_BY_GROUP[group] as category (category)}
+						<option value={category}>{categoryLabel(category)}</option>
+					{/each}
+				</optgroup>
+			{/each}
 		</select>
 		<select class="input" name="status" value={data.filters.status} onchange={applyFilter}>
 			<option value="">{m.filter_all_statuses()}</option>

@@ -1,5 +1,6 @@
 import type { Prisma } from '../../generated/prisma/client';
-import type { ItemCondition } from '../../generated/prisma/enums';
+import type { ItemCategory, ItemCondition } from '../../generated/prisma/enums';
+import { isCategory } from '#lib/categories.ts';
 import { CONDITIONS } from '#lib/format.ts';
 import { searchItemIds } from './search';
 
@@ -8,7 +9,7 @@ export type Status = (typeof STATUSES)[number];
 
 export type ItemFilters = {
 	q: string;
-	category: string;
+	category: ItemCategory | '';
 	condition: ItemCondition | '';
 	status: Status | '';
 	box: string;
@@ -19,7 +20,9 @@ export function readItemFilters(params: URLSearchParams): ItemFilters {
 	const status = params.get('status') ?? '';
 	return {
 		q: params.get('q')?.trim() ?? '',
-		category: params.get('category') ?? '',
+		category: isCategory(params.get('category') ?? '')
+			? (params.get('category') as ItemCategory)
+			: '',
 		condition: (CONDITIONS as string[]).includes(condition) ? (condition as ItemCondition) : '',
 		status: (STATUSES as readonly string[]).includes(status) ? (status as Status) : '',
 		box: params.get('box') ?? ''

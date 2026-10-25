@@ -1,11 +1,12 @@
 import type { ItemCard } from '#lib/server/items.ts';
+import type { ItemCategory } from '../generated/prisma/enums';
 
 // Identical pieces (same name, category and colour) are shown as one gallery card.
 
 export type ItemGroup = {
 	key: string;
 	name: string;
-	category: string | null;
+	category: ItemCategory;
 	color: string | null;
 	/** The card shown for the group (first piece with a photo). */
 	representative: ItemCard;
@@ -23,7 +24,7 @@ export type ItemGroup = {
 };
 
 export const groupKey = (item: Pick<ItemCard, 'name' | 'category' | 'color'>) =>
-	[item.name, item.category ?? '', item.color ?? ''].join('\u0000');
+	[item.name, item.category, item.color ?? ''].join('\u0000');
 
 export function groupItems(items: ItemCard[], now = Date.now()): ItemGroup[] {
 	const groups = new Map<string, ItemGroup>();
