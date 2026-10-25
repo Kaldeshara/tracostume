@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"dev:phone": "DEV_HTTPS=1 vite dev --host",
+		"dev:phone": "node scripts/dev-phone.mjs",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",

@@ -83,9 +83,14 @@ Demo accounts (password `password123`): `alice@example.com` (owner), `karim@exam
 ### Testing on a phone
 
 The camera only works on secure pages. `npm run dev:phone` serves the app over HTTPS on your local
-network with a self-signed certificate: open `https://<your-pc-ip>:5173` on the phone and accept
-the warning. Under WSL 2 the phone cannot reach WSL directly: enable mirrored networking in
-`.wslconfig` (`networkingMode=mirrored`) or forward the port from Windows.
+network with a self-signed certificate and prints a QR code: scan it with the phone (same Wi-Fi) and
+accept the certificate warning once. Under WSL 2 the phone cannot reach WSL directly: enable
+mirrored networking in `C:\Users\<you>\.wslconfig` (`[wsl2]` / `networkingMode=mirrored`, then
+`wsl --shutdown`) and allow the port into WSL once, in an admin PowerShell:
+
+```powershell
+New-NetFirewallHyperVRule -Name "Tracostume dev" -DisplayName "Tracostume dev" -Direction Inbound -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol TCP -LocalPorts 5173
+```
 
 To install the app, open the site in Chrome (Android) and choose **Install app**, or in Safari (iOS)
 choose **Share → Add to Home Screen**.
