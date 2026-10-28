@@ -136,15 +136,25 @@
 		const { widthCm: W, depthCm: D, heightCm: H } = container;
 		const s = size();
 		const [dx, dz] = doorDirection();
-		if (which === 'top') lookAt([W / 2, s * 1.3, D / 2 + 1]);
-		else if (which === 'front') lookAt([W / 2 + dx * s * 1.1, H / 2, D / 2 + dz * s * 1.1]);
+		if (which === 'top') lookAt([W / 2, s * 1.9, D / 2 + 1]);
+		else if (which === 'front') lookAt([W / 2 + dx * s * 1.6, H / 2, D / 2 + dz * s * 1.6]);
 		else
 			lookAt([
-				W / 2 + dx * s * 0.85 + dz * s * 0.35,
-				H / 2 + s * 0.5,
-				D / 2 + dz * s * 0.85 - dx * s * 0.35
+				W / 2 + dx * s * 1.25 + dz * s * 0.5,
+				H / 2 + s * 0.75,
+				D / 2 + dz * s * 1.25 - dx * s * 0.5
 			]);
 	}
+
+	/**
+	 * With many units, labels are only readable up close: beyond this camera distance only the
+	 * selected, highlighted and hovered units keep theirs.
+	 */
+	function labelsForAll() {
+		if (!ctx) return true;
+		return boxes.length <= 24 || ctx.controls.getDistance() < size() * 1.1;
+	}
+	let labelsWereForAll = true;
 
 	function makeLabel(className: string, text = '') {
 		const el = document.createElement('div');
@@ -578,6 +588,7 @@
 			}`;
 			const full = count || selected;
 			entry.labelEl.textContent = `${KIND_ICONS[box.kind]} ${full ? `${box.code} · ${box.label}` : box.label}${count ? ` (${count})` : ''}`;
+			entry.label.visible = !!full || hovered || labelsWereForAll;
 		}
 
 		for (const [id, entry] of entries) {
@@ -759,7 +770,14 @@
 			controls.maxPolarAngle = Math.PI / 2 - 0.03;
 			controls.minDistance = size() * 0.3;
 			controls.maxDistance = size() * 4;
-			controls.addEventListener('change', invalidate);
+			controls.addEventListener('change', () => {
+				invalidate();
+				const forAll = labelsForAll();
+				if (forAll !== labelsWereForAll) {
+					labelsWereForAll = forAll;
+					sync();
+				}
+			});
 
 			ctx = {
 				THREE,
@@ -804,6 +822,7 @@
 			observer.observe(wrapper);
 			resize();
 			view('3d');
+			labelsWereForAll = labelsForAll();
 			ready = true;
 
 			const loop = () => {

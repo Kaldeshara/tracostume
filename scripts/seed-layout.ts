@@ -206,11 +206,12 @@ column(
 add({
 	label: 'Portant (housses bleues et noires)',
 	kind: 'RACK',
-	x: 220,
+	x: 222,
 	y: 80,
 	z: 0,
-	w: 120,
-	d: 45,
+	// The rail runs along the wall: its bar is the depth axis.
+	w: 45,
+	d: 120,
 	h: 170,
 	shelf: 'Mur droit, vers le fond'
 });
