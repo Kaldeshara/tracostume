@@ -101,9 +101,11 @@
 	"condition_good": "Bon état",
 	"condition_in_repair": "En réparation",
 	"condition_lost": "Perdu",
+	"condition_repaired": "Réparée (bon état)",
 	"condition_retired": "Réformé",
 	"condition_to_repair": "À réparer",
 	"condition_to_wash": "À laver",
+	"contact_none": "Aucun·e (retour direct au container)",
 	"container_dimensions_hint": "Dimensions intérieures en centimètres, utilisées pour la future vue 3D.",
 	"door_back": "Au fond",
 	"door_front": "Devant",
@@ -115,6 +117,8 @@
 	"field_category": "Catégorie",
 	"field_color": "Couleur",
 	"field_condition": "État",
+	"field_contact": "Chorégraphe référent·e",
+	"field_contact_hint": "La personne qui récupère la pièce auprès du danseur ou de la danseuse.",
 	"field_depth": "Profondeur",
 	"field_description": "Description",
 	"field_door_side": "Porte",
@@ -146,6 +150,8 @@
 	"filter_all_categories": "Toutes les catégories",
 	"filter_all_conditions": "Tous les états",
 	"filter_all_statuses": "Partout",
+	"forbidden_text": "Cette page n'est pas accessible avec votre rôle.",
+	"forbidden_title": "Accès réservé",
 	"form_invalid": "Certains champs sont invalides.",
 	"gallery_count": [
 		{
@@ -159,6 +165,7 @@
 	],
 	"gallery_empty": "Aucune pièce ne correspond.",
 	"gallery_filters": "Filtres",
+	"gallery_repairer_hint": "Vous voyez uniquement les pièces à laver, à réparer ou abîmées.",
 	"gallery_search": "Chercher",
 	"gallery_search_placeholder": "Une robe brillante pour un numéro années 20…",
 	"gallery_semantic_count": [
@@ -235,10 +242,16 @@
 		}
 	],
 	"home_boxes_help": "Contenu et étiquettes des boîtes du container",
+	"home_contact_help": "Pièces prêtées dont vous êtes référent·e ; marquez-les récupérées quand on vous les rend.",
+	"home_contact_title": "Pièces chez mes danseur·ses",
 	"home_hello": "Bonjour {name}",
 	"home_loans_help": "Qui a quoi, retards et rappels",
 	"home_my_loans": "Ce que j'ai emprunté",
+	"home_my_loans_help": "Ces pièces sont à rendre ; le nom indique à qui.",
 	"home_new_item_help": "Photographier et étiqueter un vêtement",
+	"home_repair_empty": "Rien à réparer pour le moment.",
+	"home_repair_help": "Les pièces qui ont besoin de vous, avec leur emplacement.",
+	"home_repair_title": "À laver ou réparer",
 	"home_scan": "Scanner un QR code",
 	"home_scan_help": "Sortir, ranger ou retrouver une pièce",
 	"home_stat_attention": "À laver ou réparer",
@@ -277,9 +290,14 @@
 	"labels_print": "Imprimer les étiquettes",
 	"labels_size": "Taille du QR",
 	"labels_title": "Étiquettes QR",
+	"loan_collected": "Récupérée",
+	"loan_collected_by": "Récupérée par {name}",
 	"loan_overdue": "En retard",
+	"loan_return_to": "À rendre à {name}",
+	"loan_return_to_keeper": "À rendre au container (responsable costumes)",
 	"loan_since": "Sortie le",
 	"loans_all": "Tous les emprunts",
+	"loans_contact_mine": "Mes danseur·ses",
 	"loans_due_soon": "À rendre cette semaine",
 	"loans_empty": "Aucun vêtement sorti.",
 	"loans_later": "Plus tard ou sans date",
@@ -291,6 +309,7 @@
 	"location_due": "retour le {date}",
 	"location_out": "Sortie",
 	"location_unstored": "Non rangée",
+	"location_with_contact": "Chez {name} (chorégraphe)",
 	"login_first_account": "Première utilisation ?",
 	"login_invalid": "E-mail ou mot de passe incorrect.",
 	"login_no_account": "Pas encore de compte ?",
@@ -335,6 +354,7 @@
 	"map_view_top": "Dessus",
 	"map_your_items": "Vos pièces sont dans :",
 	"movement_checked_out": "Sortie",
+	"movement_collected": "Récupérée par le/la chorégraphe",
 	"movement_condition_changed": "Changement d'état",
 	"movement_created": "Créée",
 	"movement_moved": "Déplacée",
@@ -363,10 +383,12 @@
 	"register_submit": "Créer mon compte",
 	"register_title": "Créer un compte",
 	"register_troupe_password": "Mot de passe de la troupe",
-	"role_admin": "Administrateur",
+	"role_admin": "Administrateur·rice",
+	"role_choreographer": "Chorégraphe",
+	"role_dancer": "Danseur·se",
 	"role_keeper": "Responsable costumes",
-	"role_member": "Membre",
 	"role_owner": "Propriétaire",
+	"role_repairer": "Couturier·ère (réparations)",
 	"saved": "Enregistré.",
 	"scan_already": "{name} est déjà dans la liste.",
 	"scan_box_selected": "Boîte choisie : {box}",
@@ -416,6 +438,8 @@
 	"stock_borrower_other": "Autre personne…",
 	"stock_checkout": "Sortir",
 	"stock_choose_box": "Choisir une boîte",
+	"stock_collect": "Récupérer",
+	"stock_collect_help": "La pièce est rendue par la danseuse ou le danseur ; elle reste à ranger dans le container.",
 	"stock_condition": "Changer l'état",
 	"stock_done_checkout": [
 		{
@@ -424,6 +448,16 @@
 			"match": {
 				"countPlural=one": "{count} pièce sortie.",
 				"countPlural=other": "{count} pièces sorties."
+			}
+		}
+	],
+	"stock_done_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce récupérée.",
+				"countPlural=other": "{count} pièces récupérées."
 			}
 		}
 	],
@@ -460,5 +494,5 @@
 			}
 		}
 	],
-	"users_roles_help": "Les responsables costumes ont la clé du container : ils enregistrent les entrées et sorties. Les membres consultent la galerie."
+	"users_roles_help": "Danseur·ses : galerie et leurs emprunts. Couturier·ères : seulement les pièces à laver ou réparer. Chorégraphes : prêtent aux danseur·ses et récupèrent les pièces. Responsables costumes : la clé du container, tout le stock. Admins : les membres en plus."
 }

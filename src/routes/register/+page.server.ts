@@ -52,7 +52,7 @@ export const actions: Actions = {
 			data: {
 				...data,
 				phone: data.phone || null,
-				role: isFirst ? 'OWNER' : 'MEMBER',
+				role: isFirst ? 'OWNER' : 'DANCER',
 				passwordHash: await bcrypt.hash(password, 12)
 			}
 		});

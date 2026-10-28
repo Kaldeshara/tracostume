@@ -17,7 +17,14 @@ async function main() {
 	const users = [
 		{ email: 'alice@example.com', firstName: 'Alice', lastName: 'Martin', role: 'OWNER' as const },
 		{ email: 'karim@example.com', firstName: 'Karim', lastName: 'Benali', role: 'KEEPER' as const },
-		{ email: 'lea@example.com', firstName: 'Léa', lastName: 'Dupont', role: 'MEMBER' as const }
+		{ email: 'lea@example.com', firstName: 'Léa', lastName: 'Dupont', role: 'DANCER' as const },
+		{
+			email: 'chloe@example.com',
+			firstName: 'Chloé',
+			lastName: 'Bernard',
+			role: 'CHOREOGRAPHER' as const
+		},
+		{ email: 'remi@example.com', firstName: 'Rémi', lastName: 'Garcia', role: 'REPAIRER' as const }
 	];
 	for (const user of users) {
 		await prisma.user.upsert({

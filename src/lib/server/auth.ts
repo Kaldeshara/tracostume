@@ -80,9 +80,24 @@ export function requireUser(event: Pick<RequestEvent, 'locals' | 'url'>): AuthUs
 	return user;
 }
 
-export function requireRole(event: Pick<RequestEvent, 'locals' | 'url'>, minimum: UserRole) {
+export function requireRole(
+	event: Pick<RequestEvent, 'locals' | 'url'>,
+	minimum: 'KEEPER' | 'ADMIN' | 'OWNER'
+) {
 	const user = requireUser(event);
 	if (!hasRole(user.role, minimum)) {
+		error(403, 'Forbidden');
+	}
+	return user;
+}
+
+/** Like requireRole, for one of the capability predicates of `#lib/roles.ts`. */
+export function requireCapability(
+	event: Pick<RequestEvent, 'locals' | 'url'>,
+	allowed: (role: UserRole | null | undefined) => boolean
+) {
+	const user = requireUser(event);
+	if (!allowed(user.role)) {
 		error(403, 'Forbidden');
 	}
 	return user;

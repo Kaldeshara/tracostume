@@ -12,7 +12,8 @@ import {
 } from '#lib/server/photos.ts';
 import { qrSvg } from '#lib/server/qr.ts';
 import { stockActionOptions, stockActions } from '#lib/server/stock-actions.ts';
-import { canManageStock } from '#lib/roles.ts';
+import { canCheckOut, canCollect, canSetCondition, isRepairer } from '#lib/roles.ts';
+import { REPAIR_CONDITIONS } from '#lib/server/stock-actions.ts';
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {
 	const item = await prisma.item.findUnique({
@@ -58,8 +59,10 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 	});
 	if (!item) error(404);
 
+	if (isRepairer(locals.user?.role) && !REPAIR_CONDITIONS.includes(item.condition)) error(403);
 	const openLoan = item.loans[0];
-	const keeper = canManageStock(locals.user?.role);
+	const role = locals.user?.role;
+	const acts = canSetCondition(role) || canCheckOut(role) || canCollect(role);
 
 	return {
 		item: {
@@ -77,7 +80,7 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 		},
 		movements: item.movements,
 		qr: await qrSvg(url.origin, item.code),
-		stock: keeper ? await stockActionOptions() : null,
+		stock: acts ? await stockActionOptions() : null,
 		defaultBoxId: item.box?.id ?? (openLoan ? await lastBoxBeforeLoan(item.id) : null)
 	};
 };

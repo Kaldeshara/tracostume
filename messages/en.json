@@ -101,9 +101,11 @@
 	"condition_good": "Good",
 	"condition_in_repair": "In repair",
 	"condition_lost": "Lost",
+	"condition_repaired": "Repaired (good)",
 	"condition_retired": "Retired",
 	"condition_to_repair": "To repair",
 	"condition_to_wash": "To wash",
+	"contact_none": "None (returned straight to the container)",
 	"container_dimensions_hint": "Inside dimensions in centimetres, used for the future 3D view.",
 	"door_back": "Back",
 	"door_front": "Front",
@@ -115,6 +117,8 @@
 	"field_category": "Category",
 	"field_color": "Colour",
 	"field_condition": "Condition",
+	"field_contact": "Contact choreographer",
+	"field_contact_hint": "The person who gets the piece back from the dancer.",
 	"field_depth": "Depth",
 	"field_description": "Description",
 	"field_door_side": "Door",
@@ -146,6 +150,8 @@
 	"filter_all_categories": "All categories",
 	"filter_all_conditions": "All conditions",
 	"filter_all_statuses": "Anywhere",
+	"forbidden_text": "This page is not available with your role.",
+	"forbidden_title": "Restricted",
 	"form_invalid": "Some fields are invalid.",
 	"gallery_count": [
 		{
@@ -159,6 +165,7 @@
 	],
 	"gallery_empty": "No items match.",
 	"gallery_filters": "Filters",
+	"gallery_repairer_hint": "You only see pieces to wash, to repair or damaged.",
 	"gallery_search": "Search",
 	"gallery_search_placeholder": "A sparkly dress for a 1920s number…",
 	"gallery_semantic_count": [
@@ -235,10 +242,16 @@
 		}
 	],
 	"home_boxes_help": "Contents and labels of the container's boxes",
+	"home_contact_help": "Loans you are the contact for; mark them collected when they come back to you.",
+	"home_contact_title": "Pieces with my dancers",
 	"home_hello": "Hello {name}",
 	"home_loans_help": "Who has what, overdue items and reminders",
 	"home_my_loans": "What I borrowed",
+	"home_my_loans_help": "These pieces are to be returned; the name says to whom.",
 	"home_new_item_help": "Photograph and label a piece of clothing",
+	"home_repair_empty": "Nothing to repair at the moment.",
+	"home_repair_help": "The pieces that need you, with where they are.",
+	"home_repair_title": "To wash or repair",
 	"home_scan": "Scan a QR code",
 	"home_scan_help": "Check out, store or find an item",
 	"home_stat_attention": "To wash or repair",
@@ -277,9 +290,14 @@
 	"labels_print": "Print labels",
 	"labels_size": "QR size",
 	"labels_title": "QR labels",
+	"loan_collected": "Collected",
+	"loan_collected_by": "Collected by {name}",
 	"loan_overdue": "Overdue",
+	"loan_return_to": "Return to {name}",
+	"loan_return_to_keeper": "Return to the container (costume keeper)",
 	"loan_since": "Out since",
 	"loans_all": "All loans",
+	"loans_contact_mine": "My dancers",
 	"loans_due_soon": "Due this week",
 	"loans_empty": "Nothing is checked out.",
 	"loans_later": "Later or no date",
@@ -291,6 +309,7 @@
 	"location_due": "due {date}",
 	"location_out": "Out",
 	"location_unstored": "Not stored",
+	"location_with_contact": "With {name} (choreographer)",
 	"login_first_account": "First time here?",
 	"login_invalid": "Wrong email or password.",
 	"login_no_account": "No account yet?",
@@ -335,6 +354,7 @@
 	"map_view_top": "Top",
 	"map_your_items": "Your items are in:",
 	"movement_checked_out": "Checked out",
+	"movement_collected": "Collected by the choreographer",
 	"movement_condition_changed": "Condition changed",
 	"movement_created": "Created",
 	"movement_moved": "Moved",
@@ -364,9 +384,11 @@
 	"register_title": "Create an account",
 	"register_troupe_password": "Troupe password",
 	"role_admin": "Admin",
+	"role_choreographer": "Choreographer",
+	"role_dancer": "Dancer",
 	"role_keeper": "Costume keeper",
-	"role_member": "Member",
 	"role_owner": "Owner",
+	"role_repairer": "Repairer",
 	"saved": "Saved.",
 	"scan_already": "{name} is already in the list.",
 	"scan_box_selected": "Box selected: {box}",
@@ -416,6 +438,8 @@
 	"stock_borrower_other": "Someone else…",
 	"stock_checkout": "Check out",
 	"stock_choose_box": "Choose a box",
+	"stock_collect": "Collect",
+	"stock_collect_help": "The dancer handed the piece back; it still has to be stored in the container.",
 	"stock_condition": "Change condition",
 	"stock_done_checkout": [
 		{
@@ -424,6 +448,16 @@
 			"match": {
 				"countPlural=one": "{count} item checked out.",
 				"countPlural=other": "{count} items checked out."
+			}
+		}
+	],
+	"stock_done_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece collected.",
+				"countPlural=other": "{count} pieces collected."
 			}
 		}
 	],
@@ -460,5 +494,5 @@
 			}
 		}
 	],
-	"users_roles_help": "Costume keepers have the container key: they record items going in and out. Members can browse the gallery."
+	"users_roles_help": "Dancers: gallery and their own loans. Repairers: only pieces to wash or repair. Choreographers: lend to dancers and collect pieces back. Costume keepers: the container key, all the stock. Admins: members too."
 }

@@ -3,6 +3,7 @@ import type { ItemCategory, ItemCondition } from '../../generated/prisma/enums';
 import { isCategory } from '#lib/categories.ts';
 import { CONDITIONS } from '#lib/format.ts';
 import { searchItemIds } from './search';
+import { REPAIR_CONDITIONS } from './stock-actions';
 
 export const STATUSES = ['in', 'out', 'overdue', 'unstored'] as const;
 export type Status = (typeof STATUSES)[number];
@@ -30,7 +31,8 @@ export function readItemFilters(params: URLSearchParams): ItemFilters {
 }
 
 /** Builds the Prisma filter and, for a text search, the relevance order of the ids. */
-export async function buildItemWhere(filters: ItemFilters) {
+/** `repairerOnly`: restrict to the pieces a repairer may see. */
+export async function buildItemWhere(filters: ItemFilters, repairerOnly = false) {
 	const and: Prisma.ItemWhereInput[] = [];
 	let rankedIds: string[] | null = null;
 	let semantic = false;
@@ -39,6 +41,7 @@ export async function buildItemWhere(filters: ItemFilters) {
 		({ ids: rankedIds, semantic } = await searchItemIds(filters.q));
 		and.push({ id: { in: rankedIds } });
 	}
+	if (repairerOnly) and.push({ condition: { in: REPAIR_CONDITIONS } });
 	if (filters.category) and.push({ category: filters.category });
 	if (filters.condition) and.push({ condition: filters.condition });
 	if (filters.box) and.push({ boxId: filters.box });

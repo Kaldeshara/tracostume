@@ -48,7 +48,13 @@
 <svelte:head><title>{m.loans_title()}</title></svelte:head>
 
 <div class="mb-4 flex flex-wrap items-center gap-3">
-	<h1 class="flex-1">{data.mineOnly ? m.loans_mine() : m.loans_title()}</h1>
+	<h1 class="flex-1">
+		{data.mineOnly
+			? data.choreographer
+				? m.loans_contact_mine()
+				: m.loans_mine()
+			: m.loans_title()}
+	</h1>
 	{#if data.keeper}
 		<a class="btn" href={data.mineOnly ? '/loans' : '/loans?mine'}>
 			{data.mineOnly ? m.loans_all() : m.loans_mine()}
@@ -106,6 +112,19 @@
 										· {m.loan_since()}
 										{formatDate(loan.checkedOutAt)}
 										{#if loan.reason}· {loan.reason}{/if}
+										{#if loan.collectedAt}
+											· <span class="text-amber-700"
+												>{m.loan_collected_by({ name: loan.contact ?? '' })}</span
+											>
+										{:else if loan.mine}
+											· <span class="font-medium text-brand-700">
+												{loan.contact
+													? m.loan_return_to({ name: loan.contact })
+													: m.loan_return_to_keeper()}
+											</span>
+										{:else if loan.contact}
+											· {m.field_contact()} : {loan.contact}
+										{/if}
 									</div>
 								</div>
 								{#if loan.dueAt}

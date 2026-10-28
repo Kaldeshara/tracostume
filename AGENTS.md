@@ -26,9 +26,11 @@ before relying on SvelteKit 2 habits. Differences met so far:
 - Every location or condition change goes through `src/lib/server/inventory.ts` so the `Movement`
   history stays complete. Form actions for it live in `src/lib/server/stock-actions.ts` and are
   reused by the item, selection and scan pages.
-- Access: `hooks.server.ts` requires a session everywhere except `/login` and `/register`.
-  Pages check roles with `requireRole(event, 'KEEPER' | 'ADMIN' | 'OWNER')`; the UI uses
-  `canManageStock`/`hasRole` from `#lib/roles.ts`.
+- Access: `hooks.server.ts` requires a session everywhere except `/login` and `/register`, and
+  blocks role-restricted pages (users, container, labels, boxes, map, item creation/edit).
+  Capabilities live in `#lib/roles.ts` (`canManageStock`, `canCheckOut`, `canCollect`,
+  `canSetCondition`, `isRepairer`…); server code guards with `requireRole` (keeper ladder) or
+  `requireCapability(event, predicate)`. Repairers only see pieces in `REPAIR_CONDITIONS`.
 - All UI text goes through Paraglide (`m.key()`), in both `messages/fr.json` and `messages/en.json`.
 - The selection (`#lib/selection.svelte.ts`) is browser-only state: never mutate it during SSR.
 - The 3D map (`ContainerMap.svelte`) uses Three.js directly, imported dynamically in `onMount`.

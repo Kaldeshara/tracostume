@@ -51,12 +51,17 @@ container and who has it.
 
 ### Roles
 
-| Role     | Can                                                                             |
-| -------- | ------------------------------------------------------------------------------- |
-| `MEMBER` | Browse the gallery, see where pieces are, see their own loans                   |
-| `KEEPER` | Has the container key: create/edit pieces and boxes, check in/out, print labels |
-| `ADMIN`  | Also manage members' roles, delete pieces and boxes, edit the container         |
-| `OWNER`  | Also appoint other owners. The first account created is the owner.              |
+| Role            | Can                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `DANCER`        | Browse the gallery, look pieces up with the scanner, see their own loans and whom to return them to                    |
+| `REPAIRER`      | See only the pieces to wash, repair or damaged (a to-do list on the home page), where they are, and mark them repaired |
+| `CHOREOGRAPHER` | Also lend pieces to dancers, follow the loans they are the contact for, and mark pieces collected from a dancer        |
+| `KEEPER`        | Has the container key: create/edit pieces and boxes, check in/out, store, print labels, edit the map                   |
+| `ADMIN`         | Also manage members' roles, delete pieces and boxes                                                                    |
+| `OWNER`         | Also appoint other owners. The first account created is the owner.                                                     |
+
+A loan can name a **contact** (a choreographer). The dancer returns the piece to the contact, who
+marks it _collected_; the keeper then stores it in the container, which closes the loan.
 
 ## Getting started
 
@@ -78,7 +83,7 @@ npm run dev                 # http://localhost:5173
 ```
 
 Demo accounts (password `password123`): `alice@example.com` (owner), `karim@example.com` (keeper),
-`lea@example.com` (member).
+`chloe@example.com` (choreographer), `remi@example.com` (repairer), `lea@example.com` (dancer).
 
 ### Testing on a phone
 

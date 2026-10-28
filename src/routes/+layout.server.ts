@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import { prisma } from '#lib/server/db.ts';
-import { canManageStock } from '#lib/roles.ts';
+import { canSeeAllLoans } from '#lib/roles.ts';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	const user = locals.user;
@@ -10,7 +10,11 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 				where: {
 					returnedAt: null,
 					dueAt: { lt: new Date() },
-					...(canManageStock(user.role) ? {} : { borrowerUserId: user.id })
+					...(canSeeAllLoans(user.role)
+						? {}
+						: user.role === 'CHOREOGRAPHER'
+							? { OR: [{ contactUserId: user.id }, { borrowerUserId: user.id }] }
+							: { borrowerUserId: user.id })
 				}
 			})
 		: 0;

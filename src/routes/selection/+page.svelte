@@ -4,7 +4,6 @@
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatDate, isOverdue } from '#lib/format.ts';
-	import { canManageStock } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import StockActions from '#lib/components/StockActions.svelte';
 	import type { PageProps } from './$types';
@@ -59,6 +58,7 @@
 
 	const someOut = $derived(data.items.some((item) => item.loan));
 	const allOut = $derived(data.items.length > 0 && data.items.every((item) => item.loan));
+	const someUncollected = $derived(data.items.some((item) => item.loan && !item.loan.collectedAt));
 </script>
 
 <svelte:head><title>{m.selection_title()}</title></svelte:head>
@@ -83,7 +83,7 @@
 		</div>
 	</div>
 {:else}
-	{#if canManageStock(data.user?.role) && data.stock}
+	{#if data.stock && data.user}
 		<div class="mb-6">
 			<p class="mb-2 text-sm text-stone-600">
 				{m.selection_actions_for({ count: data.items.length })}
@@ -92,8 +92,11 @@
 				itemIds={data.items.map((item) => item.id)}
 				boxes={data.stock.boxes}
 				users={data.stock.users}
+				contacts={data.stock.contacts}
+				role={data.user.role}
 				{someOut}
 				{allOut}
+				{someUncollected}
 				{form}
 			/>
 		</div>

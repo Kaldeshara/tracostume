@@ -27,7 +27,9 @@ export const itemCardSelect = {
 			borrowerName: true,
 			dueAt: true,
 			checkedOutAt: true,
-			borrowerUser: { select: { firstName: true, lastName: true } }
+			collectedAt: true,
+			borrowerUser: { select: { firstName: true, lastName: true } },
+			contactUser: { select: { id: true, firstName: true, lastName: true } }
 		}
 	}
 } satisfies Prisma.ItemSelect;
@@ -47,6 +49,13 @@ export function toItemCard(item: RawCard) {
 						? `${loan.borrowerUser.firstName} ${loan.borrowerUser.lastName}`
 						: (loan.borrowerName ?? ''),
 					dueAt: loan.dueAt,
+					collectedAt: loan.collectedAt,
+					contact: loan.contactUser
+						? {
+								id: loan.contactUser.id,
+								name: `${loan.contactUser.firstName} ${loan.contactUser.lastName}`
+							}
+						: null,
 					checkedOutAt: loan.checkedOutAt
 				}
 			: null

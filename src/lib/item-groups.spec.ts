@@ -25,7 +25,14 @@ describe('groupItems', () => {
 				piece({
 					size: '38',
 					box: null,
-					loan: { id: 'l', borrower: 'Léa', dueAt: new Date(0), checkedOutAt: new Date(0) }
+					loan: {
+						id: 'l',
+						borrower: 'Léa',
+						dueAt: new Date(0),
+						checkedOutAt: new Date(0),
+						collectedAt: null,
+						contact: null
+					}
 				}),
 				piece({ box: null, condition: 'TO_REPAIR' }),
 				piece({ name: 'Jupe rose', color: 'rouge' })

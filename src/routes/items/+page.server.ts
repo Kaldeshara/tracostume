@@ -3,13 +3,15 @@ import { prisma } from '#lib/server/db.ts';
 import { itemCardSelect, toItemCard } from '#lib/server/items.ts';
 import { buildItemWhere, readItemFilters, sortByRank } from '#lib/server/item-filters.ts';
 import { groupItems } from '#lib/item-groups.ts';
+import { isRepairer } from '#lib/roles.ts';
 
 // Cards shown at most; identical pieces share one card.
 const MAX_GROUPS = 150;
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const filters = readItemFilters(url.searchParams);
-	const { where, rankedIds, semantic } = await buildItemWhere(filters);
+	const repairer = isRepairer(locals.user?.role);
+	const { where, rankedIds, semantic } = await buildItemWhere(filters, repairer);
 
 	const [items, total, boxes] = await Promise.all([
 		prisma.item.findMany({
@@ -31,6 +33,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		groupTotal: groups.length,
 		total,
 		semantic,
+		repairer,
 		boxes
 	};
 };

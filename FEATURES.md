@@ -1,6 +1,7 @@
 # Core features
 
-- Users and roles (member, keeper, admin, owner)
+- Users and roles (dancer, repairer, choreographer, keeper, admin, owner); loans with a contact
+  choreographer and a "collected" step before the piece is back in the container
 - Photo gallery with accent-insensitive search and filters
 - One QR code per piece and per box, printable labels
 - Boxes in the container, with location and optional dimensions/position

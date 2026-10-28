@@ -3,8 +3,9 @@
 	import { page } from '$app/state';
 	import { PUBLIC_APP_NAME } from '$app/env/public';
 	import { m } from '#lib/paraglide/messages.js';
-	import { canManageStock, canManageUsers } from '#lib/roles.ts';
+	import { canManageStock, canManageUsers, canSeeContainer } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
+	import { roleLabel } from '#lib/format.ts';
 	import LanguageSwitcher from '#lib/components/LanguageSwitcher.svelte';
 	import type { LayoutProps } from './$types';
 
@@ -18,7 +19,7 @@
 		{ href: '/items', label: m.nav_gallery(), icon: '▦' },
 		{ href: '/scan', label: m.nav_scan(), icon: '⌗', primary: true },
 		{ href: '/loans', label: m.nav_loans(), icon: '⇄', badge: data.overdueCount },
-		{ href: '/boxes', label: m.nav_boxes(), icon: '▣' }
+		...(canSeeContainer(user?.role) ? [{ href: '/boxes', label: m.nav_boxes(), icon: '▣' }] : [])
 	]);
 
 	const isActive = (href: string) =>
@@ -66,10 +67,13 @@
 						class="card absolute right-0 mt-2 flex w-60 flex-col gap-1 p-2 text-sm"
 						onclick={() => (menuOpen = false)}
 					>
-						<a href="/map" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_map()}</a>
+						{#if canSeeContainer(user.role)}
+							<a href="/map" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_map()}</a>
+						{/if}
 						{#if canManageStock(user.role)}
 							<a href="/labels" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_labels()}</a>
 						{/if}
+						<span class="px-3 pt-2 text-xs text-stone-500">{roleLabel(user.role)}</span>
 						{#if canManageUsers(user.role)}
 							<a href="/users" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_users()}</a>
 							<a href="/container" class="rounded px-3 py-2 hover:bg-stone-100"
@@ -106,7 +110,8 @@
 	{/if}
 
 	<nav
-		class="no-print fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-stone-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
+		class="no-print fixed inset-x-0 bottom-0 z-20 grid border-t border-stone-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
+		style="grid-template-columns: repeat({tabs.length}, minmax(0, 1fr))"
 	>
 		{#each tabs as tab (tab.href)}
 			<a

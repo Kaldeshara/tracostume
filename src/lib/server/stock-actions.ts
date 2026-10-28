@@ -2,15 +2,23 @@ import { fail, type RequestEvent } from '@sveltejs/kit';
 import { z } from 'zod';
 import type { ItemCondition } from '../../generated/prisma/enums';
 import { CONDITIONS } from '#lib/format.ts';
-import { requireRole } from './auth';
+import { requireCapability, requireRole } from './auth';
+import { canCheckOut, canCollect, canSetCondition, isRepairer } from '#lib/roles.ts';
 import { prisma } from './db';
-import { checkOutItems, InventoryError, placeItems, setItemsCondition } from './inventory';
+import {
+	checkOutItems,
+	collectItems,
+	InventoryError,
+	placeItems,
+	setItemsCondition
+} from './inventory';
 
 // Form actions shared by every page that can act on items (item page, selection page).
 // Each form posts one or more `itemId` fields.
 
 const checkoutSchema = z.object({
 	borrowerUserId: z.string().trim().max(50).optional(),
+	contactUserId: z.string().trim().max(50).optional(),
 	borrowerName: z.string().trim().max(200).optional(),
 	borrowerPhone: z.string().trim().max(40).optional(),
 	reason: z.string().trim().max(500).optional(),
@@ -24,6 +32,17 @@ const checkoutSchema = z.object({
 			return Number.isNaN(date.getTime()) ? null : date;
 		})
 });
+
+/** States a repairer may set. */
+export const REPAIRER_CONDITIONS: ItemCondition[] = [
+	'GOOD',
+	'TO_WASH',
+	'TO_REPAIR',
+	'IN_REPAIR',
+	'DAMAGED'
+];
+/** Pieces a repairer sees. */
+export const REPAIR_CONDITIONS: ItemCondition[] = ['TO_WASH', 'TO_REPAIR', 'IN_REPAIR', 'DAMAGED'];
 
 const itemIdsOf = (form: FormData) =>
 	[...new Set(form.getAll('itemId').map(String))].filter(Boolean).slice(0, 500);
@@ -57,7 +76,7 @@ export const stockActions = {
 	},
 
 	checkout: async (event: RequestEvent) => {
-		const user = requireRole(event, 'KEEPER');
+		const user = requireCapability(event, canCheckOut);
 		const form = await event.request.formData();
 		const itemIds = itemIdsOf(form);
 		const parsed = checkoutSchema.safeParse(Object.fromEntries(form));
@@ -68,6 +87,18 @@ export const stockActions = {
 		const borrowerUser = borrowerUserId
 			? await prisma.user.findUnique({ where: { id: borrowerUserId }, select: { id: true } })
 			: null;
+		// A choreographer lending pieces is their contact; keepers may name one.
+		const contactUserId =
+			user.role === 'CHOREOGRAPHER'
+				? user.id
+				: parsed.data.contactUserId
+					? (
+							await prisma.user.findUnique({
+								where: { id: parsed.data.contactUserId },
+								select: { id: true }
+							})
+						)?.id
+					: null;
 		try {
 			const count = await checkOutItems(
 				itemIds,
@@ -76,7 +107,7 @@ export const stockActions = {
 					name: borrowerUser ? null : borrowerName,
 					phone: borrowerPhone
 				},
-				{ dueAt, reason },
+				{ dueAt, reason, contactUserId },
 				user.id
 			);
 			return { done: 'checkout' as const, count };
@@ -85,13 +116,26 @@ export const stockActions = {
 		}
 	},
 
+	collect: async (event: RequestEvent) => {
+		const user = requireCapability(event, canCollect);
+		const form = await event.request.formData();
+		const itemIds = itemIdsOf(form);
+		if (!itemIds.length) return fail(400, { error: 'MISSING_FIELDS' as const, codes: [] });
+		const count = await collectItems(itemIds, user.id, String(form.get('note') ?? '') || undefined);
+		return { done: 'collect' as const, count };
+	},
+
 	condition: async (event: RequestEvent) => {
-		const user = requireRole(event, 'KEEPER');
+		const user = requireCapability(event, canSetCondition);
 		const form = await event.request.formData();
 		const itemIds = itemIdsOf(form);
 		const condition = String(form.get('condition') ?? '') as ItemCondition;
 		if (!itemIds.length || !CONDITIONS.includes(condition)) {
 			return fail(400, { error: 'MISSING_FIELDS' as const, codes: [] });
+		}
+		// Repairers only move pieces between the repair states and back to good.
+		if (isRepairer(user.role) && !REPAIRER_CONDITIONS.includes(condition)) {
+			return fail(403, { error: 'MISSING_FIELDS' as const, codes: [] });
 		}
 		const count = await setItemsCondition(
 			itemIds,
@@ -105,7 +149,7 @@ export const stockActions = {
 
 /** Data the StockActions component needs. */
 export async function stockActionOptions() {
-	const [boxes, users] = await Promise.all([
+	const [boxes, users, contacts] = await Promise.all([
 		prisma.box.findMany({
 			select: { id: true, code: true, label: true, shelf: true },
 			orderBy: { label: 'asc' }
@@ -113,7 +157,12 @@ export async function stockActionOptions() {
 		prisma.user.findMany({
 			select: { id: true, firstName: true, lastName: true },
 			orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }]
+		}),
+		prisma.user.findMany({
+			where: { role: 'CHOREOGRAPHER' },
+			select: { id: true, firstName: true, lastName: true },
+			orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }]
 		})
 	]);
-	return { boxes, users };
+	return { boxes, users, contacts };
 }

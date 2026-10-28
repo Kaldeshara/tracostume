@@ -71,7 +71,7 @@ export async function placeItems(itemIds: string[], boxId: string, userId: strin
 export async function checkOutItems(
 	itemIds: string[],
 	borrower: Borrower,
-	options: { dueAt?: Date | null; reason?: string | null },
+	options: { dueAt?: Date | null; reason?: string | null; contactUserId?: string | null },
 	userId: string
 ) {
 	if (!borrower.userId && !borrower.name?.trim()) throw new InventoryError('NO_BORROWER');
@@ -104,6 +104,7 @@ export async function checkOutItems(
 					borrowerPhone: borrower.phone?.trim() || null,
 					reason: options.reason?.trim() || null,
 					dueAt: options.dueAt ?? null,
+					contactUserId: options.contactUserId || null,
 					checkedOutAt: now,
 					createdById: userId
 				}
@@ -122,6 +123,37 @@ export async function checkOutItems(
 			});
 		}
 		return items.length;
+	});
+}
+
+/**
+ * Records that the dancer handed the pieces back to the choreographer (or keeper). The loan
+ * stays open until the pieces are stored in the container.
+ */
+export async function collectItems(itemIds: string[], userId: string, note?: string) {
+	return prisma.$transaction(async (tx) => {
+		const loans = await tx.loan.findMany({
+			where: { itemId: { in: itemIds }, returnedAt: null, collectedAt: null },
+			select: { id: true, itemId: true }
+		});
+		const now = new Date();
+		for (const loan of loans) {
+			await tx.loan.update({
+				where: { id: loan.id },
+				data: { collectedAt: now, collectedById: userId }
+			});
+			await tx.movement.create({
+				data: {
+					itemId: loan.itemId,
+					type: 'COLLECTED',
+					loanId: loan.id,
+					note,
+					userId,
+					createdAt: now
+				}
+			});
+		}
+		return loans.length;
 	});
 }
 

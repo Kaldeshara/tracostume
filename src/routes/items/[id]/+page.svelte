@@ -114,6 +114,10 @@
 			<Location {item} />
 			{#if item.loan}
 				<dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+					{#if item.loan.contact}
+						<dt class="text-stone-500">{m.field_contact()}</dt>
+						<dd>{item.loan.contact.name}</dd>
+					{/if}
 					<dt class="text-stone-500">{m.loan_since()}</dt>
 					<dd>{formatDate(item.loan.checkedOutAt)}</dd>
 					{#if item.loan.dueAt}
@@ -137,14 +141,17 @@
 			{/if}
 		</div>
 
-		{#if keeper && data.stock}
+		{#if data.stock && data.user}
 			<StockActions
 				itemIds={[item.id]}
 				boxes={data.stock.boxes}
 				users={data.stock.users}
+				contacts={data.stock.contacts}
+				role={data.user.role}
 				defaultBoxId={data.defaultBoxId}
 				someOut={!!item.loan}
 				allOut={!!item.loan}
+				someUncollected={!!item.loan && !item.loan.collectedAt}
 				{form}
 			/>
 		{/if}

@@ -1,18 +1,33 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import type { ItemCondition, UserRole } from '../../generated/prisma/enums';
 	import { m } from '#lib/paraglide/messages.js';
 	import { CONDITIONS, conditionLabel, toDateInput } from '#lib/format.ts';
+	import {
+		canCheckOut,
+		canCollect,
+		canManageStock,
+		canSetCondition,
+		isRepairer
+	} from '#lib/roles.ts';
 
+	type Person = { id: string; firstName: string; lastName: string };
 	type Props = {
 		itemIds: string[];
 		boxes: { id: string; code: string; label: string; shelf: string | null }[];
-		users: { id: string; firstName: string; lastName: string }[];
+		users: Person[];
+		/** Choreographers who can be named as the contact of a loan. */
+		contacts?: Person[];
+		/** Role of the current user: decides which actions are offered. */
+		role: UserRole;
 		/** Pre-selected box for storing/returning. */
 		defaultBoxId?: string | null;
 		/** Whether some of the items are currently lent (changes the wording). */
 		someOut?: boolean;
 		/** Whether all items are currently lent (hides check-out). */
 		allOut?: boolean;
+		/** Whether some lent items are still with their dancer (can be collected). */
+		someUncollected?: boolean;
 		form?: { done?: string; count?: number; error?: string; codes?: string[] } | null;
 		/** Called after a successful action, e.g. to clear the selection. */
 		ondone?: (action: string) => void;
@@ -22,16 +37,43 @@
 		itemIds,
 		boxes,
 		users,
+		contacts = [],
+		role,
 		defaultBoxId = null,
 		someOut = false,
 		allOut = false,
+		someUncollected = false,
 		form = null,
 		ondone
 	}: Props = $props();
 
-	let open = $state<'place' | 'checkout' | 'condition' | null>(null);
+	type Action = 'place' | 'checkout' | 'collect' | 'condition';
+	let open = $state<Action | null>(null);
 	let borrowerUserId = $state('');
 	let submitting = $state(false);
+
+	// States a repairer may set; keepers may set any.
+	const REPAIRER_CONDITIONS: ItemCondition[] = [
+		'GOOD',
+		'TO_WASH',
+		'TO_REPAIR',
+		'IN_REPAIR',
+		'DAMAGED'
+	];
+	const conditions = $derived(isRepairer(role) ? REPAIRER_CONDITIONS : CONDITIONS);
+
+	const actions = $derived(
+		(
+			[
+				['place', canManageStock(role)],
+				['checkout', canCheckOut(role) && !allOut],
+				['collect', canCollect(role) && someUncollected],
+				['condition', canSetCondition(role)]
+			] as [Action, boolean][]
+		)
+			.filter(([, allowed]) => allowed)
+			.map(([action]) => action)
+	);
 
 	// Default due date: two weeks from today.
 	const defaultDue = toDateInput(new Date(Date.now() + 14 * 24 * 3600 * 1000));
@@ -55,9 +97,16 @@
 		};
 	};
 
+	const labels: Record<Action, () => string> = {
+		place: () => (someOut ? m.stock_return() : m.stock_place()),
+		checkout: m.stock_checkout,
+		collect: m.stock_collect,
+		condition: m.stock_condition
+	};
 	const doneMessages: Record<string, (args: { count: number }) => string> = {
 		place: m.stock_done_place,
 		checkout: m.stock_done_checkout,
+		collect: m.stock_done_collect,
 		condition: m.stock_done_condition
 	};
 </script>
@@ -80,29 +129,15 @@
 	{/if}
 
 	<div class="flex flex-wrap gap-2">
-		<button
-			type="button"
-			class="btn {open === 'place' ? 'btn-primary' : ''}"
-			onclick={() => (open = open === 'place' ? null : 'place')}
-		>
-			{someOut ? m.stock_return() : m.stock_place()}
-		</button>
-		{#if !allOut}
+		{#each actions as action (action)}
 			<button
 				type="button"
-				class="btn {open === 'checkout' ? 'btn-primary' : ''}"
-				onclick={() => (open = open === 'checkout' ? null : 'checkout')}
+				class="btn {open === action ? 'btn-primary' : ''}"
+				onclick={() => (open = open === action ? null : action)}
 			>
-				{m.stock_checkout()}
+				{labels[action]()}
 			</button>
-		{/if}
-		<button
-			type="button"
-			class="btn {open === 'condition' ? 'btn-primary' : ''}"
-			onclick={() => (open = open === 'condition' ? null : 'condition')}
-		>
-			{m.stock_condition()}
-		</button>
+		{/each}
 	</div>
 
 	{#if open === 'place'}
@@ -120,9 +155,7 @@
 				</select>
 			</div>
 			<input class="input" name="note" placeholder={m.field_note_optional()} />
-			<button class="btn btn-primary" disabled={submitting}>
-				{someOut ? m.stock_return() : m.stock_place()}
-			</button>
+			<button class="btn btn-primary" disabled={submitting}>{labels.place()}</button>
 		</form>
 	{:else if open === 'checkout'}
 		<form
@@ -152,6 +185,18 @@
 					/>
 				</div>
 			{/if}
+			{#if role !== 'CHOREOGRAPHER' && contacts.length}
+				<div>
+					<label class="label" for="contact">{m.field_contact()}</label>
+					<select class="input" id="contact" name="contactUserId">
+						<option value="">{m.contact_none()}</option>
+						{#each contacts as contact (contact.id)}
+							<option value={contact.id}>{contact.firstName} {contact.lastName}</option>
+						{/each}
+					</select>
+					<p class="mt-1 text-xs text-stone-500">{m.field_contact_hint()}</p>
+				</div>
+			{/if}
 			<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 				<div>
 					<label class="label" for="dueAt">{m.field_due_at()}</label>
@@ -169,6 +214,18 @@
 			</div>
 			<button class="btn btn-primary" disabled={submitting}>{m.stock_checkout()}</button>
 		</form>
+	{:else if open === 'collect'}
+		<form
+			method="POST"
+			action="?/collect"
+			use:enhance={submit}
+			class="card flex flex-col gap-3 p-4"
+		>
+			{@render ids()}
+			<p class="text-sm text-stone-600">{m.stock_collect_help()}</p>
+			<input class="input" name="note" placeholder={m.field_note_optional()} />
+			<button class="btn btn-primary" disabled={submitting}>{m.stock_collect()}</button>
+		</form>
 	{:else if open === 'condition'}
 		<form
 			method="POST"
@@ -178,7 +235,7 @@
 		>
 			{@render ids()}
 			<select class="input" name="condition" required>
-				{#each CONDITIONS as condition (condition)}
+				{#each conditions as condition (condition)}
 					<option value={condition}>{conditionLabel(condition)}</option>
 				{/each}
 			</select>

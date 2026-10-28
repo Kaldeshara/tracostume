@@ -65,6 +65,7 @@
 
 	const someOut = $derived(items.some((item) => item.loan));
 	const allOut = $derived(items.length > 0 && items.every((item) => item.loan));
+	const someUncollected = $derived(items.some((item) => item.loan && !item.loan.collectedAt));
 </script>
 
 <svelte:head><title>{m.scan_title()}</title></svelte:head>
@@ -156,9 +157,12 @@
 					itemIds={items.map((item) => item.id)}
 					boxes={data.stock.boxes}
 					users={data.stock.users}
+					contacts={data.stock.contacts}
+					role={data.user!.role}
 					defaultBoxId={box?.id}
 					{someOut}
 					{allOut}
+					{someUncollected}
 					{form}
 					ondone={() => {
 						const count = items.length;

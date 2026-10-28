@@ -58,7 +58,9 @@ export function conditionLabel(condition: ItemCondition) {
 
 export function roleLabel(role: UserRole) {
 	return {
-		MEMBER: m.role_member,
+		DANCER: m.role_dancer,
+		REPAIRER: m.role_repairer,
+		CHOREOGRAPHER: m.role_choreographer,
 		KEEPER: m.role_keeper,
 		ADMIN: m.role_admin,
 		OWNER: m.role_owner
@@ -71,6 +73,7 @@ export function movementLabel(type: MovementType) {
 		STORED: m.movement_stored,
 		MOVED: m.movement_moved,
 		CHECKED_OUT: m.movement_checked_out,
+		COLLECTED: m.movement_collected,
 		RETURNED: m.movement_returned,
 		CONDITION_CHANGED: m.movement_condition_changed
 	}[type]();

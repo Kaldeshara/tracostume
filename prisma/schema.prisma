@@ -7,10 +7,13 @@ datasource db {
   provider = "postgresql"
 }
 
-/// MEMBER browses the gallery; KEEPER has the container key and records movements;
-/// ADMIN and OWNER also manage users.
+/// DANCER: gallery and own loans. REPAIRER: only pieces to wash/repair. CHOREOGRAPHER: lends
+/// pieces to dancers and collects them back. KEEPER: holds the container key, manages stock.
+/// ADMIN and OWNER also manage members.
 enum UserRole {
-  MEMBER
+  DANCER
+  REPAIRER
+  CHOREOGRAPHER
   KEEPER
   ADMIN
   OWNER
@@ -106,6 +109,8 @@ enum MovementType {
   STORED
   MOVED
   CHECKED_OUT
+  /// Handed back by the dancer to the choreographer, not yet in the container.
+  COLLECTED
   RETURNED
   CONDITION_CHANGED
 }
@@ -116,7 +121,7 @@ model User {
   firstName       String
   lastName        String
   phone           String?
-  role            UserRole         @default(MEMBER)
+  role            UserRole         @default(DANCER)
   displayLanguage DisplayLanguage?
   passwordHash    String
   createdAt       DateTime         @default(now())
@@ -126,6 +131,8 @@ model User {
   borrowedLoans  Loan[]      @relation("LoanBorrower")
   createdLoans   Loan[]      @relation("LoanCreator")
   returnedLoans  Loan[]      @relation("LoanReturner")
+  contactLoans   Loan[]      @relation("LoanContact")
+  collectedLoans Loan[]      @relation("LoanCollector")
   movements      Movement[]
   uploadedPhotos ItemPhoto[]
 }
@@ -269,12 +276,19 @@ model Loan {
   reason         String?
   checkedOutAt   DateTime  @default(now())
   dueAt          DateTime?
+  /// Choreographer in charge of getting the piece back from the dancer.
+  contactUserId  String?
+  /// When the choreographer got the piece back from the dancer (still outside the container).
+  collectedAt    DateTime?
+  collectedById  String?
   returnedAt     DateTime?
   createdById    String?
   returnedById   String?
 
   item         Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
   borrowerUser User?      @relation("LoanBorrower", fields: [borrowerUserId], references: [id], onDelete: SetNull)
+  contactUser  User?      @relation("LoanContact", fields: [contactUserId], references: [id], onDelete: SetNull)
+  collectedBy  User?      @relation("LoanCollector", fields: [collectedById], references: [id], onDelete: SetNull)
   createdBy    User?      @relation("LoanCreator", fields: [createdById], references: [id], onDelete: SetNull)
   returnedBy   User?      @relation("LoanReturner", fields: [returnedById], references: [id], onDelete: SetNull)
   movements    Movement[]

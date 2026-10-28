@@ -9,8 +9,13 @@
 
 {#if item.loan}
 	<span class="flex flex-wrap items-center gap-1 text-sm">
-		<span class="chip bg-violet-100 text-violet-800">{m.location_out()}</span>
-		<span class="truncate">{item.loan.borrower}</span>
+		{#if item.loan.collectedAt}
+			<span class="chip bg-amber-100 text-amber-800">{m.loan_collected()}</span>
+			<span class="truncate">{item.loan.contact?.name ?? item.loan.borrower}</span>
+		{:else}
+			<span class="chip bg-violet-100 text-violet-800">{m.location_out()}</span>
+			<span class="truncate">{item.loan.borrower}</span>
+		{/if}
 		{#if item.loan.dueAt && !compact}
 			<span class={isOverdue(item.loan.dueAt) ? 'font-medium text-red-700' : 'text-stone-500'}>
 				· {m.location_due({ date: formatDate(item.loan.dueAt) })}

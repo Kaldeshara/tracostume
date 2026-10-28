@@ -55,7 +55,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		boxes: boxes.map(({ _count, ...box }) => ({ ...box, itemCount: _count.items })),
 		highlighted,
 		initialBoxId: url.searchParams.get('box'),
-		editable: canManageStock(locals.user?.role),
-		admin: !!locals.user && locals.user.role !== 'MEMBER' && locals.user.role !== 'KEEPER'
+		editable: canManageStock(locals.user?.role)
 	};
 };
