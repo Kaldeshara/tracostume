@@ -4,9 +4,11 @@ import { prisma } from '#lib/server/db.ts';
 import { itemCardSelect, toItemCard } from '#lib/server/items.ts';
 import { groupItems } from '#lib/item-groups.ts';
 import { isCategory } from '#lib/categories.ts';
+import { isRepairer } from '#lib/roles.ts';
+import { REPAIR_CONDITIONS } from '#lib/server/stock-actions.ts';
 
 // All pieces identical to one another: same name, category and colour (see item-groups.ts).
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const name = url.searchParams.get('name');
 	if (!name) error(404);
 	const category = url.searchParams.get('category') ?? '';
@@ -14,7 +16,13 @@ export const load: PageServerLoad = async ({ url }) => {
 	const color = url.searchParams.get('color') || null;
 
 	const items = await prisma.item.findMany({
-		where: { name, category, color },
+		where: {
+			name,
+			category,
+			color,
+			// Repairers only see the pieces that need care.
+			...(isRepairer(locals.user?.role) ? { condition: { in: REPAIR_CONDITIONS } } : {})
+		},
 		select: itemCardSelect,
 		orderBy: [{ size: 'asc' }, { code: 'asc' }]
 	});
