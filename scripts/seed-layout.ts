@@ -5,7 +5,8 @@ import type { BoxKind } from '../src/generated/prisma/enums';
 import { randomCode } from '../src/lib/codes';
 
 // Creates the storage units of the troupe's storage unit as photographed on 2026-10-27
-// (assets/*.jpg): an approximation to refine on the 3D map. Positions are cm from the back-left
+// (assets/*.jpg, named by wall: left_front, left_back, middle_back, right_back, right…): an
+// approximation to refine on the 3D map. Positions are cm from the back-left
 // floor corner; the door is on the front wall (y = depth).
 //
 //   npx tsx scripts/seed-layout.ts            # refuses to run if the layout already exists
@@ -178,99 +179,100 @@ column(
 	180
 );
 
-// --- Right wall: plastic boxes near the door, the clothes rail further in ---------------------
+// --- Right wall (photos right_back*, right, righ_entrance_ground): plastic columns in the back
+// corner, the clothes rail along the wall, the navy garment bags on the floor by the entrance ---
 column(
 	['Boîte 24', 'Boîte 25', 'Boîte 26', 'Boîte 27', 'Boîte 28'],
 	'PLASTIC_BOX',
 	212,
-	296,
+	42,
 	PLASTIC,
-	'Mur droit, près de la porte'
+	'Mur droit, coin du fond'
 );
 column(
 	['Boîte 29', 'Boîte 30', 'Boîte 31', 'Boîte 32', 'Boîte 33'],
 	'PLASTIC_BOX',
 	212,
-	257,
+	81,
 	PLASTIC,
-	'Mur droit, près de la porte'
+	'Mur droit, vers le fond'
 );
 column(
 	['Boîte 34', 'Boîte 35', 'Boîte 36', 'Boîte 37', 'Boîte 38'],
 	'PLASTIC_BOX',
 	212,
-	218,
+	120,
 	PLASTIC,
-	'Mur droit'
+	'Mur droit, vers le fond'
 );
 add({
 	label: 'Portant (housses bleues et noires)',
 	kind: 'RACK',
 	x: 222,
-	y: 80,
+	y: 165,
 	z: 0,
 	// The rail runs along the wall: its bar is the depth axis.
 	w: 45,
 	d: 120,
 	h: 170,
-	shelf: 'Mur droit, vers le fond'
+	shelf: 'Mur droit, milieu'
 });
-
-// --- Floor and door area ---------------------------------------------------------------------
 add({
 	label: 'Housse bleu marine 1 (au sol)',
 	kind: 'CANVAS_BAG',
-	x: 75,
-	y: 50,
+	x: 150,
+	y: 190,
 	z: 0,
-	w: 90,
-	d: 50,
+	w: 60,
+	d: 90,
 	h: 35,
-	shelf: 'Au sol, fond gauche'
+	shelf: 'Au sol, à droite devant le portant'
 });
 add({
 	label: 'Housse bleu marine 2 (au sol)',
 	kind: 'CANVAS_BAG',
-	x: 75,
-	y: 105,
-	z: 0,
-	w: 90,
-	d: 50,
+	x: 150,
+	y: 240,
+	z: 35,
+	w: 60,
+	d: 90,
 	h: 35,
-	shelf: 'Au sol, fond gauche'
+	shelf: 'Au sol, à droite devant le portant'
 });
+
+// --- Door area, right side (photo right): step stool with the IKEA box and the Action bag -----
 add({
 	label: 'Marchepied',
 	kind: 'OTHER',
-	x: 150,
+	x: 215,
 	y: 290,
 	z: 0,
 	w: 45,
 	d: 35,
 	h: 45,
-	shelf: 'Près de la porte'
+	shelf: 'À droite de la porte'
 });
 add({
 	label: 'Carton IKEA (vanity)',
 	kind: 'CARDBOARD_BOX',
-	x: 145,
+	x: 210,
 	y: 288,
 	z: 45,
 	w: 55,
 	d: 40,
 	h: 40,
-	shelf: 'Près de la porte, sur le marchepied'
+	shelf: 'À droite de la porte, sur le marchepied'
 });
 add({
 	label: 'Sac Action (tissus rouges et bleus)',
 	kind: 'CANVAS_BAG',
-	x: 150,
+	x: 215,
 	y: 290,
 	z: 85,
 	w: 50,
 	d: 40,
 	h: 35,
-	shelf: 'Près de la porte, sur le carton'
+	shelf: 'À droite de la porte, sur le carton'
 });
 
 const prisma = new PrismaClient({
