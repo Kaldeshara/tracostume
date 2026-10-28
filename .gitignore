@@ -32,3 +32,6 @@ project.inlang/cache/
 /data/*
 !/data/import/
 /data/import/photos/
+
+# Container photos (reference only)
+/assets/
