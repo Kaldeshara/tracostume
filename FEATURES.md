@@ -12,12 +12,13 @@
 - Natural-language search (local embedding model), identical pieces grouped in the gallery
 - 3D map of the container: storage units of several kinds (boxes, bags, clothes rails), drag and
   stack them, editable container size and door side, highlight where selected pieces are
+- Costume sets and show lists, loaded into the selection for bulk actions
+- Offline scanner: cached page, pieces copied on the phone, queued actions sent later
+- Daily push reminders for overdue and due-tomorrow loans
+- Admin password reset links, sign-in attempt limit
 
 # TODO
 
 - 3D map: shelving units, several containers, photos on boxes
 - Search by what is visible in the photos (image model)
-- Email or push reminders for overdue loans
 - Share accounts with Tracster
-- Costumes made of several pieces (sets), if needed later
-- Offline mode for the scanner
