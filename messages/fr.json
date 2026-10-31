@@ -290,6 +290,68 @@
 	"labels_print": "Imprimer les étiquettes",
 	"labels_size": "Taille du QR",
 	"labels_title": "Étiquettes QR",
+	"lists_add_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Ajouter la pièce sélectionnée",
+				"countPlural=other": "Ajouter les {count} pièces sélectionnées"
+			}
+		}
+	],
+	"lists_added": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce ajoutée.",
+				"countPlural=other": "{count} pièces ajoutées."
+			}
+		}
+	],
+	"lists_by": "par {name}",
+	"lists_date": "Date du spectacle",
+	"lists_delete": "Supprimer la liste",
+	"lists_delete_confirm": "Supprimer cette liste ? Les pièces elles-mêmes sont conservées.",
+	"lists_description": "Notes",
+	"lists_edit": "Modifier la liste",
+	"lists_empty": "Aucune tenue ni liste de spectacle pour l'instant.",
+	"lists_help": "Une tenue regroupe des pièces portées ensemble (robe + chapeau + boa). Une liste de spectacle contient tout ce qui est préparé pour un spectacle. Sélectionnez les pièces d'une liste pour savoir où elles sont, imprimer leurs étiquettes ou les sortir ensemble.",
+	"lists_invalid": "Donnez un nom à la liste.",
+	"lists_kind": "Type",
+	"lists_kind_set": "Tenue",
+	"lists_kind_show": "Spectacle",
+	"lists_name": "Nom",
+	"lists_new": "Nouvelle liste",
+	"lists_no_pieces": "Aucune pièce pour l'instant : sélectionnez des pièces dans la galerie ou avec le scanner, puis ajoutez-les ici.",
+	"lists_piece_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce",
+				"countPlural=other": "{count} pièces"
+			}
+		}
+	],
+	"lists_remove_piece": "Retirer de la liste",
+	"lists_save_selection": "Enregistrer comme liste",
+	"lists_saved": "Enregistré.",
+	"lists_select_all": "Sélectionner ces pièces",
+	"lists_sets": "Tenues",
+	"lists_shows": "Spectacles",
+	"lists_title": "Tenues et spectacles",
+	"lists_with_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Commencer avec la pièce sélectionnée",
+				"countPlural=other": "Commencer avec les {count} pièces sélectionnées"
+			}
+		}
+	],
 	"loan_collected": "Récupérée",
 	"loan_collected_by": "Récupérée par {name}",
 	"loan_overdue": "En retard",
@@ -315,6 +377,7 @@
 	"login_no_account": "Pas encore de compte ?",
 	"login_submit": "Se connecter",
 	"login_title": "Connexion",
+	"login_too_many": "Trop de tentatives échouées. Réessayez dans {minutes} min.",
 	"map_add": "Ajouter",
 	"map_add_unit": "Ajouter un rangement",
 	"map_back": "Fond",
@@ -366,6 +429,7 @@
 	"nav_gallery": "Galerie",
 	"nav_home": "Accueil",
 	"nav_labels": "Étiquettes QR",
+	"nav_lists": "Tenues et spectacles",
 	"nav_loans": "Emprunts",
 	"nav_logout": "Se déconnecter",
 	"nav_map": "Plan 3D",
@@ -374,6 +438,59 @@
 	"photo_add": "Ajouter les photos",
 	"photo_delete": "Supprimer la photo",
 	"photo_preparing": "Préparation des photos…",
+	"push_all_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} prêt est en retard.",
+				"countPlural=other": "{count} prêts sont en retard."
+			}
+		}
+	],
+	"push_denied": "Les notifications sont bloquées pour ce site : autorisez-les dans les réglages du navigateur ou du téléphone.",
+	"push_disable": "Désactiver",
+	"push_due_soon": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce est à rendre demain.",
+				"countPlural=other": "{count} pièces sont à rendre demain."
+			}
+		}
+	],
+	"push_enable": "Activer les rappels",
+	"push_help": "Une notification le matin quand une pièce empruntée est à rendre ou en retard, quand un danseur à qui vous avez prêté est en retard et (responsables costumes) quand des prêts sont en retard.",
+	"push_on": "Les rappels sont activés sur ce téléphone.",
+	"push_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce empruntée est en retard.",
+				"countPlural=other": "{count} pièces empruntées sont en retard."
+			}
+		}
+	],
+	"push_reminder_title": "Costumes : rappel",
+	"push_test": "Envoyer un test",
+	"push_test_body": "Les rappels fonctionnent sur ce téléphone.",
+	"push_test_failed": "Le test n'a pas pu être envoyé.",
+	"push_test_sent": "Test envoyé : il devrait apparaître dans quelques secondes.",
+	"push_test_title": "Tracostume",
+	"push_title": "Rappels sur ce téléphone",
+	"push_to_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce que vous avez prêtée n'est pas encore revenue.",
+				"countPlural=other": "{count} pièces que vous avez prêtées ne sont pas encore revenues."
+			}
+		}
+	],
+	"push_unsupported": "Ce navigateur ne peut pas recevoir de notifications. Sur iPhone, ajoutez d'abord l'appli à l'écran d'accueil (Partager → Sur l'écran d'accueil), puis ouvrez-la depuis là.",
 	"register_back_to_login": "J'ai déjà un compte",
 	"register_error_email_taken": "Un compte existe déjà avec cet e-mail.",
 	"register_error_invalid": "Vérifiez les champs du formulaire.",
@@ -383,6 +500,12 @@
 	"register_submit": "Créer mon compte",
 	"register_title": "Créer un compte",
 	"register_troupe_password": "Mot de passe de la troupe",
+	"reset_confirm": "Répétez le nouveau mot de passe",
+	"reset_help": "Bonjour {name}, choisissez un nouveau mot de passe. Ce lien ne fonctionne qu'une fois.",
+	"reset_mismatch": "Les deux mots de passe sont différents.",
+	"reset_submit": "Enregistrer et se connecter",
+	"reset_title": "Nouveau mot de passe",
+	"reset_too_short": "Le mot de passe doit faire au moins 8 caractères.",
 	"role_admin": "Administrateur·rice",
 	"role_choreographer": "Chorégraphe",
 	"role_dancer": "Danseur·se",
@@ -408,6 +531,25 @@
 	"scan_manual_submit": "OK",
 	"scan_mode_collect": "Entrées/sorties",
 	"scan_mode_open": "Consulter",
+	"scan_offline": "Pas de connexion : mode hors ligne.",
+	"scan_offline_copy": "pièces au {date}",
+	"scan_offline_logout_confirm": "Des actions faites hors ligne n'ont pas encore été envoyées et seront perdues. Se déconnecter quand même ?",
+	"scan_offline_open": "Pas de connexion : la fiche de la pièce ne peut pas s'ouvrir. Utilisez le mode « Entrées/sorties » pour enregistrer des actions.",
+	"scan_offline_pending": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} action en attente d'envoi",
+				"countPlural=other": "{count} actions en attente d'envoi"
+			}
+		}
+	],
+	"scan_offline_queued": "Pas de connexion : enregistré sur ce téléphone, ce sera envoyé dès le retour de la connexion.",
+	"scan_offline_refused": "Refusé par le serveur ({count} pièces, {date}) : une pièce a peut-être été déplacée entre-temps. Vérifiez, puis réessayez ou ignorez.",
+	"scan_offline_retry": "Réessayer",
+	"scan_offline_send": "Envoyer",
+	"scan_offline_signed_out": "Non envoyé : vous avez été déconnecté. Reconnectez-vous puis réessayez ({count} pièces).",
 	"scan_starting": "Démarrage de la caméra…",
 	"scan_target_box": "Ranger dans",
 	"scan_title": "Scanner",
@@ -494,5 +636,11 @@
 			}
 		}
 	],
+	"users_reset_copied": "Copié ✓",
+	"users_reset_copy": "Copier le lien",
+	"users_reset_help": "Envoyez ce lien au membre : il permet de choisir un nouveau mot de passe, ne fonctionne qu'une fois et expire dans 2 jours.",
+	"users_reset_link": "Lien de réinitialisation",
+	"users_reset_send_sms": "Envoyer par SMS",
+	"users_reset_sms": "Voici le lien pour choisir un nouveau mot de passe sur l'appli des costumes : {url}",
 	"users_roles_help": "Danseur·ses : galerie et leurs emprunts. Couturier·ères : seulement les pièces à laver ou réparer. Chorégraphes : prêtent aux danseur·ses et récupèrent les pièces. Responsables costumes : la clé du container, tout le stock. Admins : les membres en plus."
 }

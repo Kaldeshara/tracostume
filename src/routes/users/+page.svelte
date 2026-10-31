@@ -5,9 +5,23 @@
 	import { hasRole, ROLES } from '#lib/roles.ts';
 	import type { PageProps } from './$types';
 
-	let { data }: PageProps = $props();
+	let { data, form }: PageProps = $props();
 
 	const isOwner = $derived(hasRole(data.user?.role, 'OWNER'));
+	let copied = $state(false);
+
+	function smsLink(phone: string, url: string) {
+		return `sms:${phone.replace(/\s+/g, '')}?&body=${encodeURIComponent(m.users_reset_sms({ url }))}`;
+	}
+
+	async function copy(url: string) {
+		try {
+			await navigator.clipboard.writeText(url);
+			copied = true;
+		} catch {
+			copied = false;
+		}
+	}
 </script>
 
 <svelte:head><title>{m.nav_users()}</title></svelte:head>
@@ -30,6 +44,17 @@
 			{#if user.id === data.user?.id || (user.role === 'OWNER' && !isOwner)}
 				<span class="chip bg-stone-100 text-stone-700">{roleLabel(user.role)}</span>
 			{:else}
+				<form
+					method="POST"
+					action="?/resetLink"
+					use:enhance={() => {
+						copied = false;
+						return ({ update }) => update({ reset: false });
+					}}
+				>
+					<input type="hidden" name="userId" value={user.id} />
+					<button class="btn py-1">{m.users_reset_link()}</button>
+				</form>
 				<form method="POST" action="?/setRole" use:enhance>
 					<input type="hidden" name="userId" value={user.id} />
 					<select
@@ -43,6 +68,22 @@
 						{/each}
 					</select>
 				</form>
+			{/if}
+			{#if form?.reset?.userId === user.id}
+				<div class="w-full rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+					<p class="mb-2">{m.users_reset_help()}</p>
+					<input class="input mb-2 font-mono text-xs" readonly value={form.reset.url} />
+					<div class="flex flex-wrap gap-2">
+						<button type="button" class="btn" onclick={() => copy(form.reset!.url)}>
+							{copied ? m.users_reset_copied() : m.users_reset_copy()}
+						</button>
+						{#if user.phone}
+							<a class="btn" href={smsLink(user.phone, form.reset.url)}
+								>{m.users_reset_send_sms()}</a
+							>
+						{/if}
+					</div>
+				</div>
 			{/if}
 		</li>
 	{/each}

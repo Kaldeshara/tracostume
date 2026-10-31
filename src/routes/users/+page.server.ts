@@ -1,7 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import type { UserRole } from '../../generated/prisma/enums';
-import { requireRole } from '#lib/server/auth.ts';
+import { createPasswordReset, requireRole } from '#lib/server/auth.ts';
 import { prisma } from '#lib/server/db.ts';
 import { hasRole, ROLES } from '#lib/roles.ts';
 
@@ -38,5 +38,19 @@ export const actions: Actions = {
 		}
 		await prisma.user.update({ where: { id: userId }, data: { role } });
 		return { saved: true };
+	},
+
+	/** A one-time link to choose a new password, for a member who forgot theirs. */
+	resetLink: async (event) => {
+		const me = requireRole(event, 'ADMIN');
+		const form = await event.request.formData();
+		const target = await prisma.user.findUnique({
+			where: { id: String(form.get('userId') ?? '') },
+			select: { id: true, role: true }
+		});
+		if (!target || target.id === me.id) return fail(400);
+		if (target.role === 'OWNER' && !hasRole(me.role, 'OWNER')) return fail(403);
+		const token = await createPasswordReset(target.id);
+		return { reset: { userId: target.id, url: `${event.url.origin}/reset/${token}` } };
 	}
 };

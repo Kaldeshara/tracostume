@@ -3,8 +3,9 @@
 	import { page } from '$app/state';
 	import { PUBLIC_APP_NAME } from '$app/env/public';
 	import { m } from '#lib/paraglide/messages.js';
-	import { canManageStock, canManageUsers, canSeeContainer } from '#lib/roles.ts';
+	import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
+	import { offlineScan } from '#lib/offline-scan.svelte.ts';
 	import { roleLabel } from '#lib/format.ts';
 	import LanguageSwitcher from '#lib/components/LanguageSwitcher.svelte';
 	import type { LayoutProps } from './$types';
@@ -21,6 +22,16 @@
 		{ href: '/loans', label: m.nav_loans(), icon: '⇄', badge: data.overdueCount },
 		...(canSeeContainer(user?.role) ? [{ href: '/boxes', label: m.nav_boxes(), icon: '▣' }] : [])
 	]);
+
+	// Signing out forgets the scanner's offline copy (pieces, page) kept on this phone.
+	function signOut(event: SubmitEvent) {
+		if (offlineScan.pending.length && !confirm(m.scan_offline_logout_confirm())) {
+			event.preventDefault();
+			return;
+		}
+		offlineScan.clear();
+		globalThis.caches?.delete('tracostume-pages').catch(() => {});
+	}
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
@@ -67,6 +78,9 @@
 						class="card absolute right-0 mt-2 flex w-60 flex-col gap-1 p-2 text-sm"
 						onclick={() => (menuOpen = false)}
 					>
+						{#if canSeeLists(user.role)}
+							<a href="/lists" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_lists()}</a>
+						{/if}
 						{#if canSeeContainer(user.role)}
 							<a href="/map" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_map()}</a>
 						{/if}
@@ -82,7 +96,7 @@
 						{/if}
 						<a href="/account" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_account()}</a>
 						<div class="px-3 py-2"><LanguageSwitcher /></div>
-						<form method="POST" action="/logout">
+						<form method="POST" action="/logout" onsubmit={signOut}>
 							<button class="w-full rounded px-3 py-2 text-left text-red-700 hover:bg-red-50">
 								{m.nav_logout()}
 							</button>

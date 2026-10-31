@@ -228,6 +228,25 @@ async function main() {
 
 	await prisma.item.update({ where: { id: created[3] }, data: { condition: 'TO_REPAIR' } });
 
+	// A costume set and a show list (see /lists).
+	await prisma.itemList.create({
+		data: {
+			name: 'Années 20',
+			kind: 'SET',
+			createdById: alice.id,
+			entries: { create: created.slice(0, 3).map((itemId) => ({ itemId })) }
+		}
+	});
+	await prisma.itemList.create({
+		data: {
+			name: 'Gala de printemps',
+			kind: 'SHOW',
+			date: new Date(Date.now() + 40 * DAY),
+			createdById: alice.id,
+			entries: { create: created.slice(8, 14).map((itemId) => ({ itemId })) }
+		}
+	});
+
 	console.log(`Seeded ${created.length} items in ${boxes.length} boxes.`);
 }
 

@@ -3,6 +3,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { roleLabel } from '#lib/format.ts';
 	import LanguageSwitcher from '#lib/components/LanguageSwitcher.svelte';
+	import PushToggle from '#lib/components/PushToggle.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -86,4 +87,5 @@
 			</p>{/if}
 		<button class="btn btn-primary self-start">{m.action_save()}</button>
 	</form>
+	<PushToggle />
 </div>

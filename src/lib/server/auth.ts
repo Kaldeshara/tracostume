@@ -1,4 +1,5 @@
 import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
+import bcrypt from 'bcryptjs';
 import { error, redirect, type Cookies, type RequestEvent } from '@sveltejs/kit';
 import { dev } from '$app/env';
 import { REGISTERING_PASSWORD } from '$app/env/private';
@@ -33,6 +34,8 @@ function setSessionCookie(cookies: Cookies, token: string, expiresAt: Date) {
 export async function createSession(cookies: Cookies, userId: string) {
 	const token = randomBytes(32).toString('hex');
 	const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
+	// Expired sessions are only removed when they are used again: clear the others at each sign-in.
+	await prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } });
 	await prisma.session.create({ data: { token, userId, expiresAt } });
 	setSessionCookie(cookies, token, expiresAt);
 }
@@ -116,4 +119,41 @@ export function registrationPasswordMatches(candidate: unknown) {
 	if (REGISTERING_PASSWORD === undefined) return true;
 	if (typeof candidate !== 'string') return false;
 	return timingSafeEqual(digest(REGISTERING_PASSWORD), digest(candidate));
+}
+
+const RESET_DURATION_MS = 1000 * 60 * 60 * 24 * 2;
+
+/** Creates a one-time password reset link token for a member (replacing any earlier one). */
+export async function createPasswordReset(userId: string) {
+	const token = randomBytes(32).toString('base64url');
+	await prisma.$transaction([
+		prisma.passwordReset.deleteMany({ where: { userId } }),
+		prisma.passwordReset.create({
+			data: {
+				userId,
+				tokenHash: digest(token).toString('hex'),
+				expiresAt: new Date(Date.now() + RESET_DURATION_MS)
+			}
+		})
+	]);
+	return token;
+}
+
+/** The member a reset token belongs to, or null when it is unknown or expired. */
+export async function findPasswordReset(token: string) {
+	const reset = await prisma.passwordReset.findUnique({
+		where: { tokenHash: digest(token).toString('hex') },
+		select: { id: true, expiresAt: true, user: { select: { id: true, firstName: true } } }
+	});
+	return reset && reset.expiresAt > new Date() ? reset : null;
+}
+
+/** Sets the new password, uses up the link and signs the member out everywhere else. */
+export async function completePasswordReset(userId: string, password: string) {
+	const passwordHash = await bcrypt.hash(password, 12);
+	await prisma.$transaction([
+		prisma.passwordReset.deleteMany({ where: { userId } }),
+		prisma.session.deleteMany({ where: { userId } }),
+		prisma.user.update({ where: { id: userId }, data: { passwordHash } })
+	]);
 }

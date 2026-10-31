@@ -44,6 +44,20 @@ export const REPAIRER_CONDITIONS: ItemCondition[] = [
 /** Pieces a repairer sees. */
 export const REPAIR_CONDITIONS: ItemCondition[] = ['TO_WASH', 'TO_REPAIR', 'IN_REPAIR', 'DAMAGED'];
 
+const OFFLINE_MAX_AGE_MS = 7 * 24 * 3600 * 1000;
+
+/**
+ * When the action was done: actions recorded offline by the scanner are sent later with the time
+ * they were done (`offlineAt`), kept if it is within the last week.
+ */
+export function actionTime(form: FormData, now = new Date()) {
+	const value = form.get('offlineAt');
+	const at = typeof value === 'string' && value ? new Date(value) : null;
+	if (!at || Number.isNaN(at.getTime())) return now;
+	if (at > now || now.getTime() - at.getTime() > OFFLINE_MAX_AGE_MS) return now;
+	return at;
+}
+
 const itemIdsOf = (form: FormData) =>
 	[...new Set(form.getAll('itemId').map(String))].filter(Boolean).slice(0, 500);
 
@@ -67,7 +81,8 @@ export const stockActions = {
 				itemIds,
 				boxId,
 				user.id,
-				String(form.get('note') ?? '') || undefined
+				String(form.get('note') ?? '') || undefined,
+				actionTime(form)
 			);
 			return { done: 'place' as const, count };
 		} catch (err) {
@@ -108,7 +123,8 @@ export const stockActions = {
 					phone: borrowerPhone
 				},
 				{ dueAt, reason, contactUserId },
-				user.id
+				user.id,
+				actionTime(form)
 			);
 			return { done: 'checkout' as const, count };
 		} catch (err) {
@@ -121,7 +137,12 @@ export const stockActions = {
 		const form = await event.request.formData();
 		const itemIds = itemIdsOf(form);
 		if (!itemIds.length) return fail(400, { error: 'MISSING_FIELDS' as const, codes: [] });
-		const count = await collectItems(itemIds, user.id, String(form.get('note') ?? '') || undefined);
+		const count = await collectItems(
+			itemIds,
+			user.id,
+			String(form.get('note') ?? '') || undefined,
+			actionTime(form)
+		);
 		return { done: 'collect' as const, count };
 	},
 
@@ -141,7 +162,8 @@ export const stockActions = {
 			itemIds,
 			condition,
 			user.id,
-			String(form.get('note') ?? '') || undefined
+			String(form.get('note') ?? '') || undefined,
+			actionTime(form)
 		);
 		return { done: 'condition' as const, count };
 	}
