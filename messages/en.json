@@ -438,6 +438,59 @@
 	"photo_add": "Add photos",
 	"photo_delete": "Delete photo",
 	"photo_preparing": "Preparing photos…",
+	"push_all_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} loan is overdue.",
+				"countPlural=other": "{count} loans are overdue."
+			}
+		}
+	],
+	"push_denied": "Notifications are blocked for this site: allow them in the browser or phone settings.",
+	"push_disable": "Turn off",
+	"push_due_soon": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece is due back tomorrow.",
+				"countPlural=other": "{count} pieces are due back tomorrow."
+			}
+		}
+	],
+	"push_enable": "Turn on reminders",
+	"push_help": "A notification each morning when a piece you borrowed is due or overdue, when a dancer you lent to is late, and (keepers) when loans are overdue.",
+	"push_on": "Reminders are on for this phone.",
+	"push_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece you borrowed is overdue.",
+				"countPlural=other": "{count} pieces you borrowed are overdue."
+			}
+		}
+	],
+	"push_reminder_title": "Costumes: reminder",
+	"push_test": "Send a test",
+	"push_test_body": "Reminders work on this phone.",
+	"push_test_failed": "The test could not be sent.",
+	"push_test_sent": "Test sent: it should appear in a few seconds.",
+	"push_test_title": "Tracostume",
+	"push_title": "Reminders on this phone",
+	"push_to_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece you lent has not come back yet.",
+				"countPlural=other": "{count} pieces you lent have not come back yet."
+			}
+		}
+	],
+	"push_unsupported": "This browser cannot receive notifications. On iPhone, first add the app to the home screen (Share → Add to Home Screen), then open it from there.",
 	"register_back_to_login": "I already have an account",
 	"register_error_email_taken": "An account already exists with this email.",
 	"register_error_invalid": "Check the form fields.",

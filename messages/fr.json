@@ -438,6 +438,59 @@
 	"photo_add": "Ajouter les photos",
 	"photo_delete": "Supprimer la photo",
 	"photo_preparing": "Préparation des photos…",
+	"push_all_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} prêt est en retard.",
+				"countPlural=other": "{count} prêts sont en retard."
+			}
+		}
+	],
+	"push_denied": "Les notifications sont bloquées pour ce site : autorisez-les dans les réglages du navigateur ou du téléphone.",
+	"push_disable": "Désactiver",
+	"push_due_soon": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce est à rendre demain.",
+				"countPlural=other": "{count} pièces sont à rendre demain."
+			}
+		}
+	],
+	"push_enable": "Activer les rappels",
+	"push_help": "Une notification le matin quand une pièce empruntée est à rendre ou en retard, quand un danseur à qui vous avez prêté est en retard et (responsables costumes) quand des prêts sont en retard.",
+	"push_on": "Les rappels sont activés sur ce téléphone.",
+	"push_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce empruntée est en retard.",
+				"countPlural=other": "{count} pièces empruntées sont en retard."
+			}
+		}
+	],
+	"push_reminder_title": "Costumes : rappel",
+	"push_test": "Envoyer un test",
+	"push_test_body": "Les rappels fonctionnent sur ce téléphone.",
+	"push_test_failed": "Le test n'a pas pu être envoyé.",
+	"push_test_sent": "Test envoyé : il devrait apparaître dans quelques secondes.",
+	"push_test_title": "Tracostume",
+	"push_title": "Rappels sur ce téléphone",
+	"push_to_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce que vous avez prêtée n'est pas encore revenue.",
+				"countPlural=other": "{count} pièces que vous avez prêtées ne sont pas encore revenues."
+			}
+		}
+	],
+	"push_unsupported": "Ce navigateur ne peut pas recevoir de notifications. Sur iPhone, ajoutez d'abord l'appli à l'écran d'accueil (Partager → Sur l'écran d'accueil), puis ouvrez-la depuis là.",
 	"register_back_to_login": "J'ai déjà un compte",
 	"register_error_email_taken": "Un compte existe déjà avec cet e-mail.",
 	"register_error_invalid": "Vérifiez les champs du formulaire.",

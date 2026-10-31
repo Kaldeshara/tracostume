@@ -130,6 +130,7 @@ model User {
   sessions       Session[]
   passwordResets PasswordReset[]
   itemLists      ItemList[]
+  pushSubscriptions PushSubscription[]
   borrowedLoans  Loan[]      @relation("LoanBorrower")
   createdLoans   Loan[]      @relation("LoanCreator")
   returnedLoans  Loan[]      @relation("LoanReturner")
@@ -368,4 +369,35 @@ model Movement {
   user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([itemId, createdAt])
+}
+
+/// A phone or browser that receives reminders (Web Push). Its language is the app's language
+/// when it subscribed.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  locale    String   @default("fr")
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// The server's VAPID key pair for Web Push, created on first use (one row, id 1).
+model PushKeys {
+  id         Int      @id @default(1)
+  publicKey  String
+  privateKey String
+  createdAt  DateTime @default(now())
+}
+
+/// Days on which the daily loan reminders were sent (yyyy-mm-dd, Paris time), so a restart does
+/// not send them twice.
+model ReminderRun {
+  day    String   @id
+  sentAt DateTime @default(now())
 }

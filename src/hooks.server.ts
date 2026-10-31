@@ -6,6 +6,7 @@ import { paraglideMiddleware } from '#lib/paraglide/server.js';
 import { getSessionUser } from '#lib/server/auth.ts';
 import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
 import { warmUpSearch } from '#lib/server/embeddings.ts';
+import { startReminders } from '#lib/server/reminders.ts';
 import { building } from '$app/env';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
@@ -60,6 +61,9 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 export const handle = sequence(handleAuth, handleParaglide);
 
 // Load the search model and index the catalogue at start, so the first search is not slow.
+// Start the daily loan reminders (Web Push).
 export const init: ServerInit = async () => {
-	if (!building) warmUpSearch();
+	if (building) return;
+	warmUpSearch();
+	startReminders();
 };
