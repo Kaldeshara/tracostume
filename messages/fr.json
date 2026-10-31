@@ -315,6 +315,7 @@
 	"login_no_account": "Pas encore de compte ?",
 	"login_submit": "Se connecter",
 	"login_title": "Connexion",
+	"login_too_many": "Trop de tentatives échouées. Réessayez dans {minutes} min.",
 	"map_add": "Ajouter",
 	"map_add_unit": "Ajouter un rangement",
 	"map_back": "Fond",

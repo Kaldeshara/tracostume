@@ -315,6 +315,7 @@
 	"login_no_account": "No account yet?",
 	"login_submit": "Sign in",
 	"login_title": "Sign in",
+	"login_too_many": "Too many failed attempts. Try again in {minutes} min.",
 	"map_add": "Add",
 	"map_add_unit": "Add a storage unit",
 	"map_back": "Back",

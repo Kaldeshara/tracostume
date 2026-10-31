@@ -33,6 +33,8 @@ function setSessionCookie(cookies: Cookies, token: string, expiresAt: Date) {
 export async function createSession(cookies: Cookies, userId: string) {
 	const token = randomBytes(32).toString('hex');
 	const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
+	// Expired sessions are only removed when they are used again: clear the others at each sign-in.
+	await prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } });
 	await prisma.session.create({ data: { token, userId, expiresAt } });
 	setSessionCookie(cookies, token, expiresAt);
 }
