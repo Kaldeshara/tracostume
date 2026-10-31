@@ -28,10 +28,12 @@ project.inlang/cache/
 # Prisma client
 /src/generated/prisma
 
-# Local photo storage, models and uploads (the import data files are kept, not the photos)
+# Local photo storage, models, uploads and the troupe's Drive import data (kept out of the
+# public repository; only the import README is tracked)
 /data/*
 !/data/import/
-/data/import/photos/
+/data/import/*
+!/data/import/README.md
 
 # Container photos (reference only)
 /assets/

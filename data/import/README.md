@@ -1,6 +1,7 @@
 # Import du Drive
 
-Données tirées du dossier Google Drive partagé des costumes (octobre 2026).
+Données tirées du dossier Google Drive partagé des costumes (octobre 2026). Ces fichiers ne sont
+pas versionnés (dépôt public) : copiez-les ici à la main avant de lancer les scripts d'import.
 
 - `drive-inventory.json` / `.csv` — une ligne par modèle (et par variante quand une photo en regroupe
   plusieurs) : catégorie, nom, quantité, couleurs, note, fichier Drive et son identifiant.
