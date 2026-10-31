@@ -23,6 +23,8 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 
 // Everything is private except these pages (and static files, which never reach the hook).
 const PUBLIC_PATHS = ['/login', '/register'];
+const isPublic = (pathname: string) =>
+	PUBLIC_PATHS.includes(pathname) || pathname.startsWith('/reset/');
 
 // Pages reserved to some roles; everything else is open to every signed-in member.
 const RESTRICTED: [prefix: string, allowed: (role: UserRole) => boolean][] = [
@@ -40,7 +42,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 	const { pathname, search } = event.url;
 	const user = event.locals.user;
-	if (!user && !PUBLIC_PATHS.includes(pathname)) {
+	if (!user && !isPublic(pathname)) {
 		redirect(303, `/login?next=${encodeURIComponent(pathname + search)}`);
 	}
 	if (user) {

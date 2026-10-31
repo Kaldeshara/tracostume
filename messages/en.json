@@ -384,6 +384,12 @@
 	"register_submit": "Create my account",
 	"register_title": "Create an account",
 	"register_troupe_password": "Troupe password",
+	"reset_confirm": "Repeat the new password",
+	"reset_help": "Hello {name}, choose a new password. This link works only once.",
+	"reset_mismatch": "The two passwords are different.",
+	"reset_submit": "Save and sign in",
+	"reset_title": "New password",
+	"reset_too_short": "The password must have at least 8 characters.",
 	"role_admin": "Admin",
 	"role_choreographer": "Choreographer",
 	"role_dancer": "Dancer",
@@ -495,5 +501,11 @@
 			}
 		}
 	],
+	"users_reset_copied": "Copied ✓",
+	"users_reset_copy": "Copy the link",
+	"users_reset_help": "Send this link to the member: it lets them choose a new password, works once and expires in 2 days.",
+	"users_reset_link": "Reset link",
+	"users_reset_send_sms": "Send by text message",
+	"users_reset_sms": "Here is the link to choose a new password for the costumes app: {url}",
 	"users_roles_help": "Dancers: gallery and their own loans. Repairers: only pieces to wash or repair. Choreographers: lend to dancers and collect pieces back. Costume keepers: the container key, all the stock. Admins: members too."
 }

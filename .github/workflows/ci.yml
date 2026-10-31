@@ -45,6 +45,8 @@ jobs:
         run: npm test
       - name: Apply migrations and seed
         run: npm run db:deploy && npm run db:seed
+      - name: Migrations match the schema
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       - name: Build
         run: npm run build
       - name: Smoke test with screenshots

@@ -384,6 +384,12 @@
 	"register_submit": "Créer mon compte",
 	"register_title": "Créer un compte",
 	"register_troupe_password": "Mot de passe de la troupe",
+	"reset_confirm": "Répétez le nouveau mot de passe",
+	"reset_help": "Bonjour {name}, choisissez un nouveau mot de passe. Ce lien ne fonctionne qu'une fois.",
+	"reset_mismatch": "Les deux mots de passe sont différents.",
+	"reset_submit": "Enregistrer et se connecter",
+	"reset_title": "Nouveau mot de passe",
+	"reset_too_short": "Le mot de passe doit faire au moins 8 caractères.",
 	"role_admin": "Administrateur·rice",
 	"role_choreographer": "Chorégraphe",
 	"role_dancer": "Danseur·se",
@@ -495,5 +501,11 @@
 			}
 		}
 	],
+	"users_reset_copied": "Copié ✓",
+	"users_reset_copy": "Copier le lien",
+	"users_reset_help": "Envoyez ce lien au membre : il permet de choisir un nouveau mot de passe, ne fonctionne qu'une fois et expire dans 2 jours.",
+	"users_reset_link": "Lien de réinitialisation",
+	"users_reset_send_sms": "Envoyer par SMS",
+	"users_reset_sms": "Voici le lien pour choisir un nouveau mot de passe sur l'appli des costumes : {url}",
 	"users_roles_help": "Danseur·ses : galerie et leurs emprunts. Couturier·ères : seulement les pièces à laver ou réparer. Chorégraphes : prêtent aux danseur·ses et récupèrent les pièces. Responsables costumes : la clé du container, tout le stock. Admins : les membres en plus."
 }

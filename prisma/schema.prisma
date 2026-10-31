@@ -128,6 +128,7 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   sessions       Session[]
+  passwordResets PasswordReset[]
   borrowedLoans  Loan[]      @relation("LoanBorrower")
   createdLoans   Loan[]      @relation("LoanCreator")
   returnedLoans  Loan[]      @relation("LoanReturner")
@@ -140,6 +141,18 @@ model User {
 model Session {
   id        String   @id @default(cuid())
   token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// One-time link an admin sends to a member who forgot their password. Only a hash of the token
+/// is stored; the link works once, until expiresAt.
+model PasswordReset {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
