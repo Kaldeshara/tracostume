@@ -122,3 +122,7 @@ choose **Share → Add to Home Screen**.
 
 The site URL is taken from the request and assumed to be HTTPS, which is what Railway provides.
 Print QR labels from the production site: they contain its address.
+
+## License
+
+[MIT](LICENSE)
