@@ -12,13 +12,7 @@ import {
 } from '#lib/server/photos.ts';
 import { qrSvg } from '#lib/server/qr.ts';
 import { stockActionOptions, stockActions } from '#lib/server/stock-actions.ts';
-import {
-	canCheckOut,
-	canCollect,
-	canSeeLists,
-	canSetCondition,
-	isRepairer
-} from '#lib/roles.ts';
+import { canCheckOut, canCollect, canSeeLists, canSetCondition, isRepairer } from '#lib/roles.ts';
 import { REPAIR_CONDITIONS } from '#lib/server/stock-actions.ts';
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {

@@ -40,16 +40,22 @@ jobs:
             exit 1
           fi
       - name: Type check
+        if: ${{ !cancelled() }}
         run: npm run check
       - name: Unit tests
+        if: ${{ !cancelled() }}
         run: npm test
       - name: Apply migrations and seed
+        if: ${{ !cancelled() }}
         run: npm run db:deploy && npm run db:seed
       - name: Migrations match the schema
+        if: ${{ !cancelled() }}
         run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       - name: Build
+        if: ${{ !cancelled() }}
         run: npm run build
       - name: Smoke test with screenshots
+        if: ${{ !cancelled() }}
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium

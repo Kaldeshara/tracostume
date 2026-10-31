@@ -48,7 +48,8 @@
 
 <div class="mb-6 flex flex-wrap gap-2">
 	{#if data.items.length}
-		<button type="button" class="btn btn-primary" onclick={selectAll}>{m.lists_select_all()}</button>
+		<button type="button" class="btn btn-primary" onclick={selectAll}>{m.lists_select_all()}</button
+		>
 	{/if}
 	{#if canEdit && toAdd.length}
 		<form method="POST" action="?/addItems" use:enhance>
@@ -112,8 +113,7 @@
 					name="description"
 					rows="3"
 					maxlength="1000"
-					value={list.description ?? ''}
-				></textarea>
+					value={list.description ?? ''}></textarea>
 			</div>
 			{#if form?.invalid}<p class="text-sm text-red-700">{m.lists_invalid()}</p>{/if}
 			{#if form?.saved}<p class="text-sm text-emerald-700">{m.lists_saved()}</p>{/if}
