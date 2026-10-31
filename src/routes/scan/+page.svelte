@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { ItemCard } from '#lib/server/items.ts';
+	import { formatDateTime } from '#lib/format.ts';
+	import { offlineScan, type ScanResult } from '#lib/offline-scan.svelte.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import Location from '#lib/components/Location.svelte';
 	import QrScanner from '#lib/components/QrScanner.svelte';
@@ -11,10 +14,6 @@
 	let { data, form }: PageProps = $props();
 
 	type Box = { id: string; code: string; label: string; shelf: string | null };
-	type Lookup =
-		| { type: 'item'; item: ItemCard }
-		| { type: 'box'; box: Box & { _count: { items: number } } }
-		| { type: 'unknown'; code: string };
 
 	// "collect": build a list of scanned items (and a target box) to act on them together.
 	// "open": jump to the scanned item or box. Members can only open.
@@ -25,15 +24,38 @@
 	let message = $state<{ text: string; tone: 'ok' | 'warn' } | null>(null);
 	let manualCode = $state('');
 
+	onMount(() => {
+		// Keep the copy of pieces and boxes fresh, and send what was done offline.
+		if (data.stock && navigator.onLine) {
+			offlineScan.flush().then(() => offlineScan.refreshCatalogue());
+		}
+	});
+
+	/** Asks the server; without a connection, uses the copy kept on the phone. */
+	async function resolve(value: string): Promise<ScanResult> {
+		if (navigator.onLine) {
+			try {
+				const response = await fetch(`/scan/lookup?code=${encodeURIComponent(value)}`);
+				if (response.ok) return await response.json();
+			} catch {
+				// No connection after all: fall back to the copy.
+			}
+		}
+		return offlineScan.lookup(value);
+	}
+
 	async function lookup(value: string) {
-		const response = await fetch(`/scan/lookup?code=${encodeURIComponent(value)}`);
-		const result: Lookup = await response.json();
+		const result = await resolve(value);
 
 		if (result.type === 'unknown') {
 			message = { text: m.scan_unknown({ code: result.code }), tone: 'warn' };
 			return;
 		}
 		if (mode === 'open') {
+			if (!navigator.onLine) {
+				message = { text: m.scan_offline_open(), tone: 'warn' };
+				return;
+			}
 			goto(result.type === 'item' ? `/items/${result.item.id}` : `/boxes/${result.box.id}`);
 			return;
 		}
@@ -88,6 +110,52 @@
 			</div>
 		{/if}
 	</div>
+
+	{#if data.stock && (!offlineScan.online || offlineScan.queue.length)}
+		<div class="card flex flex-col gap-2 p-3 text-sm">
+			{#if !offlineScan.online}
+				<p class="font-medium text-amber-800">
+					{m.scan_offline()}
+					{#if offlineScan.catalogue}
+						<span class="font-normal text-stone-500">
+							· {m.scan_offline_copy({ date: formatDateTime(offlineScan.catalogue.savedAt) })}
+						</span>
+					{/if}
+				</p>
+			{/if}
+			{#if offlineScan.pending.length}
+				<div class="flex items-center gap-2">
+					<p class="flex-1">{m.scan_offline_pending({ count: offlineScan.pending.length })}</p>
+					{#if offlineScan.online}
+						<button
+							type="button"
+							class="btn py-1"
+							disabled={offlineScan.syncing}
+							onclick={() => offlineScan.flush()}>{m.scan_offline_send()}</button
+						>
+					{/if}
+				</div>
+			{/if}
+			{#each offlineScan.failed as entry (entry.id)}
+				<div class="flex items-center gap-2 rounded-lg bg-red-50 px-2 py-1 text-red-800">
+					<p class="flex-1">
+						{entry.error === 'signedOut'
+							? m.scan_offline_signed_out({ count: entry.count })
+							: m.scan_offline_refused({ count: entry.count, date: formatDateTime(entry.at) })}
+					</p>
+					<button type="button" class="btn py-1" onclick={() => offlineScan.retry(entry.id)}>
+						{m.scan_offline_retry()}
+					</button>
+					<button
+						type="button"
+						class="text-red-400"
+						aria-label="✕"
+						onclick={() => offlineScan.dismiss(entry.id)}>✕</button
+					>
+				</div>
+			{/each}
+		</div>
+	{/if}
 
 	<QrScanner onscan={lookup} />
 
@@ -168,6 +236,11 @@
 						const count = items.length;
 						reset();
 						message = { text: m.scan_done({ count }), tone: 'ok' };
+					}}
+					onoffline={(action, formData) => {
+						offlineScan.enqueue(action, formData);
+						reset();
+						message = { text: m.scan_offline_queued(), tone: 'warn' };
 					}}
 				/>
 			{/if}

@@ -478,6 +478,25 @@
 	"scan_manual_submit": "OK",
 	"scan_mode_collect": "In/out",
 	"scan_mode_open": "Look up",
+	"scan_offline": "No connection: offline mode.",
+	"scan_offline_copy": "pieces as of {date}",
+	"scan_offline_logout_confirm": "Actions done offline have not been sent yet and will be lost. Sign out anyway?",
+	"scan_offline_open": "No connection: the piece's page cannot be opened. Use \"In/out\" mode to record actions.",
+	"scan_offline_pending": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} action waiting to be sent",
+				"countPlural=other": "{count} actions waiting to be sent"
+			}
+		}
+	],
+	"scan_offline_queued": "No connection: saved on this phone, it will be sent as soon as the connection is back.",
+	"scan_offline_refused": "Refused by the server ({count} pieces, {date}): a piece may have been moved meanwhile. Check it, then retry or dismiss.",
+	"scan_offline_retry": "Retry",
+	"scan_offline_send": "Send now",
+	"scan_offline_signed_out": "Not sent: you were signed out. Sign in again, then retry ({count} pieces).",
 	"scan_starting": "Starting the camera…",
 	"scan_target_box": "Store in",
 	"scan_title": "Scan",

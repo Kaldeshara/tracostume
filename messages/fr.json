@@ -478,6 +478,25 @@
 	"scan_manual_submit": "OK",
 	"scan_mode_collect": "Entrées/sorties",
 	"scan_mode_open": "Consulter",
+	"scan_offline": "Pas de connexion : mode hors ligne.",
+	"scan_offline_copy": "pièces au {date}",
+	"scan_offline_logout_confirm": "Des actions faites hors ligne n'ont pas encore été envoyées et seront perdues. Se déconnecter quand même ?",
+	"scan_offline_open": "Pas de connexion : la fiche de la pièce ne peut pas s'ouvrir. Utilisez le mode « Entrées/sorties » pour enregistrer des actions.",
+	"scan_offline_pending": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} action en attente d'envoi",
+				"countPlural=other": "{count} actions en attente d'envoi"
+			}
+		}
+	],
+	"scan_offline_queued": "Pas de connexion : enregistré sur ce téléphone, ce sera envoyé dès le retour de la connexion.",
+	"scan_offline_refused": "Refusé par le serveur ({count} pièces, {date}) : une pièce a peut-être été déplacée entre-temps. Vérifiez, puis réessayez ou ignorez.",
+	"scan_offline_retry": "Réessayer",
+	"scan_offline_send": "Envoyer",
+	"scan_offline_signed_out": "Non envoyé : vous avez été déconnecté. Reconnectez-vous puis réessayez ({count} pièces).",
 	"scan_starting": "Démarrage de la caméra…",
 	"scan_target_box": "Ranger dans",
 	"scan_title": "Scanner",
