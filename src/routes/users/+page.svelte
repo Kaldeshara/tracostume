@@ -78,7 +78,9 @@
 							{copied ? m.users_reset_copied() : m.users_reset_copy()}
 						</button>
 						{#if user.phone}
-							<a class="btn" href={smsLink(user.phone, form.reset.url)}>{m.users_reset_send_sms()}</a>
+							<a class="btn" href={smsLink(user.phone, form.reset.url)}
+								>{m.users_reset_send_sms()}</a
+							>
 						{/if}
 					</div>
 				</div>
