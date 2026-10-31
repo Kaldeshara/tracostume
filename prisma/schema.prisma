@@ -129,6 +129,7 @@ model User {
 
   sessions       Session[]
   passwordResets PasswordReset[]
+  itemLists      ItemList[]
   borrowedLoans  Loan[]      @relation("LoanBorrower")
   createdLoans   Loan[]      @relation("LoanCreator")
   returnedLoans  Loan[]      @relation("LoanReturner")
@@ -225,6 +226,7 @@ model Item {
   tags      ItemTag[]
   loans     Loan[]
   movements Movement[]
+  lists     ItemListEntry[]
 
   @@index([boxId])
   @@index([category])
@@ -276,6 +278,41 @@ model ItemTag {
   tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([itemId, tagId])
+}
+
+/// SET: pieces worn together (dress + hat + boa). SHOW: everything prepared for one show.
+enum ItemListKind {
+  SET
+  SHOW
+}
+
+/// A named, shared list of pieces: a costume set or a show's preparation list. Loading it into the
+/// selection gives the usual "where are they?", map, labels and bulk check-out.
+model ItemList {
+  id          String       @id @default(cuid())
+  name        String
+  kind        ItemListKind @default(SHOW)
+  description String?
+  /// Date of the show, for SHOW lists.
+  date        DateTime?
+  createdById String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  createdBy User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  entries   ItemListEntry[]
+}
+
+model ItemListEntry {
+  listId  String
+  itemId  String
+  addedAt DateTime @default(now())
+
+  list ItemList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  item Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([listId, itemId])
+  @@index([itemId])
 }
 
 /// An item lent outside the container. Open while returnedAt is null.

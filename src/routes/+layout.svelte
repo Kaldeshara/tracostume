@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { PUBLIC_APP_NAME } from '$app/env/public';
 	import { m } from '#lib/paraglide/messages.js';
-	import { canManageStock, canManageUsers, canSeeContainer } from '#lib/roles.ts';
+	import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import { roleLabel } from '#lib/format.ts';
 	import LanguageSwitcher from '#lib/components/LanguageSwitcher.svelte';
@@ -67,6 +67,9 @@
 						class="card absolute right-0 mt-2 flex w-60 flex-col gap-1 p-2 text-sm"
 						onclick={() => (menuOpen = false)}
 					>
+						{#if canSeeLists(user.role)}
+							<a href="/lists" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_lists()}</a>
+						{/if}
 						{#if canSeeContainer(user.role)}
 							<a href="/map" class="rounded px-3 py-2 hover:bg-stone-100">{m.nav_map()}</a>
 						{/if}

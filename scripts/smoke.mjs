@@ -11,6 +11,7 @@ const PAGES = [
 	'/scan',
 	'/selection',
 	'/loans',
+	'/lists',
 	'/boxes',
 	'/map',
 	'/account',
@@ -36,6 +37,17 @@ for (const path of PAGES) {
 	await page.screenshot({ path: `${outDir}/${name}.png`, fullPage: true });
 	console.log(`${status} ${path}`);
 }
+
+// Create a show list and open it.
+await page.goto(`${base}/lists`);
+await page.getByRole('button', { name: /nouvelle liste/i }).click();
+await page.fill('input[name="name"]', 'Gala de juin');
+await Promise.all([
+	page.waitForURL(/\/lists\/[^/]+$/),
+	page.getByRole('button', { name: /enregistrer/i }).click()
+]);
+await page.screenshot({ path: `${outDir}/list.png`, fullPage: true });
+console.log(`list created: ${page.url()}`);
 
 await browser.close();
 if (problems.length) {

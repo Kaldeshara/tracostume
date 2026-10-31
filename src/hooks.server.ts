@@ -4,7 +4,7 @@ import { sequence, type Handle, type ServerInit } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
 import { getSessionUser } from '#lib/server/auth.ts';
-import { canManageStock, canManageUsers, canSeeContainer } from '#lib/roles.ts';
+import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
 import { warmUpSearch } from '#lib/server/embeddings.ts';
 import { building } from '$app/env';
 
@@ -33,7 +33,8 @@ const RESTRICTED: [prefix: string, allowed: (role: UserRole) => boolean][] = [
 	['/labels', canManageStock],
 	['/items/new', canManageStock],
 	['/boxes', canSeeContainer],
-	['/map', canSeeContainer]
+	['/map', canSeeContainer],
+	['/lists', canSeeLists]
 ];
 const EDIT_ITEM = /^\/items\/[^/]+\/edit$/;
 

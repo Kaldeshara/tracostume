@@ -290,6 +290,68 @@
 	"labels_print": "Imprimer les étiquettes",
 	"labels_size": "Taille du QR",
 	"labels_title": "Étiquettes QR",
+	"lists_add_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Ajouter la pièce sélectionnée",
+				"countPlural=other": "Ajouter les {count} pièces sélectionnées"
+			}
+		}
+	],
+	"lists_added": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce ajoutée.",
+				"countPlural=other": "{count} pièces ajoutées."
+			}
+		}
+	],
+	"lists_by": "par {name}",
+	"lists_date": "Date du spectacle",
+	"lists_delete": "Supprimer la liste",
+	"lists_delete_confirm": "Supprimer cette liste ? Les pièces elles-mêmes sont conservées.",
+	"lists_description": "Notes",
+	"lists_edit": "Modifier la liste",
+	"lists_empty": "Aucune tenue ni liste de spectacle pour l'instant.",
+	"lists_help": "Une tenue regroupe des pièces portées ensemble (robe + chapeau + boa). Une liste de spectacle contient tout ce qui est préparé pour un spectacle. Sélectionnez les pièces d'une liste pour savoir où elles sont, imprimer leurs étiquettes ou les sortir ensemble.",
+	"lists_invalid": "Donnez un nom à la liste.",
+	"lists_kind": "Type",
+	"lists_kind_set": "Tenue",
+	"lists_kind_show": "Spectacle",
+	"lists_name": "Nom",
+	"lists_new": "Nouvelle liste",
+	"lists_no_pieces": "Aucune pièce pour l'instant : sélectionnez des pièces dans la galerie ou avec le scanner, puis ajoutez-les ici.",
+	"lists_piece_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce",
+				"countPlural=other": "{count} pièces"
+			}
+		}
+	],
+	"lists_remove_piece": "Retirer de la liste",
+	"lists_save_selection": "Enregistrer comme liste",
+	"lists_saved": "Enregistré.",
+	"lists_select_all": "Sélectionner ces pièces",
+	"lists_sets": "Tenues",
+	"lists_shows": "Spectacles",
+	"lists_title": "Tenues et spectacles",
+	"lists_with_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Commencer avec la pièce sélectionnée",
+				"countPlural=other": "Commencer avec les {count} pièces sélectionnées"
+			}
+		}
+	],
 	"loan_collected": "Récupérée",
 	"loan_collected_by": "Récupérée par {name}",
 	"loan_overdue": "En retard",
@@ -367,6 +429,7 @@
 	"nav_gallery": "Galerie",
 	"nav_home": "Accueil",
 	"nav_labels": "Étiquettes QR",
+	"nav_lists": "Tenues et spectacles",
 	"nav_loans": "Emprunts",
 	"nav_logout": "Se déconnecter",
 	"nav_map": "Plan 3D",
