@@ -48,6 +48,25 @@ await Promise.all([
 await page.screenshot({ path: `${outDir}/list.png`, fullPage: true });
 console.log(`list created: ${page.url()}`);
 
+// Reset Léa's password with a one-time link, then sign in as her with the new password.
+await page.goto(`${base}/users`, { waitUntil: 'networkidle' });
+await page
+	.locator('li', { hasText: 'lea@example.com' })
+	.getByRole('button', { name: /réinitialisation/i })
+	.click();
+const resetUrl = await page.locator('input[readonly]').inputValue();
+const visitor = await browser.newPage({ viewport: { width: 390, height: 844 }, locale: 'fr-FR' });
+visitor.on('pageerror', (err) => problems.push(`${visitor.url()}: ${err.message}`));
+await visitor.goto(resetUrl.replace(/^https?:\/\/[^/]+/, base), { waitUntil: 'networkidle' });
+await visitor.screenshot({ path: `${outDir}/reset.png`, fullPage: true });
+await visitor.fill('input[name="password"]', 'nouveau-mot-de-passe');
+await visitor.fill('input[name="confirm"]', 'nouveau-mot-de-passe');
+await Promise.all([
+	visitor.waitForURL((url) => url.pathname === '/'),
+	visitor.getByRole('button', { name: /enregistrer/i }).click()
+]);
+console.log('password reset by link: signed in as Léa');
+
 await browser.close();
 if (problems.length) {
 	console.error(problems.join('\n'));
