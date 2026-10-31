@@ -35,7 +35,7 @@ jobs:
         run: |
           if ! npm run lint; then
             echo '::group::Formatting diff (prettier --write)'
-            npx prettier --write . > /dev/null && git diff
+            npx prettier --write . > /dev/null && git diff | tee formatting.diff
             echo '::endgroup::'
             exit 1
           fi
@@ -66,6 +66,9 @@ jobs:
       - name: Server log
         if: always()
         run: cat server.log || true
+      - name: Formatting diff (again, at the end of the log)
+        if: always()
+        run: cat formatting.diff 2>/dev/null || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -39,8 +39,7 @@ for (const path of PAGES) {
 }
 
 // Create a show list and open it.
-await page.goto(`${base}/lists`);
-await page.getByRole('button', { name: /nouvelle liste/i }).click();
+await page.goto(`${base}/lists?fromSelection=1`, { waitUntil: 'networkidle' });
 await page.fill('input[name="name"]', 'Gala de juin');
 await Promise.all([
 	page.waitForURL(/\/lists\/[^/]+$/),
