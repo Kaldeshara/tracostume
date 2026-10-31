@@ -19,7 +19,13 @@ export const GET: RequestHandler = async ({ locals }) => {
 			select: itemCardSelect
 		}),
 		prisma.box.findMany({
-			select: { id: true, code: true, label: true, shelf: true, _count: { select: { items: true } } }
+			select: {
+				id: true,
+				code: true,
+				label: true,
+				shelf: true,
+				_count: { select: { items: true } }
+			}
 		})
 	]);
 	return json({ items: items.map(toItemCard), boxes, savedAt: new Date().toISOString() });
