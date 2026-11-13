@@ -1,0 +1,98 @@
+# Tracostume production on the VPS: tailnet only, through its own Tailscale node
+# (https://tracostume.<tailnet>.ts.net), so the installed web app has its own origin.
+#   deploy/deploy.sh              build, migrate, restart
+#   deploy/deploy.sh tools <cmd>  run a command in the tools image (e.g. the Drive import)
+name: tracostume-prod
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tracostume
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: tracostume
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tracostume -d tracostume']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Applies pending migrations, then exits; the app starts only after it succeeds.
+  migrate:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: tools
+    image: tracostume-tools:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: &database_url postgresql://tracostume:${POSTGRES_PASSWORD}@db:5432/tracostume
+    command: ['npx', 'prisma', 'migrate', 'deploy']
+    restart: 'no'
+
+  # One-off scripts: `docker compose run --rm tools npx tsx scripts/import-drive.ts`.
+  tools:
+    profiles: [tools]
+    image: tracostume-tools:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: *database_url
+      UPLOADS_DIR: /data/uploads
+    volumes:
+      - uploads:/data/uploads
+      - ../data/import:/app/data/import:ro
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: app
+    image: tracostume:latest
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: *database_url
+      PUBLIC_APP_NAME: ${PUBLIC_APP_NAME:-Tracostume}
+      REGISTERING_PASSWORD: ${REGISTERING_PASSWORD:-}
+      BODY_SIZE_LIMIT: 10M
+      TZ: Europe/Paris
+    volumes:
+      - uploads:/data/uploads
+      - models:/data/models
+    # Host loopback only, for local checks; the tailnet reaches the app through `tailscale`.
+    ports:
+      - '127.0.0.1:3002:3000'
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+
+  # Own machine on the tailnet. Userspace mode: no extra capabilities. Funnel is off.
+  tailscale:
+    image: tailscale/tailscale:v1.104.4@sha256:ed6480b33c6eb67c9cbd203ed42b9fb57e361986725b6856def71b7a3d9e276c
+    hostname: tracostume
+    restart: unless-stopped
+    depends_on: [app]
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:-}
+      TS_AUTH_ONCE: 'true'
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: 'true'
+      TS_SERVE_CONFIG: /config/serve.json
+    volumes:
+      - ts-state:/var/lib/tailscale
+      - ./tailscale-serve.json:/config/serve.json:ro
+
+volumes:
+  db-data:
+  uploads:
+  models:
+  ts-state:

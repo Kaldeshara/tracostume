@@ -121,6 +121,27 @@ choose **Share → Add to Home Screen**.
 | `npm run db:migrate` / `db:deploy` | Create and apply migrations (dev) / apply them (production) |
 | `npm run db:seed` / `db:studio`    | Demo data / Prisma Studio                                   |
 
+## Deployment (VPS, tailnet only)
+
+Production runs on the VPS with Docker Compose (`deploy/`): PostgreSQL, the app, and its own
+Tailscale node, so the site lives at `https://tracostume.<tailnet>.ts.net` and is reachable only
+from the tailnet (Funnel off; the app port is published on `127.0.0.1:3002` for local checks only).
+Photos and the search model are kept in Docker volumes; no bucket is needed.
+
+1. `cp deploy/.env.example deploy/.env`, set `POSTGRES_PASSWORD` (`openssl rand -hex 24`) and
+   `TS_AUTHKEY` (a one-off, pre-approved key from the Tailscale admin console; it is used once,
+   the node identity then lives in the `ts-state` volume).
+2. `deploy/deploy.sh` builds the images, applies migrations and (re)starts everything.
+3. Open the site from a tailnet device and register: the first account is the owner.
+
+One-off scripts run in the tools image against production, with `data/import/` mounted read-only:
+
+```bash
+deploy/deploy.sh tools npx tsx scripts/import-drive.ts
+deploy/deploy.sh tools npx tsx scripts/enrich-tags.ts
+deploy/deploy.sh backup     # pg_dump into deploy/backups/
+```
+
 ## Deployment (Railway)
 
 1. Create a PostgreSQL database and a Storage Bucket, and add the bucket's AWS SDK variable preset

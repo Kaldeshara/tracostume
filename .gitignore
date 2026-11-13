@@ -37,3 +37,4 @@ project.inlang/cache/
 
 # Container photos (reference only)
 /assets/
+/deploy/backups/

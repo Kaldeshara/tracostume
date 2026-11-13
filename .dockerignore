@@ -1,0 +1,12 @@
+node_modules
+build
+.svelte-kit
+.git
+.env
+.env.*
+!.env.example
+data
+deploy/.env
+deploy/backups
+src/generated
+src/lib/paraglide
