@@ -14,7 +14,6 @@ const schema = z.object({
 	firstName: z.string().trim().min(1).max(100),
 	lastName: z.string().trim().min(1).max(100),
 	email: z.string().trim().toLowerCase().pipe(z.email()),
-	phone: z.string().trim().max(40).optional(),
 	password: z.string().min(8).max(200)
 });
 
@@ -29,8 +28,7 @@ export const actions: Actions = {
 		const values = {
 			firstName: form.firstName ?? '',
 			lastName: form.lastName ?? '',
-			email: form.email ?? '',
-			phone: form.phone ?? ''
+			email: form.email ?? ''
 		};
 
 		if (!registrationPasswordMatches(form.registeringPassword)) {
@@ -51,7 +49,6 @@ export const actions: Actions = {
 		const user = await prisma.user.create({
 			data: {
 				...data,
-				phone: data.phone || null,
 				role: isFirst ? 'OWNER' : 'DANCER',
 				passwordHash: await bcrypt.hash(password, 12)
 			}

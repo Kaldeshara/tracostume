@@ -65,17 +65,6 @@
 			/>
 		</div>
 		<div>
-			<label class="label" for="phone">{m.field_phone()}</label>
-			<input
-				class="input"
-				id="phone"
-				name="phone"
-				type="tel"
-				autocomplete="tel"
-				value={form?.values.phone ?? ''}
-			/>
-		</div>
-		<div>
 			<label class="label" for="password">{m.field_password()}</label>
 			<input
 				class="input"
