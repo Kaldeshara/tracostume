@@ -8,9 +8,25 @@ import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#l
 import { warmUpSearch } from '#lib/server/embeddings.ts';
 import { startReminders } from '#lib/server/reminders.ts';
 import { building } from '$app/env';
+import {
+	htmlAttributes,
+	parseSidebarCollapsed,
+	parseThemePreference,
+	SIDEBAR_COOKIE,
+	THEME_COOKIE,
+	themeHtml
+} from '#lib/theme.ts';
 
-const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
+const handleParaglide: Handle = ({ event, resolve }) => {
+	// The theme is rendered on the server so the first paint already has the right colours.
+	// Same for the desktop sidebar width, so the page does not jump on load.
+	const preference = parseThemePreference(event.cookies.get(THEME_COOKIE));
+	const attributes = htmlAttributes(
+		preference,
+		parseSidebarCollapsed(event.cookies.get(SIDEBAR_COOKIE))
+	);
+	const { themeColorMeta } = themeHtml(preference);
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
 		return resolve(
 			{ ...event, request },
 			{
@@ -18,9 +34,12 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 					html
 						.replace('%paraglide.lang%', locale)
 						.replace('%paraglide.dir%', getTextDirection(locale))
+						.replace('%tracostume.theme%', attributes)
+						.replace('%tracostume.themeColor%', themeColorMeta)
 			}
 		);
 	});
+};
 
 // Everything is private except these pages (and static files, which never reach the hook).
 const PUBLIC_PATHS = ['/login', '/register'];

@@ -12,6 +12,7 @@
 	import { canManageStock } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import ItemCard from '#lib/components/ItemCard.svelte';
+	import FilterSheet from '#lib/components/FilterSheet.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -70,13 +71,42 @@
 		enterkeyhint="search"
 	/>
 	<button class="btn btn-primary">{m.gallery_search()}</button>
-	<button type="button" class="btn" onclick={() => (showFilters = !showFilters)}>
-		{m.gallery_filters()}{activeFilterCount ? ` (${activeFilterCount})` : ''}
+	<button
+		type="button"
+		aria-haspopup="dialog"
+		aria-label={m.gallery_filters_count({ count: activeFilterCount })}
+		title={m.gallery_filters()}
+		class="relative inline-flex min-h-10 min-w-10 items-center justify-center gap-2 rounded-lg border text-sm font-medium transition md:px-3 {activeFilterCount
+			? 'border-stone-900 bg-stone-900 text-white hover:bg-stone-700'
+			: 'border-stone-300 bg-white text-stone-900 hover:bg-stone-100'}"
+		onclick={() => (showFilters = true)}
+	>
+		<svg
+			viewBox="0 0 24 24"
+			class="h-5 w-5"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.75"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<path d="M3 5h18l-7 8.5V19l-4 2v-7.5Z" />
+		</svg>
+		<span class="hidden md:inline">{m.gallery_filters()}</span>
+		{#if activeFilterCount}
+			<span
+				aria-hidden="true"
+				class="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1 text-[11px] font-semibold text-white ring-2 ring-white"
+			>
+				{activeFilterCount}
+			</span>
+		{/if}
 	</button>
 </form>
 
-{#if showFilters || activeFilterCount}
-	<div class="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+<FilterSheet bind:open={showFilters} title={m.gallery_filters()}>
+	<div class="grid gap-3">
 		<select class="input" name="category" value={data.filters.category} onchange={applyFilter}>
 			<option value="">{m.filter_all_categories()}</option>
 			{#each CATEGORY_GROUPS as group (group)}
@@ -105,7 +135,7 @@
 				>{/each}
 		</select>
 	</div>
-{/if}
+</FilterSheet>
 
 <div class="mb-3 flex flex-wrap items-center gap-3 text-sm text-stone-600">
 	<span
