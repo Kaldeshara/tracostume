@@ -96,15 +96,19 @@
 	<div class="flex items-center gap-2">
 		<h1 class="flex-1">{m.scan_title()}</h1>
 		{#if data.stock}
-			<div class="flex rounded-lg border border-stone-300 bg-white p-0.5 text-sm">
+			<div role="radiogroup" aria-label={m.scan_title()} class="segmented">
 				<button
 					type="button"
-					class="rounded-md px-3 py-1 {mode === 'collect' ? 'bg-brand-700 text-white' : ''}"
+					role="radio"
+					aria-checked={mode === 'collect'}
+					class="segmented-option"
 					onclick={() => (chosenMode = 'collect')}>{m.scan_mode_collect()}</button
 				>
 				<button
 					type="button"
-					class="rounded-md px-3 py-1 {mode === 'open' ? 'bg-brand-700 text-white' : ''}"
+					role="radio"
+					aria-checked={mode === 'open'}
+					class="segmented-option"
 					onclick={() => (chosenMode = 'open')}>{m.scan_mode_open()}</button
 				>
 			</div>

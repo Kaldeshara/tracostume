@@ -18,7 +18,6 @@
 	import type { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 	import type { BoxKind, DoorSide } from '../../generated/prisma/enums';
 	import { m } from '#lib/paraglide/messages.js';
-	import { KIND_ICONS } from '#lib/format.ts';
 
 	// 3D view of the container. Units are centimetres. Positions are a unit's back-left-bottom
 	// corner measured from the container's back-left floor corner. posX runs along the width,
@@ -62,7 +61,7 @@
 
 	const SNAP_CM = 5;
 	const CLICK_TOLERANCE_PX = 6;
-	const BRAND = 0x7c2d5b;
+	const BRAND = 0x4a3a6b; // stage aubergine, lifted to read on the 3D scene
 	const AMBER = 0xf59e0b;
 
 	type Entry = {
@@ -587,7 +586,7 @@
 						: 'bg-white/95 text-stone-800'
 			}`;
 			const full = count || selected;
-			entry.labelEl.textContent = `${KIND_ICONS[box.kind]} ${full ? `${box.code} · ${box.label}` : box.label}${count ? ` (${count})` : ''}`;
+			entry.labelEl.textContent = `${full ? `${box.code} · ${box.label}` : box.label}${count ? ` (${count})` : ''}`;
 			entry.label.visible = !!full || hovered || labelsWereForAll;
 		}
 

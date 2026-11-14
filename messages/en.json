@@ -106,7 +106,7 @@
 	"condition_to_repair": "To repair",
 	"condition_to_wash": "To wash",
 	"contact_none": "None (returned straight to the container)",
-	"container_dimensions_hint": "Inside dimensions in centimetres, used for the future 3D view.",
+	"container_dimensions_hint": "Inside dimensions in centimetres, used for the 3D map.",
 	"door_back": "Back",
 	"door_front": "Front",
 	"door_left": "Left",
@@ -426,6 +426,7 @@
 	"movement_returned": "Returned",
 	"movement_stored": "Stored",
 	"nav_account": "My account",
+	"nav_back": "Back",
 	"nav_boxes": "Boxes",
 	"nav_collapse_sidebar": "Collapse the menu",
 	"nav_container": "Container",
@@ -486,7 +487,7 @@
 	"push_test_body": "Reminders work on this phone.",
 	"push_test_failed": "The test could not be sent.",
 	"push_test_sent": "Test sent: it should appear in a few seconds.",
-	"push_test_title": "Tracostume",
+	"push_test_title": "TRACostume",
 	"push_title": "Reminders on this phone",
 	"push_to_collect": [
 		{

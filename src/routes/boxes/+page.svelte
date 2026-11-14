@@ -3,7 +3,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { canManageStock } from '#lib/roles.ts';
 	import BoxFields from '#lib/components/BoxFields.svelte';
-	import { KIND_ICONS } from '#lib/format.ts';
+	import KindIcon from '#lib/components/KindIcon.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -21,6 +21,8 @@
 			`${box.code} ${box.label} ${box.shelf ?? ''} ${box.description ?? ''}`.toLowerCase();
 		return text.includes(filter.trim().toLowerCase());
 	};
+	import Fab from '#lib/components/Fab.svelte';
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <svelte:head><title>{m.boxes_title()}</title></svelte:head>
@@ -29,9 +31,14 @@
 	<h1 class="flex-1">{m.boxes_title()}</h1>
 	<a href="/map" class="btn">{m.nav_map()}</a>
 	{#if canManageStock(data.user?.role)}
-		<button type="button" class="btn btn-primary" onclick={() => (creating = !creating)}>
-			+ {m.box_new()}
+		<button
+			type="button"
+			class="btn btn-primary hidden lg:inline-flex"
+			onclick={() => (creating = !creating)}
+		>
+			<NavIcon name="add" class="h-4 w-4" />{m.box_new()}
 		</button>
+		<Fab label={m.box_new()} onclick={() => (creating = true)} />
 	{/if}
 </div>
 
@@ -52,7 +59,7 @@
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 			{#each container.boxes.filter(matches) as box (box.id)}
 				<a href="/boxes/{box.id}" class="card flex items-center gap-3 p-4 hover:border-brand-200">
-					<span class="text-3xl">{KIND_ICONS[box.kind]}</span>
+					<KindIcon kind={box.kind} class="h-8 w-8 shrink-0 text-stone-500" />
 					<div class="min-w-0 flex-1">
 						<div class="truncate font-medium">{box.label}</div>
 						<div class="text-xs text-stone-500">

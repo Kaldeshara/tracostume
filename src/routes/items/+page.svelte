@@ -41,6 +41,8 @@
 	}
 
 	const selectAllVisible = () => selection.add(...data.groups.flatMap((group) => group.ids));
+	import Fab from '#lib/components/Fab.svelte';
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <svelte:head><title>{m.gallery_title()}</title></svelte:head>
@@ -48,7 +50,10 @@
 <div class="mb-4 flex flex-wrap items-center gap-3">
 	<h1 class="flex-1">{m.gallery_title()}</h1>
 	{#if canManageStock(data.user?.role)}
-		<a href="/items/new" class="btn btn-primary">+ {m.item_new()}</a>
+		<a href="/items/new" class="btn btn-primary hidden lg:inline-flex"
+			><NavIcon name="add" class="h-4 w-4" />{m.item_new()}</a
+		>
+		<Fab href="/items/new" label={m.item_new()} />
 	{/if}
 </div>
 

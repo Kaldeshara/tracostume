@@ -5,6 +5,7 @@
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <div class="flex flex-col gap-6">
@@ -21,31 +22,41 @@
 		<button class="btn btn-primary px-5">{m.gallery_search()}</button>
 	</form>
 
-	<a href="/scan" class="card flex items-center gap-4 bg-brand-700 p-5 text-white md:hidden">
-		<span class="text-4xl">⌗</span>
+	<!-- Tracster's stage block: the page's one dark, highlighted call to action. -->
+	<a
+		href="/scan"
+		class="flex items-center gap-4 rounded-2xl bg-stage p-5 text-[#fff] shadow-lg transition active:scale-[0.99] md:hidden"
+	>
+		<span
+			class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-spotlight text-spotlight-ink"
+		>
+			<NavIcon name="scan" class="h-6 w-6" />
+		</span>
 		<div>
 			<div class="text-lg font-semibold">{m.home_scan()}</div>
-			<div class="text-sm text-brand-100">{m.home_scan_help()}</div>
+			<div class="text-sm text-[#fff]/70">{m.home_scan_help()}</div>
 		</div>
 	</a>
 
 	<div class="grid grid-cols-2 gap-3 md:grid-cols-4">
 		<a href="/items" class="card p-4">
-			<div class="text-3xl font-semibold">{data.stats.itemCount}</div>
+			<div class="text-4xl font-display tabular-nums">{data.stats.itemCount}</div>
 			<div class="text-sm text-stone-600">{m.home_stat_items()}</div>
 		</a>
 		<a href="/items?status=out" class="card p-4">
-			<div class="text-3xl font-semibold">{data.stats.outCount}</div>
+			<div class="text-4xl font-display tabular-nums">{data.stats.outCount}</div>
 			<div class="text-sm text-stone-600">{m.home_stat_out()}</div>
 		</a>
 		<a href="/loans" class="card p-4 {data.stats.overdueCount ? 'border-red-200 bg-red-50' : ''}">
-			<div class="text-3xl font-semibold {data.stats.overdueCount ? 'text-red-700' : ''}">
+			<div
+				class="text-4xl font-display tabular-nums {data.stats.overdueCount ? 'text-red-700' : ''}"
+			>
 				{data.stats.overdueCount}
 			</div>
 			<div class="text-sm text-stone-600">{m.home_stat_overdue()}</div>
 		</a>
 		<a href="/items?condition=TO_REPAIR" class="card p-4">
-			<div class="text-3xl font-semibold">{data.stats.attentionCount}</div>
+			<div class="text-4xl font-display tabular-nums">{data.stats.attentionCount}</div>
 			<div class="text-sm text-stone-600">{m.home_stat_attention()}</div>
 		</a>
 	</div>
@@ -144,15 +155,17 @@
 
 	{#if data.keeper}
 		<section class="grid grid-cols-1 gap-3 md:grid-cols-3">
-			<a href="/items/new" class="card p-4 hover:border-brand-200">
-				<div class="font-semibold">+ {m.item_new()}</div>
+			<a href="/items/new" class="card p-4 transition hover:shadow-md">
+				<div class="flex items-center gap-2 font-semibold">
+					<NavIcon name="add" class="h-4 w-4" />{m.item_new()}
+				</div>
 				<div class="text-sm text-stone-600">{m.home_new_item_help()}</div>
 			</a>
-			<a href="/loans" class="card p-4 hover:border-brand-200">
+			<a href="/loans" class="card p-4 transition hover:shadow-md">
 				<div class="font-semibold">{m.loans_title()}</div>
 				<div class="text-sm text-stone-600">{m.home_loans_help()}</div>
 			</a>
-			<a href="/map" class="card p-4 hover:border-brand-200">
+			<a href="/map" class="card p-4 transition hover:shadow-md">
 				<div class="font-semibold">{m.nav_map()}</div>
 				<div class="text-sm text-stone-600">{m.home_boxes_help()}</div>
 			</a>

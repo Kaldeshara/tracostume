@@ -5,7 +5,8 @@
 	import { selection } from '#lib/selection.svelte.ts';
 	import BoxFields from '#lib/components/BoxFields.svelte';
 	import ItemCard from '#lib/components/ItemCard.svelte';
-	import { kindLabel, KIND_ICONS } from '#lib/format.ts';
+	import { kindLabel } from '#lib/format.ts';
+	import KindIcon from '#lib/components/KindIcon.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -17,6 +18,7 @@
 	function confirmDelete(event: SubmitEvent) {
 		if (!confirm(m.box_delete_confirm())) event.preventDefault();
 	}
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <svelte:head><title>{box.label}</title></svelte:head>
@@ -24,7 +26,7 @@
 <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-start">
 	<div class="flex-1">
 		<p class="text-sm text-stone-500">
-			{KIND_ICONS[box.kind]}
+			<KindIcon kind={box.kind} class="inline h-4 w-4 align-[-2px]" />
 			{kindLabel(box.kind)} · {box.container.name}{box.shelf ? ` · ${box.shelf}` : ''}
 		</p>
 		<h1>{box.label}</h1>
@@ -42,7 +44,9 @@
 			{/if}
 			<a class="btn" href="/map?box={box.id}">{m.map_open()}</a>
 			{#if keeper}
-				<a class="btn" href="/items/new?box={box.id}">+ {m.item_new()}</a>
+				<a class="btn" href="/items/new?box={box.id}"
+					><NavIcon name="add" class="h-4 w-4" />{m.item_new()}</a
+				>
 				<a class="btn" href="/labels?boxes={box.id}">{m.labels_print()}</a>
 				<button type="button" class="btn" onclick={() => (editing = !editing)}
 					>{m.action_edit()}</button

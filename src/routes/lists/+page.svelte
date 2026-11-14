@@ -18,6 +18,8 @@
 		{ title: m.lists_shows(), lists: data.lists.filter((list) => list.kind === 'SHOW') },
 		{ title: m.lists_sets(), lists: data.lists.filter((list) => list.kind === 'SET') }
 	]);
+	import Fab from '#lib/components/Fab.svelte';
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <svelte:head><title>{m.lists_title()}</title></svelte:head>
@@ -25,9 +27,14 @@
 <div class="mb-4 flex flex-wrap items-center gap-3">
 	<h1 class="flex-1">{m.lists_title()}</h1>
 	{#if canEdit && !creating}
-		<button type="button" class="btn btn-primary" onclick={() => (creating = true)}>
-			{m.lists_new()}
+		<button
+			type="button"
+			class="btn btn-primary hidden lg:inline-flex"
+			onclick={() => (creating = true)}
+		>
+			<NavIcon name="add" class="h-4 w-4" />{m.lists_new()}
 		</button>
+		<Fab label={m.lists_new()} onclick={() => (creating = true)} />
 	{/if}
 </div>
 <p class="mb-4 text-sm text-stone-600">{m.lists_help()}</p>

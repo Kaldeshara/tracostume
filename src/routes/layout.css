@@ -1,11 +1,31 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/geist';
+@import '@fontsource-variable/archivo/wdth.css';
 @plugin '@tailwindcss/forms';
 
-/* Tracster's art direction: warm stone neutrals, near-black primary, Geist. The brand scale
-   maps onto stone so pages keep using brand-* for "the accent". */
+/*
+ * Shared art direction with Tracster (the troupe's planning app); keep both in step.
+ * "Rehearsal call sheet" palette: the neutral scale is tinted towards aubergine (ink #231B33
+ * at 900) over a cool studio white (50). Dark mode mirrors it below. Accents: spotlight amber
+ * (today, highlights), velvet (destructive), stage (the + button and hero blocks).
+ */
 @theme {
-	--font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-sans: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+	--color-stone-50: oklch(97.2% 0.004 285);
+	--color-stone-100: oklch(94.6% 0.008 290);
+	--color-stone-200: oklch(90.4% 0.012 292);
+	--color-stone-300: oklch(83.5% 0.018 295);
+	--color-stone-400: oklch(68.5% 0.026 297);
+	--color-stone-500: oklch(54.5% 0.032 299);
+	--color-stone-600: oklch(44.5% 0.037 300);
+	--color-stone-700: oklch(35.5% 0.042 302);
+	--color-stone-800: oklch(28.5% 0.045 303);
+	--color-stone-900: oklch(22.9% 0.044 302);
+	--color-stone-950: oklch(16% 0.035 304);
+	--color-spotlight: #ffb000;
+	--color-spotlight-ink: #3d2a00;
+	--color-velvet: #8c2a46;
+	--color-stage: #231b33;
+	/* Pages still say brand-* for "the accent": it is the ink. */
 	--color-brand-50: var(--color-stone-100);
 	--color-brand-100: var(--color-stone-200);
 	--color-brand-200: var(--color-stone-300);
@@ -14,10 +34,38 @@
 	--color-brand-600: var(--color-stone-700);
 	--color-brand-700: var(--color-stone-900);
 	--color-brand-800: var(--color-stone-950);
+	/*
+	 * Motion: one curve for everything that moves, and three durations — short (exits, small
+	 * things), medium (sheets, menus), long (entrances).
+	 */
+	--ease-stage: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--duration-short: 150ms;
+	--duration-medium: 220ms;
+	--duration-long: 320ms;
+}
+
+/* Titles: Archivo condensed and heavy, like a show poster. */
+@utility font-display {
+	font-stretch: 72%;
+	font-weight: 800;
+	letter-spacing: -0.005em;
 }
 
 html {
 	overflow-x: clip;
+}
+
+/* Pages with the floating "+": extra room at the end so nothing stays hidden under it. */
+@media (max-width: 1023px) {
+	body:has([data-fab]) #main {
+		padding-bottom: calc(10rem + env(safe-area-inset-bottom));
+	}
+
+	/* Keyboard focus never lands under the sticky header or the bottom tab bar. */
+	html {
+		scroll-padding-top: 4.5rem;
+		scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+	}
 }
 
 @layer base {
@@ -25,45 +73,95 @@ html {
 		@apply bg-stone-50 text-stone-900 antialiased;
 	}
 	h1 {
-		@apply text-2xl font-semibold tracking-tight break-words sm:text-3xl;
+		@apply text-3xl font-display break-words sm:text-4xl;
 	}
 	h2 {
-		@apply text-lg font-semibold;
+		@apply text-lg font-semibold tracking-tight;
+	}
+
+	/* Tailwind v4 dropped the hand cursor on buttons: bring it back for everything clickable. */
+	button:not(:disabled),
+	[role='button']:not([aria-disabled='true']),
+	select:not(:disabled),
+	summary {
+		cursor: pointer;
+	}
+
+	/* Visible keyboard focus everywhere (also on dark buttons, thanks to the offset). */
+	:focus-visible {
+		outline: 2px solid var(--color-stone-900);
+		outline-offset: 2px;
+	}
+
+	/* No double-tap zoom delay on controls; no grey flash on tap. */
+	a,
+	button,
+	input,
+	select,
+	textarea,
+	label,
+	[role='button'] {
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
 	}
 }
 
+/* Checkboxes and radios in the app's ink colour (mirrored in dark mode like the palette). */
+input[type='checkbox'],
+input[type='radio'] {
+	accent-color: var(--color-stone-900);
+}
+
+/* Same classes as Tracster's ui.tsx components (Button, Field, Card). */
 @layer components {
 	.btn {
-		@apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm transition hover:bg-stone-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+		@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-900 transition hover:bg-stone-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
 	}
 	.btn-primary {
 		@apply border-stone-900 bg-stone-900 text-white hover:bg-stone-700;
 	}
 	.btn-danger {
-		@apply border-red-300 text-red-700 hover:bg-red-50;
+		@apply border-red-700 bg-red-700 text-white hover:bg-red-800;
+	}
+	.btn-ghost {
+		@apply border-transparent bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900;
 	}
 	.input {
-		@apply block w-full rounded-lg border-stone-300 bg-white text-sm text-stone-900 shadow-sm focus:border-stone-500 focus:ring-stone-500;
+		@apply block min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-xs transition outline-none placeholder:text-stone-400 focus:border-stone-900 focus:ring-3 focus:ring-stone-900/15 disabled:bg-stone-100 disabled:text-stone-500 sm:text-sm;
+	}
+	/* Room for the select arrow drawn by the forms plugin. */
+	select.input {
+		@apply pr-9;
 	}
 	.label {
-		@apply mb-1 block text-sm font-medium text-stone-700;
+		@apply mb-1.5 block text-sm font-medium text-stone-800;
 	}
 	.card {
-		@apply rounded-xl border border-stone-200 bg-white shadow-sm;
+		@apply rounded-xl border border-stone-200 bg-white;
 	}
 	.chip {
-		@apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+		@apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
 	}
 	.link {
 		@apply font-medium text-stone-900 underline underline-offset-2 hover:text-stone-600;
 	}
+	/* Tracster's SegmentedControl: one look for every either/or switch. */
+	.segmented {
+		@apply flex gap-0.5 rounded-xl border border-stone-200 bg-white p-0.5;
+	}
+	.segmented-option {
+		@apply inline-flex min-h-11 flex-1 items-center justify-center rounded-lg px-3 text-sm font-medium whitespace-nowrap text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 aria-checked:bg-stone-900 aria-checked:text-white aria-pressed:bg-stone-900 aria-pressed:text-white;
+	}
+	.empty-state {
+		@apply rounded-xl border border-dashed border-stone-300 px-4 py-6 text-center text-sm text-stone-500;
+	}
 }
 
 /*
- * Dark theme, ported from Tracster: pages use Tailwind's light palette classes (bg-white,
+ * Dark theme, from Tracster: pages use Tailwind's light palette classes (bg-white,
  * text-stone-900, bg-amber-100...), so instead of `dark:` variants the palette variables are
  * mirrored: light shades become dark and vice versa, which keeps every text/background pair
- * readable. White maps to the card colour, stone-50 to the page; black is left as is (overlays,
+ * readable. White maps to the card colour, stone-50 to the page; black is left as is (scrims,
  * camera). Screen only: printed labels stay black on white.
  */
 :root {
@@ -81,18 +179,19 @@ html {
 
 @media screen and (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
-		--color-white: oklch(21.6% 0.006 56.043);
-		--color-stone-50: oklch(14.7% 0.004 49.25);
-		--color-stone-100: oklch(26.8% 0.007 34.298);
-		--color-stone-200: color-mix(in oklab, oklch(37.4% 0.01 67.558) 45%, oklch(26.8% 0.007 34.298));
-		--color-stone-300: oklch(37.4% 0.01 67.558);
-		--color-stone-400: oklch(44.4% 0.011 73.639);
-		--color-stone-500: oklch(70.9% 0.01 56.259);
-		--color-stone-600: oklch(86.9% 0.005 56.366);
-		--color-stone-700: oklch(92.3% 0.003 48.717);
-		--color-stone-800: oklch(97% 0.001 106.424);
-		--color-stone-900: oklch(98.5% 0.001 106.423);
+		--color-white: oklch(22% 0.024 300);
+		--color-stone-50: oklch(16.2% 0.02 300);
+		--color-stone-100: oklch(27% 0.028 300);
+		--color-stone-200: color-mix(in oklab, oklch(38% 0.032 300) 45%, oklch(27% 0.028 300));
+		--color-stone-300: oklch(38% 0.032 300);
+		--color-stone-400: oklch(46% 0.03 300);
+		--color-stone-500: oklch(71% 0.02 298);
+		--color-stone-600: oklch(86.5% 0.012 296);
+		--color-stone-700: oklch(92.5% 0.008 294);
+		--color-stone-800: oklch(96.8% 0.004 290);
+		--color-stone-900: oklch(98.6% 0.002 290);
 		--color-stone-950: #fff;
+		--color-stage: oklch(32% 0.07 302);
 		--color-red-50: color-mix(in oklab, oklch(39.6% 0.141 25.723) 22%, oklch(21.6% 0.006 56.043));
 		--color-red-100: color-mix(in oklab, oklch(39.6% 0.141 25.723) 45%, oklch(21.6% 0.006 56.043));
 		--color-red-200: color-mix(in oklab, oklch(50.5% 0.213 27.518) 45%, oklch(26.8% 0.007 34.298));
@@ -331,35 +430,36 @@ html {
 	}
 
 	:root:not([data-theme='light']) .autumn-header {
-		background: linear-gradient(180deg, #1c1917 0%, #261a12 45%, #4a230d 100%);
+		background: linear-gradient(180deg, #1b1724 0%, #22182a 45%, #3d2216 100%);
 	}
 
 	:root:not([data-theme='light']) .autumn-surface {
 		background: linear-gradient(
 			165deg,
-			#1f1510 0%,
-			#22170f 18%,
-			#1d1810 32%,
-			#0c0a09 55%,
-			#0c0a09 100%
+			#1d1520 0%,
+			#211722 18%,
+			#1c1622 32%,
+			#110e18 55%,
+			#110e18 100%
 		);
 	}
 }
 
 @media screen {
 	:root[data-theme='dark'] {
-		--color-white: oklch(21.6% 0.006 56.043);
-		--color-stone-50: oklch(14.7% 0.004 49.25);
-		--color-stone-100: oklch(26.8% 0.007 34.298);
-		--color-stone-200: color-mix(in oklab, oklch(37.4% 0.01 67.558) 45%, oklch(26.8% 0.007 34.298));
-		--color-stone-300: oklch(37.4% 0.01 67.558);
-		--color-stone-400: oklch(44.4% 0.011 73.639);
-		--color-stone-500: oklch(70.9% 0.01 56.259);
-		--color-stone-600: oklch(86.9% 0.005 56.366);
-		--color-stone-700: oklch(92.3% 0.003 48.717);
-		--color-stone-800: oklch(97% 0.001 106.424);
-		--color-stone-900: oklch(98.5% 0.001 106.423);
+		--color-white: oklch(22% 0.024 300);
+		--color-stone-50: oklch(16.2% 0.02 300);
+		--color-stone-100: oklch(27% 0.028 300);
+		--color-stone-200: color-mix(in oklab, oklch(38% 0.032 300) 45%, oklch(27% 0.028 300));
+		--color-stone-300: oklch(38% 0.032 300);
+		--color-stone-400: oklch(46% 0.03 300);
+		--color-stone-500: oklch(71% 0.02 298);
+		--color-stone-600: oklch(86.5% 0.012 296);
+		--color-stone-700: oklch(92.5% 0.008 294);
+		--color-stone-800: oklch(96.8% 0.004 290);
+		--color-stone-900: oklch(98.6% 0.002 290);
 		--color-stone-950: #fff;
+		--color-stage: oklch(32% 0.07 302);
 		--color-red-50: color-mix(in oklab, oklch(39.6% 0.141 25.723) 22%, oklch(21.6% 0.006 56.043));
 		--color-red-100: color-mix(in oklab, oklch(39.6% 0.141 25.723) 45%, oklch(21.6% 0.006 56.043));
 		--color-red-200: color-mix(in oklab, oklch(50.5% 0.213 27.518) 45%, oklch(26.8% 0.007 34.298));
@@ -598,17 +698,17 @@ html {
 	}
 
 	:root[data-theme='dark'] .autumn-header {
-		background: linear-gradient(180deg, #1c1917 0%, #261a12 45%, #4a230d 100%);
+		background: linear-gradient(180deg, #1b1724 0%, #22182a 45%, #3d2216 100%);
 	}
 
 	:root[data-theme='dark'] .autumn-surface {
 		background: linear-gradient(
 			165deg,
-			#1f1510 0%,
-			#22170f 18%,
-			#1d1810 32%,
-			#0c0a09 55%,
-			#0c0a09 100%
+			#1d1520 0%,
+			#211722 18%,
+			#1c1622 32%,
+			#110e18 55%,
+			#110e18 100%
 		);
 	}
 }
@@ -693,6 +793,12 @@ html {
 	.app-sidebar.sidebar-hover-off .sidebar-label {
 		display: none;
 	}
+
+	/* Section headings keep their height in the rail so the icons do not jump. */
+	.app-sidebar:not(:hover):not(:focus-within) .sidebar-heading,
+	.app-sidebar.sidebar-hover-off .sidebar-heading {
+		visibility: hidden;
+	}
 }
 
 @media (min-width: 80rem) {
@@ -707,6 +813,10 @@ html {
 
 	:root:not([data-sidebar='collapsed']) .app-sidebar .sidebar-label {
 		display: revert-layer;
+	}
+
+	:root:not([data-sidebar='collapsed']) .app-sidebar .sidebar-heading {
+		visibility: visible;
 	}
 }
 

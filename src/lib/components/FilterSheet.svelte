@@ -45,7 +45,7 @@
 	onclick={(event) => {
 		if (event.target === event.currentTarget) open = false;
 	}}
-	class="m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-2xl bg-white p-0 text-stone-900 shadow-xl backdrop:bg-black/40 md:m-auto md:max-w-lg md:rounded-2xl"
+	class="m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-2xl bg-white p-0 text-stone-900 shadow-xl transition-[translate,opacity,overlay,display] transition-discrete duration-(--duration-medium) ease-stage outline-none not-open:translate-y-6 not-open:opacity-0 not-open:duration-(--duration-short) backdrop:bg-black/50 backdrop:transition-[opacity,overlay,display] backdrop:transition-discrete backdrop:duration-(--duration-medium) not-open:backdrop:opacity-0 motion-reduce:transition-none motion-reduce:backdrop:transition-none md:m-auto md:max-w-lg md:rounded-2xl starting:translate-y-6 starting:opacity-0 starting:backdrop:opacity-0"
 >
 	<div class="flex max-h-[85dvh] flex-col pb-[env(safe-area-inset-bottom)]">
 		<!-- The swipe-down gesture is a touch shortcut for the "Done" button. -->
@@ -61,7 +61,7 @@
 			></div>
 			<div class="flex items-start justify-between gap-3">
 				<div class="min-w-0">
-					<h2 class="text-base font-semibold">{title}</h2>
+					<h2 class="text-lg font-semibold tracking-tight">{title}</h2>
 					{#if summary}<p class="mt-0.5 text-sm text-stone-500">{summary}</p>{/if}
 				</div>
 				<button type="button" class="btn btn-primary shrink-0" onclick={() => (open = false)}>

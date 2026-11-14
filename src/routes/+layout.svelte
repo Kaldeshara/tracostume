@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import { page } from '$app/state';
-	import { invalidate } from '$app/navigation';
+	import { afterNavigate, invalidate } from '$app/navigation';
 	import { PUBLIC_APP_NAME } from '$app/env/public';
 	import { m } from '#lib/paraglide/messages.js';
 	import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
@@ -13,6 +13,8 @@
 	import ThemeToggle from '#lib/components/ThemeToggle.svelte';
 	import AutumnAccent from '#lib/components/AutumnAccent.svelte';
 	import AppSidebar from '#lib/components/AppSidebar.svelte';
+	import BackButton from '#lib/components/BackButton.svelte';
+	import { cameFromApp, hasBackButton, parentPath } from '#lib/back.svelte.ts';
 	import { rememberSeasonalStyle } from '#lib/theme.ts';
 	import type { LayoutProps } from './$types';
 
@@ -92,6 +94,11 @@
 			.join('')
 			.toLocaleUpperCase() || '?';
 
+	// The back button uses the history only after a navigation inside the app.
+	afterNavigate(({ from }) => {
+		cameFromApp.value = from !== null;
+	});
+
 	// Any navigation closes the menu.
 	$effect(() => {
 		void page.url.pathname;
@@ -144,7 +151,7 @@
 					type="button"
 					aria-label={m.nav_close_menu()}
 					tabindex="-1"
-					class="fixed inset-0 -z-10 cursor-default bg-black/40"
+					class="fixed inset-0 -z-10 cursor-default bg-black/50"
 					onclick={() => (menuOpen = false)}
 				></button>
 			{/if}
@@ -241,10 +248,14 @@
 	{/if}
 
 	<main
-		class="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 sm:px-6 sm:pt-8 {user
+		id="main"
+		class="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 sm:px-6 sm:pt-8 xl:max-w-6xl 2xl:max-w-[100rem] {user
 			? 'pb-[calc(6rem+env(safe-area-inset-bottom))] lg:px-8 lg:pt-10 lg:pb-12'
 			: 'pb-6'}"
 	>
+		{#if user && hasBackButton(page.url.pathname)}
+			<div class="mb-3"><BackButton parent={parentPath(page.url.pathname)} /></div>
+		{/if}
 		{@render children()}
 	</main>
 
@@ -252,7 +263,7 @@
 		{#if selection.size > 0 && !page.url.pathname.startsWith('/selection')}
 			<a
 				href="/selection"
-				class="no-print fixed right-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-30 inline-flex min-h-14 items-center gap-2 rounded-full bg-stone-900 px-5 text-sm font-medium text-white shadow-lg transition active:scale-95 lg:bottom-6"
+				class="no-print fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-4 z-30 inline-flex min-h-14 items-center gap-2 rounded-full bg-stone-900 px-5 text-sm font-medium text-white shadow-lg transition active:scale-95 lg:bottom-6"
 			>
 				<span
 					class="flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-xs font-semibold text-stone-900"
@@ -288,7 +299,7 @@
 									<NavIcon name={tab.icon} class="h-7 w-7" />
 								</span>
 								<span
-									class="text-[11px] leading-none {active
+									class="text-xs leading-none max-[360px]:text-[11px] {active
 										? 'font-semibold text-stone-900'
 										: 'text-stone-600'}">{tab.label}</span
 								>
@@ -307,7 +318,7 @@
 									<NavIcon name={tab.icon} class="h-5 w-5" />
 								</span>
 								<span
-									class="max-w-full truncate px-0.5 text-[11px] leading-none {active
+									class="max-w-full truncate px-0.5 text-xs leading-none max-[360px]:text-[11px] {active
 										? 'font-semibold text-stone-900'
 										: 'text-stone-600'}">{tab.label}</span
 								>

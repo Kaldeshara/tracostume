@@ -6,6 +6,7 @@
 	import { isOverdue } from '#lib/format.ts';
 	import ConditionBadge from './ConditionBadge.svelte';
 	import Location from './Location.svelte';
+	import NavIcon from './NavIcon.svelte';
 
 	type Props = {
 		item: ItemCard;
@@ -51,7 +52,9 @@
 				class="h-full w-full object-cover"
 			/>
 		{:else}
-			<div class="flex h-full items-center justify-center text-4xl text-stone-300">👗</div>
+			<div class="flex h-full items-center justify-center text-stone-300">
+				<NavIcon name="gallery" class="h-12 w-12" />
+			</div>
 		{/if}
 	</a>
 

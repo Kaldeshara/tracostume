@@ -114,9 +114,7 @@
 
 		{#if managementLinks.length}
 			<nav aria-label={m.nav_management()} class="mt-5 flex flex-col gap-1">
-				<p
-					class="sidebar-label px-3 pb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase"
-				>
+				<p class="sidebar-heading px-3 pb-1 text-xs font-semibold text-stone-500">
 					{m.nav_management()}
 				</p>
 				{#each managementLinks as item (item.href)}{@render link(item)}{/each}

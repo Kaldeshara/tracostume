@@ -106,7 +106,7 @@
 	"condition_to_repair": "À réparer",
 	"condition_to_wash": "À laver",
 	"contact_none": "Aucun·e (retour direct au container)",
-	"container_dimensions_hint": "Dimensions intérieures en centimètres, utilisées pour la future vue 3D.",
+	"container_dimensions_hint": "Dimensions intérieures en centimètres, utilisées pour le plan 3D.",
 	"door_back": "Au fond",
 	"door_front": "Devant",
 	"door_left": "À gauche",
@@ -426,6 +426,7 @@
 	"movement_returned": "Rendue",
 	"movement_stored": "Rangée",
 	"nav_account": "Mon compte",
+	"nav_back": "Retour",
 	"nav_boxes": "Boîtes",
 	"nav_collapse_sidebar": "Réduire le menu",
 	"nav_container": "Container",
@@ -486,7 +487,7 @@
 	"push_test_body": "Les rappels fonctionnent sur ce téléphone.",
 	"push_test_failed": "Le test n'a pas pu être envoyé.",
 	"push_test_sent": "Test envoyé : il devrait apparaître dans quelques secondes.",
-	"push_test_title": "Tracostume",
+	"push_test_title": "TRACostume",
 	"push_title": "Rappels sur ce téléphone",
 	"push_to_collect": [
 		{

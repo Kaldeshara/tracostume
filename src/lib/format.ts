@@ -89,14 +89,6 @@ export function kindLabel(kind: BoxKind) {
 	}[kind]();
 }
 
-export const KIND_ICONS: Record<BoxKind, string> = {
-	PLASTIC_BOX: '🧊',
-	CARDBOARD_BOX: '📦',
-	CANVAS_BAG: '👜',
-	RACK: '🧥',
-	OTHER: '▣'
-};
-
 export function doorSideLabel(side: DoorSide) {
 	return {
 		FRONT: m.door_front,

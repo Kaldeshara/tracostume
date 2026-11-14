@@ -2,7 +2,8 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { BoxKind, DoorSide } from '../../generated/prisma/enums';
 	import { hasRole } from '#lib/roles.ts';
-	import { doorSideLabel, kindLabel, KIND_ICONS } from '#lib/format.ts';
+	import { doorSideLabel, kindLabel } from '#lib/format.ts';
+	import KindIcon from '#lib/components/KindIcon.svelte';
 	import {
 		BOX_KINDS,
 		DOOR_SIDES,
@@ -211,6 +212,7 @@
 		['depthCm', m.field_depth],
 		['heightCm', m.field_height]
 	] as const;
+	import NavIcon from '#lib/components/NavIcon.svelte';
 </script>
 
 <svelte:head><title>{m.map_title()}</title></svelte:head>
@@ -320,7 +322,7 @@
 								onclick={() => (selectedId = box.id)}
 							>
 								<span class="chip bg-brand-700 text-white">{count}</span>
-								<span>{KIND_ICONS[box.kind]}</span>
+								<KindIcon kind={box.kind} class="h-4 w-4 shrink-0 text-stone-500" />
 								<span class="font-mono">{box.code}</span>
 								<span class="truncate">{box.label}</span>
 								{#if !isPlaced(box)}
@@ -356,7 +358,7 @@
 						/>
 						<select class="input" bind:value={newKind} aria-label={m.field_kind()}>
 							{#each BOX_KINDS as kind (kind)}
-								<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
+								<option value={kind}>{kindLabel(kind)}</option>
 							{/each}
 						</select>
 						<div class="flex gap-2">
@@ -368,7 +370,7 @@
 					</form>
 				{:else}
 					<button type="button" class="btn w-full" onclick={() => (adding = true)}>
-						+ {m.map_add_unit()}
+						<NavIcon name="add" class="h-4 w-4" />{m.map_add_unit()}
 					</button>
 				{/if}
 			</section>
@@ -388,7 +390,7 @@
 									: ''}"
 								onclick={() => (selectedId = box.id)}
 							>
-								<span>{KIND_ICONS[box.kind]}</span>
+								<KindIcon kind={box.kind} class="h-4 w-4 shrink-0 text-stone-500" />
 								<span class="font-mono">{box.code}</span>
 								<span class="truncate">{box.label}</span>
 							</button>
@@ -408,7 +410,7 @@
 {#snippet selectedPanel(prefix: string)}
 	{#if selected}
 		<div class="flex items-start gap-2">
-			<span class="text-2xl">{KIND_ICONS[selected.kind]}</span>
+			<KindIcon kind={selected.kind} class="h-7 w-7 shrink-0 text-stone-500" />
 			<div class="min-w-0 flex-1">
 				<div class="font-mono text-xs text-stone-500">
 					{selected.code} · {kindLabel(selected.kind)}
@@ -452,7 +454,7 @@
 					onchange={(event) => setKind(selected!, event.currentTarget.value as BoxKind)}
 				>
 					{#each BOX_KINDS as kind (kind)}
-						<option value={kind}>{KIND_ICONS[kind]} {kindLabel(kind)}</option>
+						<option value={kind}>{kindLabel(kind)}</option>
 					{/each}
 				</select>
 			</div>

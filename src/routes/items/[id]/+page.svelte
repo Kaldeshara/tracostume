@@ -16,6 +16,7 @@
 	import PhotoInput from '#lib/components/PhotoInput.svelte';
 	import StockActions from '#lib/components/StockActions.svelte';
 	import type { PageProps } from './$types';
+	import NavIcon from '#lib/components/NavIcon.svelte';
 
 	let { data, form }: PageProps = $props();
 
@@ -38,7 +39,9 @@
 			{#if currentPhoto}
 				<img src="/photos/{currentPhoto}" alt={item.name} class="h-full w-full object-contain" />
 			{:else}
-				<div class="flex h-full items-center justify-center text-7xl text-stone-300">👗</div>
+				<div class="flex h-full items-center justify-center text-stone-300">
+					<NavIcon name="gallery" class="h-20 w-20" />
+				</div>
 			{/if}
 		</div>
 		{#if item.photoIds.length > 1 || keeper}

@@ -8,6 +8,7 @@
 	import { selection } from '#lib/selection.svelte.ts';
 	import StockActions from '#lib/components/StockActions.svelte';
 	import type { PageProps } from './$types';
+	import NavIcon from '#lib/components/NavIcon.svelte';
 
 	let { data, form }: PageProps = $props();
 
@@ -126,7 +127,7 @@
 		{#each groups.borrowers as [borrower, items] (borrower)}
 			<section class="card overflow-hidden">
 				<header class="flex items-baseline gap-2 bg-violet-50 px-4 py-2">
-					<span class="text-lg">👤</span>
+					<NavIcon name="account" class="h-5 w-5 text-stone-500" />
 					<span class="font-semibold">{borrower}</span>
 					<span class="ml-auto text-sm text-stone-500">{items.length}</span>
 				</header>

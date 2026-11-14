@@ -100,7 +100,7 @@
 		></div>
 	{:else}
 		<div
-			class="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-white"
+			class="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-[#fff]"
 		>
 			{#if status === 'starting'}{m.scan_starting()}
 			{:else if status === 'denied'}{m.scan_denied()}
