@@ -55,5 +55,7 @@ before relying on SvelteKit 2 habits. Differences met so far:
 - Push reminders: `src/lib/server/web-push.ts` (RFC 8291/8292 with node:crypto, no dependency),
   `src/lib/server/reminders.ts` (daily timer started in `hooks.server.ts` `init`, VAPID keys in
   `PushKeys`, one `ReminderRun` row per day); who gets what is `src/lib/reminders.ts` (tested).
-- CI (`.github/workflows/ci.yml`) also runs `scripts/smoke.mjs` against the dev server.
-- Before finishing: `npm run check`, `npm run lint`, `npm test`.
+- There is no CI. Before finishing: `npm run check`, `npm run lint`, `npm test`; after a schema
+  change, also check that the migrations match it, against the dev database:
+  `npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code`.
+  `scripts/smoke.mjs` (Playwright, not a dependency) screenshots the main pages before a big merge.

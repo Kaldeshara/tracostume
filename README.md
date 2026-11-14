@@ -162,12 +162,17 @@ process).
 An admin creates a one-time reset link from the **Members** page and sends it (copy or text
 message); it expires after 2 days. After 5 failed sign-ins, an email is blocked for 15 minutes.
 
-## Continuous integration
+## Checks
 
-`.github/workflows/ci.yml` runs on every push: Prettier/ESLint, type checking, unit tests,
-migrations against PostgreSQL (and a check that they match `schema.prisma`), the production build,
-and a smoke test that signs in and screenshots the main pages on a phone-sized screen (downloadable
-as the run's `screenshots` artifact).
+There is no CI: run `npm run check`, `npm run lint` and `npm test` before merging. After a schema
+change, check that the migrations match it (against the dev database):
+
+```bash
+npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+```
+
+`scripts/smoke.mjs` signs in, opens the main pages on a phone-sized screen and saves screenshots,
+against a running dev server with the demo data (`npm install --no-save playwright` first).
 
 ## License
 

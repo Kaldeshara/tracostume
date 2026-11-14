@@ -1,4 +1,4 @@
-// CI smoke test: signs in with the seeded owner account, opens the main pages on a phone-sized
+// Smoke test (run by hand before a big merge): signs in with the seeded owner account, opens the main pages on a phone-sized
 // screen, fails on any error status or page error, and saves a screenshot of each page.
 // Usage: node scripts/smoke.mjs <base URL> <screenshot directory>
 import { mkdir } from 'node:fs/promises';
