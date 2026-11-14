@@ -43,10 +43,19 @@ container and who has it.
 - **Scanner** — in "In/out" mode, scan several pieces (and a box), then store or check them out
   in one go. In "Look up" mode, a scan opens the piece. Labels also work with the phone's own
   camera app (they encode `https://<site>/q/<code>`).
+- **Offline scanner** — inside the container, without signal: the scanner page still opens (once
+  visited online), scans resolve from a copy of the pieces and boxes kept on the phone, and in/out
+  actions are queued and sent when the connection is back, with the time they were done.
+- **Sets and shows** (`/lists`) — costume sets (pieces worn together) and show preparation lists.
+  Select a list's pieces to see where they are, print labels or check them all out at once; save
+  the current selection as a list.
 - **Selection — "Where are they?"** — pick pieces in the gallery or by scanning; the selection page
   groups them by box (with its location) and by borrower, and offers bulk actions and labels.
 - **Loans and reminders** — overdue and due-this-week loans, grouped by borrower, with a
-  ready-made reminder text message. Overdue counts show as badges in the navigation.
+  ready-made reminder text message. Overdue counts show as badges in the navigation. Members can
+  turn on **push reminders** on their phone (account page): every morning at 9:00 (Paris time)
+  borrowers hear about overdue and due-tomorrow pieces, choreographers about pieces they lent that
+  have not come back, keepers about overdue loans. On iPhone, the app must be installed first.
 - **Printable QR labels** — for selected pieces, a box, or everything.
 
 ### Roles
@@ -57,7 +66,7 @@ container and who has it.
 | `REPAIRER`      | See only the pieces to wash, repair or damaged (a to-do list on the home page), where they are, and mark them repaired |
 | `CHOREOGRAPHER` | Also lend pieces to dancers, follow the loans they are the contact for, and mark pieces collected from a dancer        |
 | `KEEPER`        | Has the container key: create/edit pieces and boxes, check in/out, store, print labels, edit the map                   |
-| `ADMIN`         | Also manage members' roles, delete pieces and boxes                                                                    |
+| `ADMIN`         | Also manage members' roles, send password reset links, delete pieces and boxes                                         |
 | `OWNER`         | Also appoint other owners. The first account created is the owner.                                                     |
 
 A loan can name a **contact** (a choreographer). The dancer returns the piece to the contact, who
@@ -122,6 +131,22 @@ choose **Share → Add to Home Screen**.
 
 The site URL is taken from the request and assumed to be HTTPS, which is what Railway provides.
 Print QR labels from the production site: they contain its address.
+
+Push reminders need no setup: the server creates its Web Push keys on first use and stores them in
+the database. Run a single instance of the service (reminders and sign-in limits are kept in that
+process).
+
+### Forgotten passwords and sign-in limits
+
+An admin creates a one-time reset link from the **Members** page and sends it (copy or text
+message); it expires after 2 days. After 5 failed sign-ins, an email is blocked for 15 minutes.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every push: Prettier/ESLint, type checking, unit tests,
+migrations against PostgreSQL (and a check that they match `schema.prisma`), the production build,
+and a smoke test that signs in and screenshots the main pages on a phone-sized screen (downloadable
+as the run's `screenshots` artifact).
 
 ## License
 

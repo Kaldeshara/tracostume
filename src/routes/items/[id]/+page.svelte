@@ -106,6 +106,9 @@
 						>#{tag}</a
 					>
 				{/each}
+				{#each item.lists as list (list.id)}
+					<a href="/lists/{list.id}" class="chip bg-violet-100 text-violet-800">☰ {list.name}</a>
+				{/each}
 			</div>
 		</div>
 

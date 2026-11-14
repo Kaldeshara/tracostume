@@ -1,3 +1,7 @@
+<script lang="ts" module>
+	export type Action = 'place' | 'checkout' | 'collect' | 'condition';
+</script>
+
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ItemCondition, UserRole } from '../../generated/prisma/enums';
@@ -31,6 +35,11 @@
 		form?: { done?: string; count?: number; error?: string; codes?: string[] } | null;
 		/** Called after a successful action, e.g. to clear the selection. */
 		ondone?: (action: string) => void;
+		/**
+		 * When set, an action that cannot reach the server (no connection) is handed over here
+		 * instead of failing, to be sent later (offline scanner).
+		 */
+		onoffline?: (action: Action, form: FormData) => void;
 	};
 
 	let {
@@ -44,10 +53,9 @@
 		allOut = false,
 		someUncollected = false,
 		form = null,
-		ondone
+		ondone,
+		onoffline
 	}: Props = $props();
-
-	type Action = 'place' | 'checkout' | 'collect' | 'condition';
 	let open = $state<Action | null>(null);
 	let borrowerUserId = $state('');
 	let submitting = $state(false);
@@ -78,15 +86,40 @@
 	// Default due date: two weeks from today.
 	const defaultDue = toDateInput(new Date(Date.now() + 14 * 24 * 3600 * 1000));
 
-	const submit = () => {
+	function keepForLater(action: Action, formData: FormData) {
+		onoffline?.(action, formData);
+		submitting = false;
+		open = null;
+	}
+
+	const submit = ({
+		formData,
+		action,
+		cancel
+	}: {
+		formData: FormData;
+		action: URL;
+		cancel: () => void;
+	}) => {
+		const name = action.search.replace('?/', '') as Action;
+		if (onoffline && !navigator.onLine) {
+			cancel();
+			keepForLater(name, formData);
+			return;
+		}
 		submitting = true;
 		return async ({
 			result,
 			update
 		}: {
-			result: { type: string; data?: Record<string, unknown> };
+			result: { type: string; data?: Record<string, unknown>; error?: unknown };
 			update: () => Promise<void>;
 		}) => {
+			// The phone believed it was online but the request never reached the server.
+			if (onoffline && result.type === 'error' && result.error instanceof TypeError) {
+				keepForLater(name, formData);
+				return;
+			}
 			await update();
 			submitting = false;
 			if (result.type === 'success') {

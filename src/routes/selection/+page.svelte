@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatDate, isOverdue } from '#lib/format.ts';
+	import { canEditLists } from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import StockActions from '#lib/components/StockActions.svelte';
 	import type { PageProps } from './$types';
@@ -68,6 +69,9 @@
 	{#if selection.size}
 		<a href="/map?items={selection.ids.join(',')}" class="btn btn-primary">{m.map_open()}</a>
 		<a href="/labels?items={selection.ids.join(',')}" class="btn">{m.labels_print()}</a>
+		{#if canEditLists(data.user?.role)}
+			<a href="/lists?fromSelection=1" class="btn">{m.lists_save_selection()}</a>
+		{/if}
 		<button type="button" class="btn btn-danger" onclick={() => selection.clear()}>
 			{m.selection_clear()}
 		</button>

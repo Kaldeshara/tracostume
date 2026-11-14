@@ -51,3 +51,9 @@ export const isRepairer = (role: Role) => role === 'REPAIRER';
 
 /** See every loan, not just one's own. */
 export const canSeeAllLoans = (role: Role) => is(role, STOCK);
+
+/** See costume sets and show lists (repairers only see pieces that need care). */
+export const canSeeLists = (role: Role) => role != null && role !== 'REPAIRER';
+
+/** Create and edit costume sets and show lists. */
+export const canEditLists = (role: Role) => is(role, [...STOCK, 'CHOREOGRAPHER']);

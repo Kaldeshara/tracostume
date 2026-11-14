@@ -290,6 +290,68 @@
 	"labels_print": "Print labels",
 	"labels_size": "QR size",
 	"labels_title": "QR labels",
+	"lists_add_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Add the selected piece",
+				"countPlural=other": "Add the {count} selected pieces"
+			}
+		}
+	],
+	"lists_added": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece added.",
+				"countPlural=other": "{count} pieces added."
+			}
+		}
+	],
+	"lists_by": "by {name}",
+	"lists_date": "Show date",
+	"lists_delete": "Delete the list",
+	"lists_delete_confirm": "Delete this list? The pieces themselves are kept.",
+	"lists_description": "Notes",
+	"lists_edit": "Edit the list",
+	"lists_empty": "No set or show list yet.",
+	"lists_help": "A set is pieces worn together (dress + hat + boa). A show list holds everything prepared for one show. Select a list's pieces to see where they are, print their labels or check them out together.",
+	"lists_invalid": "Give the list a name.",
+	"lists_kind": "Type",
+	"lists_kind_set": "Costume set",
+	"lists_kind_show": "Show",
+	"lists_name": "Name",
+	"lists_new": "New list",
+	"lists_no_pieces": "No pieces yet: select pieces in the gallery or with the scanner, then add them here.",
+	"lists_piece_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece",
+				"countPlural=other": "{count} pieces"
+			}
+		}
+	],
+	"lists_remove_piece": "Remove from the list",
+	"lists_save_selection": "Save as a list",
+	"lists_saved": "Saved.",
+	"lists_select_all": "Select these pieces",
+	"lists_sets": "Costume sets",
+	"lists_shows": "Shows",
+	"lists_title": "Sets & shows",
+	"lists_with_selection": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Start with the selected piece",
+				"countPlural=other": "Start with the {count} selected pieces"
+			}
+		}
+	],
 	"loan_collected": "Collected",
 	"loan_collected_by": "Collected by {name}",
 	"loan_overdue": "Overdue",
@@ -315,6 +377,7 @@
 	"login_no_account": "No account yet?",
 	"login_submit": "Sign in",
 	"login_title": "Sign in",
+	"login_too_many": "Too many failed attempts. Try again in {minutes} min.",
 	"map_add": "Add",
 	"map_add_unit": "Add a storage unit",
 	"map_back": "Back",
@@ -366,6 +429,7 @@
 	"nav_gallery": "Gallery",
 	"nav_home": "Home",
 	"nav_labels": "QR labels",
+	"nav_lists": "Sets & shows",
 	"nav_loans": "Loans",
 	"nav_logout": "Sign out",
 	"nav_map": "3D map",
@@ -374,6 +438,59 @@
 	"photo_add": "Add photos",
 	"photo_delete": "Delete photo",
 	"photo_preparing": "Preparing photos…",
+	"push_all_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} loan is overdue.",
+				"countPlural=other": "{count} loans are overdue."
+			}
+		}
+	],
+	"push_denied": "Notifications are blocked for this site: allow them in the browser or phone settings.",
+	"push_disable": "Turn off",
+	"push_due_soon": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece is due back tomorrow.",
+				"countPlural=other": "{count} pieces are due back tomorrow."
+			}
+		}
+	],
+	"push_enable": "Turn on reminders",
+	"push_help": "A notification each morning when a piece you borrowed is due or overdue, when a dancer you lent to is late, and (keepers) when loans are overdue.",
+	"push_on": "Reminders are on for this phone.",
+	"push_overdue": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece you borrowed is overdue.",
+				"countPlural=other": "{count} pieces you borrowed are overdue."
+			}
+		}
+	],
+	"push_reminder_title": "Costumes: reminder",
+	"push_test": "Send a test",
+	"push_test_body": "Reminders work on this phone.",
+	"push_test_failed": "The test could not be sent.",
+	"push_test_sent": "Test sent: it should appear in a few seconds.",
+	"push_test_title": "Tracostume",
+	"push_title": "Reminders on this phone",
+	"push_to_collect": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece you lent has not come back yet.",
+				"countPlural=other": "{count} pieces you lent have not come back yet."
+			}
+		}
+	],
+	"push_unsupported": "This browser cannot receive notifications. On iPhone, first add the app to the home screen (Share → Add to Home Screen), then open it from there.",
 	"register_back_to_login": "I already have an account",
 	"register_error_email_taken": "An account already exists with this email.",
 	"register_error_invalid": "Check the form fields.",
@@ -383,6 +500,12 @@
 	"register_submit": "Create my account",
 	"register_title": "Create an account",
 	"register_troupe_password": "Troupe password",
+	"reset_confirm": "Repeat the new password",
+	"reset_help": "Hello {name}, choose a new password. This link works only once.",
+	"reset_mismatch": "The two passwords are different.",
+	"reset_submit": "Save and sign in",
+	"reset_title": "New password",
+	"reset_too_short": "The password must have at least 8 characters.",
 	"role_admin": "Admin",
 	"role_choreographer": "Choreographer",
 	"role_dancer": "Dancer",
@@ -408,6 +531,25 @@
 	"scan_manual_submit": "OK",
 	"scan_mode_collect": "In/out",
 	"scan_mode_open": "Look up",
+	"scan_offline": "No connection: offline mode.",
+	"scan_offline_copy": "pieces as of {date}",
+	"scan_offline_logout_confirm": "Actions done offline have not been sent yet and will be lost. Sign out anyway?",
+	"scan_offline_open": "No connection: the piece's page cannot be opened. Use \"In/out\" mode to record actions.",
+	"scan_offline_pending": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} action waiting to be sent",
+				"countPlural=other": "{count} actions waiting to be sent"
+			}
+		}
+	],
+	"scan_offline_queued": "No connection: saved on this phone, it will be sent as soon as the connection is back.",
+	"scan_offline_refused": "Refused by the server ({count} pieces, {date}): a piece may have been moved meanwhile. Check it, then retry or dismiss.",
+	"scan_offline_retry": "Retry",
+	"scan_offline_send": "Send now",
+	"scan_offline_signed_out": "Not sent: you were signed out. Sign in again, then retry ({count} pieces).",
 	"scan_starting": "Starting the camera…",
 	"scan_target_box": "Store in",
 	"scan_title": "Scan",
@@ -494,5 +636,11 @@
 			}
 		}
 	],
+	"users_reset_copied": "Copied ✓",
+	"users_reset_copy": "Copy the link",
+	"users_reset_help": "Send this link to the member: it lets them choose a new password, works once and expires in 2 days.",
+	"users_reset_link": "Reset link",
+	"users_reset_send_sms": "Send by text message",
+	"users_reset_sms": "Here is the link to choose a new password for the costumes app: {url}",
 	"users_roles_help": "Dancers: gallery and their own loans. Repairers: only pieces to wash or repair. Choreographers: lend to dancers and collect pieces back. Costume keepers: the container key, all the stock. Admins: members too."
 }

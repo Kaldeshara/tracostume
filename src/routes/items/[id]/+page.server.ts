@@ -12,7 +12,7 @@ import {
 } from '#lib/server/photos.ts';
 import { qrSvg } from '#lib/server/qr.ts';
 import { stockActionOptions, stockActions } from '#lib/server/stock-actions.ts';
-import { canCheckOut, canCollect, canSetCondition, isRepairer } from '#lib/roles.ts';
+import { canCheckOut, canCollect, canSeeLists, canSetCondition, isRepairer } from '#lib/roles.ts';
 import { REPAIR_CONDITIONS } from '#lib/server/stock-actions.ts';
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {
@@ -24,6 +24,10 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 			createdAt: true,
 			photos: { orderBy: { position: 'asc' }, select: { id: true } },
 			tags: { select: { tag: { select: { name: true } } } },
+			lists: {
+				orderBy: { list: { name: 'asc' } },
+				select: { list: { select: { id: true, name: true } } }
+			},
 			loans: {
 				where: { returnedAt: null },
 				take: 1,
@@ -70,6 +74,7 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 			description: item.description,
 			photoIds: item.photos.map((photo) => photo.id),
 			tags: item.tags.map(({ tag }) => tag.name),
+			lists: canSeeLists(role) ? item.lists.map(({ list }) => list) : [],
 			loanDetails: openLoan
 				? {
 						reason: openLoan.reason,

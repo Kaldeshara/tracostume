@@ -128,6 +128,9 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   sessions       Session[]
+  passwordResets PasswordReset[]
+  itemLists      ItemList[]
+  pushSubscriptions PushSubscription[]
   borrowedLoans  Loan[]      @relation("LoanBorrower")
   createdLoans   Loan[]      @relation("LoanCreator")
   returnedLoans  Loan[]      @relation("LoanReturner")
@@ -140,6 +143,18 @@ model User {
 model Session {
   id        String   @id @default(cuid())
   token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// One-time link an admin sends to a member who forgot their password. Only a hash of the token
+/// is stored; the link works once, until expiresAt.
+model PasswordReset {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -212,6 +227,7 @@ model Item {
   tags      ItemTag[]
   loans     Loan[]
   movements Movement[]
+  lists     ItemListEntry[]
 
   @@index([boxId])
   @@index([category])
@@ -263,6 +279,41 @@ model ItemTag {
   tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([itemId, tagId])
+}
+
+/// SET: pieces worn together (dress + hat + boa). SHOW: everything prepared for one show.
+enum ItemListKind {
+  SET
+  SHOW
+}
+
+/// A named, shared list of pieces: a costume set or a show's preparation list. Loading it into the
+/// selection gives the usual "where are they?", map, labels and bulk check-out.
+model ItemList {
+  id          String       @id @default(cuid())
+  name        String
+  kind        ItemListKind @default(SHOW)
+  description String?
+  /// Date of the show, for SHOW lists.
+  date        DateTime?
+  createdById String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  createdBy User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  entries   ItemListEntry[]
+}
+
+model ItemListEntry {
+  listId  String
+  itemId  String
+  addedAt DateTime @default(now())
+
+  list ItemList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  item Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([listId, itemId])
+  @@index([itemId])
 }
 
 /// An item lent outside the container. Open while returnedAt is null.
@@ -318,4 +369,35 @@ model Movement {
   user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([itemId, createdAt])
+}
+
+/// A phone or browser that receives reminders (Web Push). Its language is the app's language
+/// when it subscribed.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  locale    String   @default("fr")
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// The server's VAPID key pair for Web Push, created on first use (one row, id 1).
+model PushKeys {
+  id         Int      @id @default(1)
+  publicKey  String
+  privateKey String
+  createdAt  DateTime @default(now())
+}
+
+/// Days on which the daily loan reminders were sent (yyyy-mm-dd, Paris time), so a restart does
+/// not send them twice.
+model ReminderRun {
+  day    String   @id
+  sentAt DateTime @default(now())
 }

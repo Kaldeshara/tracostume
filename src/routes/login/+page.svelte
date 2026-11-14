@@ -41,6 +41,9 @@
 			/>
 		</div>
 		{#if form?.invalid}<p class="text-sm text-red-700">{m.login_invalid()}</p>{/if}
+		{#if form?.retryMinutes}
+			<p class="text-sm text-red-700">{m.login_too_many({ minutes: form.retryMinutes })}</p>
+		{/if}
 		<button class="btn btn-primary">{m.login_submit()}</button>
 		<p class="text-center text-sm text-stone-600">
 			{data.hasUsers ? m.login_no_account() : m.login_first_account()}

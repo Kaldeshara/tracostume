@@ -46,4 +46,14 @@ before relying on SvelteKit 2 habits. Differences met so far:
   refreshed from the item text hash on each search). Ranking rules live in `src/lib/search-rank.ts`
   with unit tests; `scripts/search-eval.ts` compares models on real queries.
 - Prisma 7: `prisma migrate dev` does not regenerate the client; run `npm run db:generate`.
+- Sets and show lists are `ItemList` + `ItemListEntry` (`/lists`); they reuse the selection for
+  bulk actions rather than having their own.
+- Offline scanner: `#lib/offline-scan.svelte.ts` (browser state: catalogue from `/scan/catalogue`,
+  queue of actions). The service worker caches only the `/scan` page and its data (network first).
+  Queued actions post `offlineAt`; `actionTime()` in `stock-actions.ts` turns it into the movement
+  time, so inventory functions take an optional `at`.
+- Push reminders: `src/lib/server/web-push.ts` (RFC 8291/8292 with node:crypto, no dependency),
+  `src/lib/server/reminders.ts` (daily timer started in `hooks.server.ts` `init`, VAPID keys in
+  `PushKeys`, one `ReminderRun` row per day); who gets what is `src/lib/reminders.ts` (tested).
+- CI (`.github/workflows/ci.yml`) also runs `scripts/smoke.mjs` against the dev server.
 - Before finishing: `npm run check`, `npm run lint`, `npm test`.

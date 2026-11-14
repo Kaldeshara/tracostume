@@ -23,7 +23,13 @@ export type Borrower = {
  * Puts items into a box. Items that were lent are returned (their loan is closed),
  * items already in another box are moved, and items not stored yet are stored.
  */
-export async function placeItems(itemIds: string[], boxId: string, userId: string, note?: string) {
+export async function placeItems(
+	itemIds: string[],
+	boxId: string,
+	userId: string,
+	note?: string,
+	at = new Date()
+) {
 	return prisma.$transaction(async (tx) => {
 		const box = await tx.box.findUnique({ where: { id: boxId }, select: { id: true } });
 		if (!box) throw new InventoryError('BOX_NOT_FOUND');
@@ -36,7 +42,7 @@ export async function placeItems(itemIds: string[], boxId: string, userId: strin
 				loans: { where: { returnedAt: null }, select: { id: true } }
 			}
 		});
-		const now = new Date();
+		const now = at;
 
 		for (const item of items) {
 			const openLoan = item.loans[0];
@@ -72,7 +78,8 @@ export async function checkOutItems(
 	itemIds: string[],
 	borrower: Borrower,
 	options: { dueAt?: Date | null; reason?: string | null; contactUserId?: string | null },
-	userId: string
+	userId: string,
+	at = new Date()
 ) {
 	if (!borrower.userId && !borrower.name?.trim()) throw new InventoryError('NO_BORROWER');
 
@@ -93,7 +100,7 @@ export async function checkOutItems(
 				alreadyOut.map((item) => item.code)
 			);
 		}
-		const now = new Date();
+		const now = at;
 
 		for (const item of items) {
 			const loan = await tx.loan.create({
@@ -130,13 +137,18 @@ export async function checkOutItems(
  * Records that the dancer handed the pieces back to the choreographer (or keeper). The loan
  * stays open until the pieces are stored in the container.
  */
-export async function collectItems(itemIds: string[], userId: string, note?: string) {
+export async function collectItems(
+	itemIds: string[],
+	userId: string,
+	note?: string,
+	at = new Date()
+) {
 	return prisma.$transaction(async (tx) => {
 		const loans = await tx.loan.findMany({
 			where: { itemId: { in: itemIds }, returnedAt: null, collectedAt: null },
 			select: { id: true, itemId: true }
 		});
-		const now = new Date();
+		const now = at;
 		for (const loan of loans) {
 			await tx.loan.update({
 				where: { id: loan.id },
@@ -161,7 +173,8 @@ export async function setItemsCondition(
 	itemIds: string[],
 	condition: ItemCondition,
 	userId: string,
-	note?: string
+	note?: string,
+	at = new Date()
 ) {
 	return prisma.$transaction(async (tx) => {
 		const items = await tx.item.findMany({
@@ -177,7 +190,8 @@ export async function setItemsCondition(
 					fromCondition: item.condition,
 					toCondition: condition,
 					note,
-					userId
+					userId,
+					createdAt: at
 				}
 			});
 		}
