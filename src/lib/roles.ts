@@ -57,3 +57,28 @@ export const canSeeLists = (role: Role) => role != null && role !== 'REPAIRER';
 
 /** Create and edit costume sets and show lists. */
 export const canEditLists = (role: Role) => is(role, [...STOCK, 'CHOREOGRAPHER']);
+
+// Pages reserved to some roles; everything else is open to every signed-in member. A single
+// storage unit (/boxes/<id>) is open to all: every member can scan a unit's label (its actions
+// check their own access). The list of units, the map and unit editing stay restricted.
+const RESTRICTED_PAGES: [prefix: string, allowed: (role: Role) => boolean][] = [
+	['/users', canManageUsers],
+	['/container', canManageUsers],
+	['/labels', canManageStock],
+	['/items/new', canManageStock],
+	['/map', canSeeContainer],
+	['/lists', canSeeLists]
+];
+const EDIT_ITEM = /^\/items\/[^/]+\/edit$/;
+const UNIT_PAGE = /^\/boxes\/[^/]+$/;
+
+/** Whether a signed-in member may open a page (enforced in hooks.server.ts). */
+export function canOpenPage(role: Role, pathname: string): boolean {
+	if (pathname === '/boxes' || (pathname.startsWith('/boxes/') && !UNIT_PAGE.test(pathname)))
+		return canSeeContainer(role) || /^\/boxes\/[^/]+\/candidates$/.test(pathname);
+	if (EDIT_ITEM.test(pathname)) return canManageStock(role);
+	const rule = RESTRICTED_PAGES.find(
+		([prefix]) => pathname === prefix || pathname.startsWith(prefix + '/')
+	);
+	return rule ? rule[1](role) : true;
+}

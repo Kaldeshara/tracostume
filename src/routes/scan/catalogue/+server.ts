@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	const role = locals.user?.role;
 	if (!(canSetCondition(role) || canCheckOut(role) || canCollect(role))) error(403);
 
-	const [items, boxes] = await Promise.all([
+	const [items, boxes, containers] = await Promise.all([
 		prisma.item.findMany({
 			where: isRepairer(role) ? { condition: { in: REPAIR_CONDITIONS } } : {},
 			select: itemCardSelect
@@ -26,7 +26,13 @@ export const GET: RequestHandler = async ({ locals }) => {
 				shelf: true,
 				_count: { select: { items: true } }
 			}
-		})
+		}),
+		prisma.container.findMany({ select: { id: true, code: true, name: true } })
 	]);
-	return json({ items: items.map(toItemCard), boxes, savedAt: new Date().toISOString() });
+	return json({
+		items: items.map(toItemCard),
+		boxes,
+		containers,
+		savedAt: new Date().toISOString()
+	});
 };

@@ -7,6 +7,7 @@
 	"account_password_wrong": "The current password is wrong.",
 	"account_profile": "Profile",
 	"action_cancel": "Cancel",
+	"action_close": "Close",
 	"action_create": "Create",
 	"action_edit": "Edit",
 	"action_save": "Save",
@@ -97,6 +98,44 @@
 	"catgroup_outerwear": "Outerwear",
 	"catgroup_tops": "Tops",
 	"catgroup_unsorted": "Unsorted",
+	"check_confirm_all": "Everything is here",
+	"check_confirm_missing": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Confirm: {count} missing",
+				"countPlural=other": "Confirm: {count} missing"
+			}
+		}
+	],
+	"check_done_all": "Check recorded: everything is here.",
+	"check_done_missing": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Check recorded: {count} piece marked lost.",
+				"countPlural=other": "Check recorded: {count} pieces marked lost."
+			}
+		}
+	],
+	"check_found": "Found",
+	"check_help": "Everything is counted as here. Lower the count of what you cannot find.",
+	"check_missing_warning": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece will be marked lost and leave this unit.",
+				"countPlural=other": "{count} pieces will be marked lost and leave this unit."
+			}
+		}
+	],
+	"check_open": "Check contents",
+	"check_size": "Size {size}",
+	"check_summary": "{found} of {expected} found",
+	"check_title": "Check this unit",
 	"condition_damaged": "Damaged",
 	"condition_good": "Good",
 	"condition_in_repair": "In repair",
@@ -146,11 +185,11 @@
 	"field_size": "Size",
 	"field_tags": "Tags",
 	"field_width": "Width",
-	"filter_done": "Done",
 	"filter_all_boxes": "All boxes",
 	"filter_all_categories": "All categories",
 	"filter_all_conditions": "All conditions",
 	"filter_all_statuses": "Anywhere",
+	"filter_done": "Done",
 	"forbidden_text": "This page is not available with your role.",
 	"forbidden_title": "Restricted",
 	"form_invalid": "Some fields are invalid.",
@@ -260,6 +299,7 @@
 	"home_stat_items": "Items",
 	"home_stat_out": "Out",
 	"home_stat_overdue": "Overdue",
+	"item_code": "Code",
 	"item_delete": "Delete item",
 	"item_delete_confirm": "Delete this item, its photos and its history permanently?",
 	"item_edit": "Edit",
@@ -276,9 +316,10 @@
 	"kind_other": "Other",
 	"kind_plastic_box": "Plastic box",
 	"kind_rack": "Clothes rail",
-	"labels_all_boxes": "All boxes",
-	"labels_all_items": "All items",
-	"labels_empty": "No labels to print. Select items or boxes.",
+	"labels_all_printed": "Every unit already has its printed label.",
+	"labels_all_units": "All units",
+	"labels_confirm_printed": "Did the labels print correctly? Confirm so they no longer show under \"Not printed yet\".",
+	"labels_empty": "No labels to print. Choose units, or the units of a selection.",
 	"labels_help": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],
@@ -289,9 +330,15 @@
 			}
 		}
 	],
+	"labels_marked_printed": "Done: these labels are marked as printed.",
+	"labels_not_stored": "Not stored in any unit, so no label:",
 	"labels_print": "Print labels",
+	"labels_printed": "Labels printed",
 	"labels_size": "QR size",
 	"labels_title": "QR labels",
+	"labels_unit_label": "Unit label",
+	"labels_units_of_selection": "Labels of their units",
+	"labels_unprinted": "Not printed yet",
 	"lists_add_selection": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],
@@ -422,12 +469,14 @@
 	"movement_collected": "Collected by the choreographer",
 	"movement_condition_changed": "Condition changed",
 	"movement_created": "Created",
+	"movement_missing": "Missing at the check",
 	"movement_moved": "Moved",
 	"movement_returned": "Returned",
 	"movement_stored": "Stored",
 	"nav_account": "My account",
 	"nav_back": "Back",
 	"nav_boxes": "Boxes",
+	"nav_close_menu": "Close the menu",
 	"nav_collapse_sidebar": "Collapse the menu",
 	"nav_container": "Container",
 	"nav_expand_sidebar": "Expand the menu",
@@ -439,9 +488,8 @@
 	"nav_logout": "Sign out",
 	"nav_main": "Main navigation",
 	"nav_management": "Management",
-	"nav_open_menu": "Open the menu of {name}",
-	"nav_close_menu": "Close the menu",
 	"nav_map": "3D map",
+	"nav_open_menu": "Open the menu of {name}",
 	"nav_scan": "Scan",
 	"nav_users": "Members",
 	"photo_add": "Add photos",
@@ -500,6 +548,45 @@
 		}
 	],
 	"push_unsupported": "This browser cannot receive notifications. On iPhone, first add the app to the home screen (Share → Add to Home Screen), then open it from there.",
+	"put_in_borrower_detail": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece: {names}",
+				"countPlural=other": "{count} pieces: {names}"
+			}
+		}
+	],
+	"put_in_collected": "collected by the choreographer",
+	"put_in_done": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece put in.",
+				"countPlural=other": "{count} pieces put in."
+			}
+		}
+	],
+	"put_in_no_results": "No piece found.",
+	"put_in_no_returns": "No piece is on loan.",
+	"put_in_open": "Put in pieces",
+	"put_in_returns": "Returns",
+	"put_in_search": "Search",
+	"put_in_search_placeholder": "Search…",
+	"put_in_submit": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Put {count} piece here",
+				"countPlural=other": "Put {count} pieces here"
+			}
+		}
+	],
+	"put_in_title": "Put in this unit",
+	"put_in_unstored_only": "Only pieces stored nowhere",
 	"register_back_to_login": "I already have an account",
 	"register_error_email_taken": "An account already exists with this email.",
 	"register_error_invalid": "Check the form fields.",
@@ -522,24 +609,10 @@
 	"role_owner": "Owner",
 	"role_repairer": "Repairer",
 	"saved": "Saved.",
-	"scan_already": "{name} is already in the list.",
-	"scan_box_selected": "Box selected: {box}",
-	"scan_collect_help": "Scan the items one by one. Scan a box to store them in it.",
 	"scan_denied": "Camera access denied. Allow it in the browser settings, or type the code below.",
-	"scan_done": [
-		{
-			"declarations": ["input count", "local countPlural = count: plural"],
-			"selectors": ["countPlural"],
-			"match": {
-				"countPlural=one": "Done for {count} item.",
-				"countPlural=other": "Done for {count} items."
-			}
-		}
-	],
+	"scan_help": "Scan the label of a unit to see what is inside.",
 	"scan_manual_placeholder": "Label code",
 	"scan_manual_submit": "OK",
-	"scan_mode_collect": "In/out",
-	"scan_mode_open": "Look up",
 	"scan_offline": "No connection: offline mode.",
 	"scan_offline_copy": "pieces as of {date}",
 	"scan_offline_logout_confirm": "Actions done offline have not been sent yet and will be lost. Sign out anyway?",
@@ -559,10 +632,11 @@
 	"scan_offline_retry": "Retry",
 	"scan_offline_send": "Send now",
 	"scan_offline_signed_out": "Not sent: you were signed out. Sign in again, then retry ({count} pieces).",
+	"scan_offline_unit_note": "copy from {date}, may be out of date",
+	"scan_piece_lent": "lent to {name}",
+	"scan_piece_offline": "{name}: {where}",
 	"scan_starting": "Starting the camera…",
-	"scan_target_box": "Store in",
 	"scan_title": "Scan",
-	"scan_to_selection": "Add to selection",
 	"scan_unknown": "Unknown code: {code}",
 	"scan_unsupported": "This browser cannot use the camera. Type the code below.",
 	"seasonal_style": "Seasonal decorations",
@@ -636,10 +710,47 @@
 	"stock_error_already_out": "Already out, store them first: {codes}",
 	"stock_place": "Store in a box",
 	"stock_return": "Return / store",
+	"take_out_available": [
+		{
+			"declarations": ["input available", "local availablePlural = available: plural"],
+			"selectors": ["availablePlural"],
+			"match": {
+				"availablePlural=one": "{available} available",
+				"availablePlural=other": "{available} available"
+			}
+		}
+	],
+	"take_out_less": "One less: {label}",
+	"take_out_more": "One more: {label}",
+	"take_out_nothing": "Nothing to take out: every piece is lent, lost or retired.",
+	"take_out_open": "Take out pieces",
+	"take_out_size": [
+		{
+			"declarations": ["input available", "local availablePlural = available: plural"],
+			"selectors": ["availablePlural"],
+			"match": {
+				"availablePlural=one": "Size {size} · {available} available",
+				"availablePlural=other": "Size {size} · {available} available"
+			}
+		}
+	],
+	"take_out_summary": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} piece chosen",
+				"countPlural=other": "{count} pieces chosen"
+			}
+		}
+	],
+	"take_out_title": "Take out",
 	"theme_dark": "Dark",
 	"theme_light": "Light",
 	"theme_system": "Like the device",
 	"theme_title": "Theme",
+	"unit_last_checked": "Checked on {date} by {name}: {found} of {expected} found",
+	"unit_never_checked": "Never checked",
 	"users_borrowed": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],

@@ -13,3 +13,8 @@ bun.lockb
 /src/lib/paraglide/
 /project.inlang/
 /prisma/migrations/
+
+# Spec Kit (local only, not versioned)
+/.specify/
+/.claude/
+/specs/

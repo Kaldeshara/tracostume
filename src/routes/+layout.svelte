@@ -4,7 +4,13 @@
 	import { afterNavigate, invalidate } from '$app/navigation';
 	import { PUBLIC_APP_NAME } from '$app/env/public';
 	import { m } from '#lib/paraglide/messages.js';
-	import { canManageStock, canManageUsers, canSeeContainer, canSeeLists } from '#lib/roles.ts';
+	import {
+		canManageStock,
+		canManageUsers,
+		canOpenPage,
+		canSeeContainer,
+		canSeeLists
+	} from '#lib/roles.ts';
 	import { selection } from '#lib/selection.svelte.ts';
 	import { offlineScan } from '#lib/offline-scan.svelte.ts';
 	import { roleLabel } from '#lib/format.ts';
@@ -84,6 +90,13 @@
 		offlineScan.clear();
 		globalThis.caches?.delete('tracostume-pages').catch(() => {});
 	}
+
+	// From a scanned label, "back" goes to the parent page, or home when that page is closed to the
+	// member (a dancer may open a unit but not the list of units).
+	const backTarget = $derived.by(() => {
+		const parent = parentPath(page.url.pathname);
+		return canOpenPage(user?.role, parent) ? parent : '/';
+	});
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
@@ -254,7 +267,7 @@
 			: 'pb-6'}"
 	>
 		{#if user && hasBackButton(page.url.pathname)}
-			<div class="mb-3"><BackButton parent={parentPath(page.url.pathname)} /></div>
+			<div class="mb-3"><BackButton parent={backTarget} /></div>
 		{/if}
 		{@render children()}
 	</main>

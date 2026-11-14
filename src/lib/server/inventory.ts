@@ -199,6 +199,57 @@ export async function setItemsCondition(
 	});
 }
 
+/**
+ * Records a check of a unit's contents. Pieces confirmed missing that are still in the unit
+ * leave it and become LOST, each with a MISSING movement linked to the check; pieces elsewhere
+ * are ignored (they moved since the check started).
+ */
+export async function recordUnitCheck(
+	boxId: string,
+	expectedIds: string[],
+	missingIds: string[],
+	userId: string,
+	at = new Date()
+) {
+	return prisma.$transaction(async (tx) => {
+		const box = await tx.box.findUnique({ where: { id: boxId }, select: { id: true } });
+		if (!box) throw new InventoryError('BOX_NOT_FOUND');
+		const missing = await tx.item.findMany({
+			where: { id: { in: missingIds }, boxId },
+			select: { id: true, condition: true }
+		});
+		const check = await tx.unitCheck.create({
+			data: {
+				boxId,
+				userId,
+				checkedAt: at,
+				expectedCount: expectedIds.length,
+				foundCount: expectedIds.length - missing.length
+			}
+		});
+		for (const item of missing) {
+			await tx.item.update({ where: { id: item.id }, data: { boxId: null, condition: 'LOST' } });
+			await tx.movement.create({
+				data: {
+					itemId: item.id,
+					type: 'MISSING',
+					fromBoxId: boxId,
+					fromCondition: item.condition,
+					toCondition: 'LOST',
+					unitCheckId: check.id,
+					userId,
+					createdAt: at
+				}
+			});
+		}
+		return {
+			checkedAt: check.checkedAt,
+			foundCount: check.foundCount,
+			missingCount: missing.length
+		};
+	});
+}
+
 /** Box an item came from before its open loan, used as the default return box. */
 export async function lastBoxBeforeLoan(itemId: string) {
 	const movement = await prisma.movement.findFirst({

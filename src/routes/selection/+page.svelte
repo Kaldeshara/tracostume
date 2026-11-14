@@ -69,7 +69,8 @@
 	<h1 class="flex-1">{m.selection_title()}</h1>
 	{#if selection.size}
 		<a href="/map?items={selection.ids.join(',')}" class="btn btn-primary">{m.map_open()}</a>
-		<a href="/labels?items={selection.ids.join(',')}" class="btn">{m.labels_print()}</a>
+		<a href="/labels?items={selection.ids.join(',')}" class="btn">{m.labels_units_of_selection()}</a
+		>
 		{#if canEditLists(data.user?.role)}
 			<a href="/lists?fromSelection=1" class="btn">{m.lists_save_selection()}</a>
 		{/if}

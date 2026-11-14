@@ -1,8 +1,8 @@
 # TRACostume
 
 TRACostume manages the costumes of a dance troupe: a photo gallery you can search in plain words,
-a QR code on every piece of clothing and every box, and a record of what goes in and out of the
-container and who has it.
+a QR code on every storage unit (box, bag, clothes rail) that shows what is inside, and a record of
+what goes in and out of the container and who has it.
 
 ## Stack
 
@@ -27,10 +27,18 @@ container and who has it.
   multilingual language model running on the server (free, no API) ranks pieces by meaning, and
   pieces containing the typed words come first. Accents and plurals are ignored. Tags on pieces
   (theme, era, style) are what make searches by idea work, so keep them rich.
-- **One QR code per piece** — identical pieces (12 skirts) each get their own code. Creating an item
-  with sizes `36, 38, 38, 40` creates one piece per size and opens their labels for printing.
-- **Boxes in the container** — each box has a QR code, a location ("left shelf, top") and, optionally,
-  dimensions and a position in the container.
+- **Labels on storage units, not on clothes** — each unit (plastic or cardboard box, canvas bag,
+  clothes rail, other) and the container get a QR label; pieces are not labelled. Each physical
+  piece is still its own record (its loans, condition and history), and identical pieces are grouped
+  ("Jupe flamenco ×10 · 36–42"). Creating an item with sizes `36, 38, 38, 40` creates one piece per
+  size. Old piece links (`/q/<code>`) keep working.
+- **The unit page** — the main screen in the container, opened by scanning a unit's label: its
+  contents grouped by model with counts, sizes and conditions, and its last check. From there:
+  **take out** (how many of each model, per size if needed, then lend or move to another unit),
+  **put in** (pieces coming back from loans, by borrower, or found with the search, by default those
+  stored nowhere; returning closes the loan) and **check the contents** (lower the count of what is
+  not found: those pieces become lost, and the check is recorded). Every member can open a unit;
+  dancers see its contents, repairers only the pieces needing care.
 - **3D map** (`/map`) — the container drawn with Three.js (corrugated walls seen from inside, plywood
   floor, door on the side you choose) with the storage units inside: plastic boxes, cardboard boxes,
   canvas bags, clothes rails, or other. Keepers add units, drag them (5 cm snapping; a unit rests on
@@ -40,23 +48,25 @@ container and who has it.
 - **In and out** — keepers check pieces out to a member or anyone else (with a due date and a
   reason), return them to a box, move them, and track their condition (to wash, to repair…).
   Every change is kept in the piece's history.
-- **Scanner** — in "In/out" mode, scan several pieces (and a box), then store or check them out
-  in one go. In "Look up" mode, a scan opens the piece. Labels also work with the phone's own
-  camera app (they encode `https://<site>/q/<code>`).
+- **Scanner** — a scan opens the unit (or the container, or a piece from an older label). Labels
+  also work with the phone's own camera app (they encode `https://<site>/q/<code>`).
 - **Offline scanner** — inside the container, without signal: the scanner page still opens (once
-  visited online), scans resolve from a copy of the pieces and boxes kept on the phone, and in/out
-  actions are queued and sent when the connection is back, with the time they were done.
+  visited online), a scanned unit shows its contents from a copy kept on the phone, and take-out and
+  put-in actions are queued and sent when the connection is back, with the time they were done.
 - **Sets and shows** (`/lists`) — costume sets (pieces worn together) and show preparation lists.
-  Select a list's pieces to see where they are, print labels or check them all out at once; save
+  Select a list's pieces to see where they are, print their units' labels or check them all out at
+  once; save
   the current selection as a list.
 - **Selection — "Where are they?"** — pick pieces in the gallery or by scanning; the selection page
-  groups them by box (with its location) and by borrower, and offers bulk actions and labels.
+  groups them by box (with its location) and by borrower, and offers bulk actions and the labels of
+  their units.
 - **Loans and reminders** — overdue and due-this-week loans, grouped by borrower, with a
   ready-made reminder text message. Overdue counts show as badges in the navigation. Members can
   turn on **push reminders** on their phone (account page): every morning at 9:00 (Paris time)
   borrowers hear about overdue and due-tomorrow pieces, choreographers about pieces they lent that
   have not come back, keepers about overdue loans. On iPhone, the app must be installed first.
-- **Printable QR labels** — for selected pieces, a box, or everything.
+- **Printable QR labels** — for every unit, the units not printed yet (a keeper confirms once a sheet
+  is printed), one unit, or the units holding a selection or a show list.
 
 ### Roles
 

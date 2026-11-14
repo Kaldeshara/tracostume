@@ -13,6 +13,9 @@ const PAGES = [
 	'/loans',
 	'/lists',
 	'/boxes',
+	// A unit from its printed link (seed unit), and the unit labels.
+	'/q/B-ROB1',
+	'/labels?all=units',
 	'/map',
 	'/account',
 	'/users'
@@ -33,7 +36,7 @@ for (const path of PAGES) {
 	const response = await page.goto(base + path, { waitUntil: 'networkidle' });
 	const status = response?.status() ?? 0;
 	if (status >= 400) problems.push(`${path}: HTTP ${status}`);
-	const name = path === '/' ? 'home' : path.slice(1).replaceAll('/', '-');
+	const name = path === '/' ? 'home' : path.slice(1).replace(/[^a-z0-9]+/gi, '-');
 	await page.screenshot({ path: `${outDir}/${name}.png`, fullPage: true });
 	console.log(`${status} ${path}`);
 }

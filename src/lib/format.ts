@@ -75,7 +75,8 @@ export function movementLabel(type: MovementType) {
 		CHECKED_OUT: m.movement_checked_out,
 		COLLECTED: m.movement_collected,
 		RETURNED: m.movement_returned,
-		CONDITION_CHANGED: m.movement_condition_changed
+		CONDITION_CHANGED: m.movement_condition_changed,
+		MISSING: m.movement_missing
 	}[type]();
 }
 

@@ -7,6 +7,7 @@
 	"account_password_wrong": "Le mot de passe actuel est incorrect.",
 	"account_profile": "Profil",
 	"action_cancel": "Annuler",
+	"action_close": "Fermer",
 	"action_create": "Créer",
 	"action_edit": "Modifier",
 	"action_save": "Enregistrer",
@@ -97,6 +98,44 @@
 	"catgroup_outerwear": "Vestes & manteaux",
 	"catgroup_tops": "Hauts",
 	"catgroup_unsorted": "Non classé",
+	"check_confirm_all": "Tout est là",
+	"check_confirm_missing": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Confirmer : {count} introuvable",
+				"countPlural=other": "Confirmer : {count} introuvables"
+			}
+		}
+	],
+	"check_done_all": "Vérification enregistrée : tout est là.",
+	"check_done_missing": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Vérification enregistrée : {count} pièce marquée perdue.",
+				"countPlural=other": "Vérification enregistrée : {count} pièces marquées perdues."
+			}
+		}
+	],
+	"check_found": "Trouvées",
+	"check_help": "Tout est compté comme présent. Baissez le nombre de ce que vous ne trouvez pas.",
+	"check_missing_warning": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce sera marquée perdue et sortira de cette unité.",
+				"countPlural=other": "{count} pièces seront marquées perdues et sortiront de cette unité."
+			}
+		}
+	],
+	"check_open": "Vérifier le contenu",
+	"check_size": "Taille {size}",
+	"check_summary": "{found} sur {expected} trouvées",
+	"check_title": "Vérifier cette unité",
 	"condition_damaged": "Abîmé",
 	"condition_good": "Bon état",
 	"condition_in_repair": "En réparation",
@@ -146,11 +185,11 @@
 	"field_size": "Taille",
 	"field_tags": "Mots-clés",
 	"field_width": "Largeur",
-	"filter_done": "Terminé",
 	"filter_all_boxes": "Toutes les boîtes",
 	"filter_all_categories": "Toutes les catégories",
 	"filter_all_conditions": "Tous les états",
 	"filter_all_statuses": "Partout",
+	"filter_done": "Terminé",
 	"forbidden_text": "Cette page n'est pas accessible avec votre rôle.",
 	"forbidden_title": "Accès réservé",
 	"form_invalid": "Certains champs sont invalides.",
@@ -260,6 +299,7 @@
 	"home_stat_items": "Pièces",
 	"home_stat_out": "Sorties",
 	"home_stat_overdue": "En retard",
+	"item_code": "Code",
 	"item_delete": "Supprimer la pièce",
 	"item_delete_confirm": "Supprimer définitivement cette pièce, ses photos et son historique ?",
 	"item_edit": "Modifier",
@@ -276,9 +316,10 @@
 	"kind_other": "Autre",
 	"kind_plastic_box": "Boîte plastique",
 	"kind_rack": "Portant",
-	"labels_all_boxes": "Toutes les boîtes",
-	"labels_all_items": "Toutes les pièces",
-	"labels_empty": "Aucune étiquette à imprimer. Sélectionnez des pièces ou des boîtes.",
+	"labels_all_printed": "Toutes les unités ont déjà leur étiquette imprimée.",
+	"labels_all_units": "Toutes les unités",
+	"labels_confirm_printed": "Les étiquettes sont bien imprimées ? Confirmez pour qu’elles n’apparaissent plus dans « Pas encore imprimées ».",
+	"labels_empty": "Aucune étiquette à imprimer. Choisissez des unités, ou les unités d’une sélection.",
 	"labels_help": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],
@@ -289,9 +330,15 @@
 			}
 		}
 	],
+	"labels_marked_printed": "C’est noté : ces étiquettes sont marquées comme imprimées.",
+	"labels_not_stored": "Rangées dans aucune unité, donc sans étiquette :",
 	"labels_print": "Imprimer les étiquettes",
+	"labels_printed": "Étiquettes imprimées",
 	"labels_size": "Taille du QR",
 	"labels_title": "Étiquettes QR",
+	"labels_unit_label": "Étiquette de l’unité",
+	"labels_units_of_selection": "Étiquettes de leurs unités",
+	"labels_unprinted": "Pas encore imprimées",
 	"lists_add_selection": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],
@@ -422,12 +469,14 @@
 	"movement_collected": "Récupérée par le/la chorégraphe",
 	"movement_condition_changed": "Changement d'état",
 	"movement_created": "Créée",
+	"movement_missing": "Introuvable à la vérification",
 	"movement_moved": "Déplacée",
 	"movement_returned": "Rendue",
 	"movement_stored": "Rangée",
 	"nav_account": "Mon compte",
 	"nav_back": "Retour",
 	"nav_boxes": "Boîtes",
+	"nav_close_menu": "Fermer le menu",
 	"nav_collapse_sidebar": "Réduire le menu",
 	"nav_container": "Container",
 	"nav_expand_sidebar": "Agrandir le menu",
@@ -439,9 +488,8 @@
 	"nav_logout": "Se déconnecter",
 	"nav_main": "Navigation principale",
 	"nav_management": "Gestion",
-	"nav_open_menu": "Ouvrir le menu de {name}",
-	"nav_close_menu": "Fermer le menu",
 	"nav_map": "Plan 3D",
+	"nav_open_menu": "Ouvrir le menu de {name}",
 	"nav_scan": "Scanner",
 	"nav_users": "Membres",
 	"photo_add": "Ajouter les photos",
@@ -500,6 +548,45 @@
 		}
 	],
 	"push_unsupported": "Ce navigateur ne peut pas recevoir de notifications. Sur iPhone, ajoutez d'abord l'appli à l'écran d'accueil (Partager → Sur l'écran d'accueil), puis ouvrez-la depuis là.",
+	"put_in_borrower_detail": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce : {names}",
+				"countPlural=other": "{count} pièces : {names}"
+			}
+		}
+	],
+	"put_in_collected": "récupérées par le/la chorégraphe",
+	"put_in_done": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce rangée.",
+				"countPlural=other": "{count} pièces rangées."
+			}
+		}
+	],
+	"put_in_no_results": "Aucune pièce trouvée.",
+	"put_in_no_returns": "Aucune pièce n’est prêtée.",
+	"put_in_open": "Ranger des pièces",
+	"put_in_returns": "Retours",
+	"put_in_search": "Rechercher",
+	"put_in_search_placeholder": "Rechercher…",
+	"put_in_submit": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Ranger {count} pièce ici",
+				"countPlural=other": "Ranger {count} pièces ici"
+			}
+		}
+	],
+	"put_in_title": "Ranger dans cette unité",
+	"put_in_unstored_only": "Seulement les pièces rangées nulle part",
 	"register_back_to_login": "J'ai déjà un compte",
 	"register_error_email_taken": "Un compte existe déjà avec cet e-mail.",
 	"register_error_invalid": "Vérifiez les champs du formulaire.",
@@ -522,24 +609,10 @@
 	"role_owner": "Propriétaire",
 	"role_repairer": "Couturier·ère (réparations)",
 	"saved": "Enregistré.",
-	"scan_already": "{name} est déjà dans la liste.",
-	"scan_box_selected": "Boîte choisie : {box}",
-	"scan_collect_help": "Scannez les pièces une par une. Scannez une boîte pour les y ranger.",
 	"scan_denied": "Accès à la caméra refusé. Autorisez-le dans les réglages du navigateur, ou tapez le code ci-dessous.",
-	"scan_done": [
-		{
-			"declarations": ["input count", "local countPlural = count: plural"],
-			"selectors": ["countPlural"],
-			"match": {
-				"countPlural=one": "C'est fait pour {count} pièce.",
-				"countPlural=other": "C'est fait pour {count} pièces."
-			}
-		}
-	],
+	"scan_help": "Scannez l’étiquette d’une unité pour voir son contenu.",
 	"scan_manual_placeholder": "Code de l'étiquette",
 	"scan_manual_submit": "OK",
-	"scan_mode_collect": "Entrées/sorties",
-	"scan_mode_open": "Consulter",
 	"scan_offline": "Pas de connexion : mode hors ligne.",
 	"scan_offline_copy": "pièces au {date}",
 	"scan_offline_logout_confirm": "Des actions faites hors ligne n'ont pas encore été envoyées et seront perdues. Se déconnecter quand même ?",
@@ -559,10 +632,11 @@
 	"scan_offline_retry": "Réessayer",
 	"scan_offline_send": "Envoyer",
 	"scan_offline_signed_out": "Non envoyé : vous avez été déconnecté. Reconnectez-vous puis réessayez ({count} pièces).",
+	"scan_offline_unit_note": "copie du {date}, peut-être pas à jour",
+	"scan_piece_lent": "prêtée à {name}",
+	"scan_piece_offline": "{name} : {where}",
 	"scan_starting": "Démarrage de la caméra…",
-	"scan_target_box": "Ranger dans",
 	"scan_title": "Scanner",
-	"scan_to_selection": "Ajouter à la sélection",
 	"scan_unknown": "Code inconnu : {code}",
 	"scan_unsupported": "Ce navigateur ne peut pas utiliser la caméra. Tapez le code ci-dessous.",
 	"seasonal_style": "Décorations de saison",
@@ -636,10 +710,47 @@
 	"stock_error_already_out": "Déjà sorties, rangez-les d'abord : {codes}",
 	"stock_place": "Ranger dans une boîte",
 	"stock_return": "Rendre / ranger",
+	"take_out_available": [
+		{
+			"declarations": ["input available", "local availablePlural = available: plural"],
+			"selectors": ["availablePlural"],
+			"match": {
+				"availablePlural=one": "{available} disponible",
+				"availablePlural=other": "{available} disponibles"
+			}
+		}
+	],
+	"take_out_less": "Une de moins : {label}",
+	"take_out_more": "Une de plus : {label}",
+	"take_out_nothing": "Rien à sortir : toutes les pièces sont prêtées, perdues ou retirées.",
+	"take_out_open": "Sortir des pièces",
+	"take_out_size": [
+		{
+			"declarations": ["input available", "local availablePlural = available: plural"],
+			"selectors": ["availablePlural"],
+			"match": {
+				"availablePlural=one": "Taille {size} · {available} disponible",
+				"availablePlural=other": "Taille {size} · {available} disponibles"
+			}
+		}
+	],
+	"take_out_summary": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} pièce choisie",
+				"countPlural=other": "{count} pièces choisies"
+			}
+		}
+	],
+	"take_out_title": "Sortir des pièces",
 	"theme_dark": "Sombre",
 	"theme_light": "Clair",
 	"theme_system": "Comme l'appareil",
 	"theme_title": "Thème",
+	"unit_last_checked": "Vérifiée le {date} par {name} : {found} sur {expected} trouvées",
+	"unit_never_checked": "Jamais vérifiée",
 	"users_borrowed": [
 		{
 			"declarations": ["input count", "local countPlural = count: plural"],

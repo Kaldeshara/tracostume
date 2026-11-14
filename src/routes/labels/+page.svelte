@@ -1,11 +1,18 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { PageProps } from './$types';
 
-	let { data }: PageProps = $props();
+	let { data, form }: PageProps = $props();
 
 	// Label size in millimetres; the defaults fit common 3×8 A4 sticker sheets.
 	let size = $state(35);
+	let printedOnce = $state(false);
+
+	function printSheet() {
+		print();
+		printedOnce = true;
+	}
 </script>
 
 <svelte:head><title>{m.labels_title()}</title></svelte:head>
@@ -16,20 +23,63 @@
 		{m.labels_size()}
 		<input class="input w-20" type="number" min="15" max="100" bind:value={size} /> mm
 	</label>
-	<a class="btn" href="/labels?all=boxes">{m.labels_all_boxes()}</a>
-	<a class="btn" href="/labels?all=items">{m.labels_all_items()}</a>
-	<button
-		type="button"
-		class="btn btn-primary"
-		onclick={() => print()}
-		disabled={!data.labels.length}
-	>
+</div>
+
+<div class="no-print mb-4 flex flex-wrap gap-2">
+	<div role="radiogroup" aria-label={m.labels_title()} class="segmented sm:min-w-80">
+		<a
+			href="/labels?all=units"
+			role="radio"
+			aria-checked={data.view === 'all'}
+			class="segmented-option">{m.labels_all_units()}</a
+		>
+		<a
+			href="/labels?unprinted=1"
+			role="radio"
+			aria-checked={data.view === 'unprinted'}
+			class="segmented-option">{m.labels_unprinted()}</a
+		>
+	</div>
+	<button type="button" class="btn btn-primary" onclick={printSheet} disabled={!data.labels.length}>
 		{m.labels_print()}
 	</button>
 </div>
 
+{#if data.notStored.length}
+	<p class="no-print mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+		{m.labels_not_stored({ count: data.notStored.length })}
+		{data.notStored
+			.map((piece) => (piece.size ? `${piece.name} (${piece.size})` : piece.name))
+			.join(', ')}
+	</p>
+{/if}
+
 {#if data.labels.length}
 	<p class="no-print mb-4 text-sm text-stone-500">{m.labels_help({ count: data.labels.length })}</p>
+
+	{#if printedOnce && !form?.printed}
+		<form
+			method="POST"
+			action="?/printed"
+			use:enhance
+			class="no-print card mb-4 flex flex-wrap items-center gap-3 p-4"
+		>
+			<p class="flex-1 text-sm">{m.labels_confirm_printed()}</p>
+			{#each data.labels as label (label.code)}
+				<input
+					type="hidden"
+					name={label.kind === 'container' ? 'containerId' : 'unitId'}
+					value={label.id}
+				/>
+			{/each}
+			<button class="btn btn-primary">{m.labels_printed()}</button>
+		</form>
+	{:else if form?.printed}
+		<p class="no-print mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+			{m.labels_marked_printed()}
+		</p>
+	{/if}
+
 	<div class="flex flex-wrap gap-[2mm] bg-white">
 		{#each data.labels as label (label.code)}
 			<div
@@ -47,5 +97,7 @@
 		{/each}
 	</div>
 {:else}
-	<p class="card p-8 text-center text-stone-500">{m.labels_empty()}</p>
+	<p class="empty-state">
+		{data.view === 'unprinted' ? m.labels_all_printed() : m.labels_empty()}
+	</p>
 {/if}

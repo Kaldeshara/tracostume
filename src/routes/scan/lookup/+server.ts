@@ -4,7 +4,7 @@ import { prisma } from '#lib/server/db.ts';
 import { parseScannedCode } from '#lib/server/codes.ts';
 import { itemCardSelect, toItemCard } from '#lib/server/items.ts';
 
-/** Resolves a scanned QR value to an item or a box. */
+/** Resolves a scanned QR value to a piece, a storage unit or the container. */
 export const GET: RequestHandler = async ({ url }) => {
 	const code = parseScannedCode(url.searchParams.get('code') ?? '');
 	if (!code) return json({ type: 'unknown', code });
@@ -17,6 +17,10 @@ export const GET: RequestHandler = async ({ url }) => {
 		select: { id: true, code: true, label: true, shelf: true, _count: { select: { items: true } } }
 	});
 	if (box) return json({ type: 'box', box });
-
+	const container = await prisma.container.findUnique({
+		where: { code },
+		select: { id: true, code: true, name: true }
+	});
+	if (container) return json({ type: 'container', container });
 	return json({ type: 'unknown', code });
 };

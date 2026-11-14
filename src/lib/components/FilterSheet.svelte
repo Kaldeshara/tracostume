@@ -11,8 +11,15 @@
 		open = $bindable(false),
 		title,
 		summary,
+		doneLabel,
 		children
-	}: { open?: boolean; title: string; summary?: string; children: Snippet } = $props();
+	}: {
+		open?: boolean;
+		title: string;
+		summary?: string;
+		doneLabel?: string;
+		children: Snippet;
+	} = $props();
 
 	let dialog: HTMLDialogElement | undefined = $state();
 	let swipeStartY: number | null = null;
@@ -65,7 +72,7 @@
 					{#if summary}<p class="mt-0.5 text-sm text-stone-500">{summary}</p>{/if}
 				</div>
 				<button type="button" class="btn btn-primary shrink-0" onclick={() => (open = false)}>
-					{m.filter_done()}
+					{doneLabel ?? m.filter_done()}
 				</button>
 			</div>
 		</div>

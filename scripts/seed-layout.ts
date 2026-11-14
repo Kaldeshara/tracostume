@@ -304,7 +304,7 @@ async function main() {
 
 	const container =
 		(await prisma.container.findFirst({ orderBy: { createdAt: 'asc' } })) ??
-		(await prisma.container.create({ data: { name: CONTAINER.name } }));
+		(await prisma.container.create({ data: { name: CONTAINER.name, code: `C-${randomCode(5)}` } }));
 	await prisma.container.update({ where: { id: container.id }, data: CONTAINER });
 
 	for (const unit of units) {

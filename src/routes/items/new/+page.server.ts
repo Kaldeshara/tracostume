@@ -57,7 +57,12 @@ export const actions: Actions = {
 			ids.push(item.id);
 		}
 
-		// Several pieces: go straight to their labels so they can be printed and stuck on.
-		redirect(303, ids.length === 1 ? `/items/${ids[0]}` : `/labels?items=${ids.join(',')}`);
+		// Pieces are not labelled (labels go on units): several identical pieces open their group.
+		const group = new URLSearchParams({
+			name: fields.name,
+			category: fields.category ?? 'UNSORTED',
+			color: fields.color ?? ''
+		});
+		redirect(303, ids.length === 1 ? `/items/${ids[0]}` : `/items/group?${group}`);
 	}
 };

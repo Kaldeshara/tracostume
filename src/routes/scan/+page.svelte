@@ -2,74 +2,73 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { m } from '#lib/paraglide/messages.js';
-	import type { ItemCard } from '#lib/server/items.ts';
 	import { formatDateTime } from '#lib/format.ts';
-	import { offlineScan, type ScanResult } from '#lib/offline-scan.svelte.ts';
-	import { selection } from '#lib/selection.svelte.ts';
-	import Location from '#lib/components/Location.svelte';
+	import { canManageStock } from '#lib/roles.ts';
+	import { offlineScan, type ScanBox, type ScanResult } from '#lib/offline-scan.svelte.ts';
 	import QrScanner from '#lib/components/QrScanner.svelte';
-	import StockActions from '#lib/components/StockActions.svelte';
+	import UnitContents from '#lib/components/UnitContents.svelte';
+	import TakeOutSheet from '#lib/components/TakeOutSheet.svelte';
+	import PutInSheet from '#lib/components/PutInSheet.svelte';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
 
-	type Box = { id: string; code: string; label: string; shelf: string | null };
-
-	// "collect": build a list of scanned items (and a target box) to act on them together.
-	// "open": jump to the scanned item or box. Members can only open.
-	let chosenMode = $state<'collect' | 'open'>('collect');
-	const mode = $derived(data.stock ? chosenMode : 'open');
-	let items = $state<ItemCard[]>([]);
-	let box = $state<Box | null>(null);
+	// Scanning opens what the label points to: a storage unit (labels go on units), the container,
+	// or a piece from an older label. Without signal in the container, a unit opens here from the
+	// copy kept on the phone, and its take-out and put-in are queued until the network is back.
 	let message = $state<{ text: string; tone: 'ok' | 'warn' } | null>(null);
 	let manualCode = $state('');
+	let offlineUnit = $state<ScanBox | null>(null);
+	let takingOut = $state(false);
+	let puttingIn = $state(false);
+	const keeper = $derived(canManageStock(data.user?.role));
 
 	onMount(() => {
-		// Keep the copy of pieces and boxes fresh, and send what was done offline.
+		// Keep the copy of pieces and units fresh, and send what was done offline.
 		if (data.stock && navigator.onLine) {
 			offlineScan.flush().then(() => offlineScan.refreshCatalogue());
 		}
 	});
 
 	/** Asks the server; without a connection, uses the copy kept on the phone. */
-	async function resolve(value: string): Promise<ScanResult> {
+	async function resolve(value: string): Promise<{ result: ScanResult; online: boolean }> {
 		if (navigator.onLine) {
 			try {
 				const response = await fetch(`/scan/lookup?code=${encodeURIComponent(value)}`);
-				if (response.ok) return await response.json();
+				if (response.ok) return { result: await response.json(), online: true };
 			} catch {
 				// No connection after all: fall back to the copy.
 			}
 		}
-		return offlineScan.lookup(value);
+		return { result: offlineScan.lookup(value), online: false };
 	}
 
 	async function lookup(value: string) {
-		const result = await resolve(value);
-
+		const { result, online } = await resolve(value);
+		message = null;
 		if (result.type === 'unknown') {
 			message = { text: m.scan_unknown({ code: result.code }), tone: 'warn' };
 			return;
 		}
-		if (mode === 'open') {
-			if (!navigator.onLine) {
-				message = { text: m.scan_offline_open(), tone: 'warn' };
-				return;
-			}
-			goto(result.type === 'item' ? `/items/${result.item.id}` : `/boxes/${result.box.id}`);
+		if (online) {
+			offlineUnit = null;
+			if (result.type === 'item') goto(`/items/${result.item.id}`);
+			else if (result.type === 'box') goto(`/boxes/${result.box.id}`);
+			else goto('/boxes');
 			return;
 		}
 		if (result.type === 'box') {
-			box = result.box;
-			message = {
-				text: m.scan_box_selected({ box: `${result.box.code} · ${result.box.label}` }),
-				tone: 'ok'
-			};
-		} else if (items.some((item) => item.id === result.item.id)) {
-			message = { text: m.scan_already({ name: result.item.name }), tone: 'warn' };
+			offlineUnit = result.box;
+		} else if (result.type === 'item') {
+			const { item } = result;
+			const where = item.loan
+				? m.scan_piece_lent({ name: item.loan.borrower })
+				: item.box
+					? `${item.box.code} · ${item.box.label}`
+					: m.status_unstored();
+			message = { text: m.scan_piece_offline({ name: item.name, where }), tone: 'ok' };
 		} else {
-			items = [result.item, ...items];
-			message = { text: `✓ ${result.item.name}`, tone: 'ok' };
+			message = { text: m.scan_offline_open(), tone: 'warn' };
 		}
 	}
 
@@ -79,41 +78,17 @@
 		manualCode = '';
 	}
 
-	function reset() {
-		items = [];
-		box = null;
-		message = null;
+	function queued(action: 'checkout' | 'place' | 'collect' | 'condition', formData: FormData) {
+		offlineScan.enqueue(action, formData);
+		takingOut = false;
+		message = { text: m.scan_offline_queued(), tone: 'warn' };
 	}
-
-	const someOut = $derived(items.some((item) => item.loan));
-	const allOut = $derived(items.length > 0 && items.every((item) => item.loan));
-	const someUncollected = $derived(items.some((item) => item.loan && !item.loan.collectedAt));
 </script>
 
 <svelte:head><title>{m.scan_title()}</title></svelte:head>
 
 <div class="mx-auto flex max-w-md flex-col gap-4">
-	<div class="flex items-center gap-2">
-		<h1 class="flex-1">{m.scan_title()}</h1>
-		{#if data.stock}
-			<div role="radiogroup" aria-label={m.scan_title()} class="segmented">
-				<button
-					type="button"
-					role="radio"
-					aria-checked={mode === 'collect'}
-					class="segmented-option"
-					onclick={() => (chosenMode = 'collect')}>{m.scan_mode_collect()}</button
-				>
-				<button
-					type="button"
-					role="radio"
-					aria-checked={mode === 'open'}
-					class="segmented-option"
-					onclick={() => (chosenMode = 'open')}>{m.scan_mode_open()}</button
-				>
-			</div>
-		{/if}
-	</div>
+	<h1>{m.scan_title()}</h1>
 
 	{#if data.stock && (!offlineScan.online || offlineScan.queue.length)}
 		<div class="card flex flex-col gap-2 p-3 text-sm">
@@ -175,6 +150,7 @@
 
 	{#if message}
 		<p
+			role="status"
 			class="rounded-lg px-3 py-2 text-sm {message.tone === 'ok'
 				? 'bg-emerald-50 text-emerald-800'
 				: 'bg-amber-50 text-amber-800'}"
@@ -183,83 +159,55 @@
 		</p>
 	{/if}
 
-	{#if mode === 'collect'}
-		<p class="text-sm text-stone-600">{m.scan_collect_help()}</p>
-
-		{#if box}
-			<div class="card flex items-center gap-2 p-3">
-				<span class="text-xl">▣</span>
-				<div class="flex-1">
-					<div class="text-xs text-stone-500 uppercase">{m.scan_target_box()}</div>
-					<div class="font-medium">{box.code} · {box.label}</div>
-				</div>
-				<button type="button" class="text-stone-400" onclick={() => (box = null)} aria-label="✕"
-					>✕</button
-				>
+	{#if offlineUnit}
+		<section class="flex flex-col gap-3">
+			<div>
+				<h2>{offlineUnit.label}</h2>
+				<p class="text-sm text-stone-500">
+					<span class="font-mono">{offlineUnit.code}</span>
+					{#if offlineScan.catalogue}
+						· {m.scan_offline_unit_note({ date: formatDateTime(offlineScan.catalogue.savedAt) })}
+					{/if}
+				</p>
 			</div>
-		{/if}
+			{#if data.stock && data.user}
+				<div class="flex flex-wrap gap-2">
+					{#if keeper}
+						<button type="button" class="btn" onclick={() => (puttingIn = true)}>
+							{m.put_in_open()}
+						</button>
+					{/if}
+					<button type="button" class="btn btn-primary" onclick={() => (takingOut = true)}>
+						{m.take_out_open()}
+					</button>
+				</div>
+			{/if}
+			<UnitContents pieces={offlineScan.piecesIn(offlineUnit.id)}>
+				{#snippet empty()}<p class="empty-state">{m.box_empty()}</p>{/snippet}
+			</UnitContents>
+		</section>
 
-		{#if items.length}
-			<ul class="card divide-y divide-stone-100">
-				{#each items as item (item.id)}
-					<li class="flex items-center gap-3 px-3 py-2">
-						<div class="h-10 w-10 shrink-0 overflow-hidden rounded bg-stone-100">
-							{#if item.photoId}<img
-									src="/photos/{item.photoId}"
-									alt=""
-									class="h-full w-full object-cover"
-								/>{/if}
-						</div>
-						<div class="min-w-0 flex-1">
-							<div class="truncate text-sm font-medium">{item.name}</div>
-							<Location {item} compact />
-						</div>
-						<button
-							type="button"
-							class="text-stone-400"
-							aria-label={m.selection_remove()}
-							onclick={() => (items = items.filter((other) => other.id !== item.id))}>✕</button
-						>
-					</li>
-				{/each}
-			</ul>
-
-			{#if data.stock}
-				<StockActions
-					itemIds={items.map((item) => item.id)}
-					boxes={data.stock.boxes}
-					users={data.stock.users}
-					contacts={data.stock.contacts}
-					role={data.user!.role}
-					defaultBoxId={box?.id}
-					{someOut}
-					{allOut}
-					{someUncollected}
-					{form}
-					ondone={() => {
-						const count = items.length;
-						reset();
-						message = { text: m.scan_done({ count }), tone: 'ok' };
-					}}
-					onoffline={(action, formData) => {
-						offlineScan.enqueue(action, formData);
-						reset();
-						message = { text: m.scan_offline_queued(), tone: 'warn' };
-					}}
+		{#if data.stock && data.user}
+			<TakeOutSheet
+				bind:open={takingOut}
+				pieces={offlineScan.piecesIn(offlineUnit.id)}
+				unitId={offlineUnit.id}
+				role={data.user.role}
+				stock={data.stock}
+				form={form && ('done' in form || 'error' in form) ? form : null}
+				onoffline={queued}
+			/>
+			{#if keeper}
+				<PutInSheet
+					bind:open={puttingIn}
+					unitId={offlineUnit.id}
+					lentPieces={offlineScan.lentPieces}
+					searchable={false}
+					onoffline={(formData) => queued('place', formData)}
 				/>
 			{/if}
-
-			<div class="flex gap-2">
-				<button
-					type="button"
-					class="btn"
-					onclick={() => {
-						selection.add(...items.map((item) => item.id));
-						goto('/selection');
-					}}>{m.scan_to_selection()}</button
-				>
-				<button type="button" class="btn btn-danger" onclick={reset}>{m.selection_clear()}</button>
-			</div>
 		{/if}
+	{:else}
+		<p class="text-sm text-stone-600">{m.scan_help()}</p>
 	{/if}
 </div>

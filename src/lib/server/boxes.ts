@@ -1,12 +1,16 @@
 import { z } from 'zod';
 import type { BoxKind } from '../../generated/prisma/enums';
 import { BOX_KINDS } from '#lib/map.ts';
+import { generateContainerCode } from './codes';
 import { prisma } from './db';
 
 /** The troupe has a single container for now; it is created on first use. */
 export async function getDefaultContainer() {
 	const existing = await prisma.container.findFirst({ orderBy: { createdAt: 'asc' } });
-	return existing ?? prisma.container.create({ data: { name: 'Container' } });
+	return (
+		existing ??
+		prisma.container.create({ data: { name: 'Container', code: await generateContainerCode() } })
+	);
 }
 
 const optionalText = (max: number) =>

@@ -113,6 +113,8 @@ enum MovementType {
   COLLECTED
   RETURNED
   CONDITION_CHANGED
+  /// Not found when its unit was checked: leaves the unit and becomes LOST.
+  MISSING
 }
 
 model User {
@@ -127,17 +129,18 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
-  sessions       Session[]
-  passwordResets PasswordReset[]
-  itemLists      ItemList[]
+  sessions          Session[]
+  passwordResets    PasswordReset[]
+  itemLists         ItemList[]
   pushSubscriptions PushSubscription[]
-  borrowedLoans  Loan[]      @relation("LoanBorrower")
-  createdLoans   Loan[]      @relation("LoanCreator")
-  returnedLoans  Loan[]      @relation("LoanReturner")
-  contactLoans   Loan[]      @relation("LoanContact")
-  collectedLoans Loan[]      @relation("LoanCollector")
-  movements      Movement[]
-  uploadedPhotos ItemPhoto[]
+  borrowedLoans     Loan[]             @relation("LoanBorrower")
+  createdLoans      Loan[]             @relation("LoanCreator")
+  returnedLoans     Loan[]             @relation("LoanReturner")
+  contactLoans      Loan[]             @relation("LoanContact")
+  collectedLoans    Loan[]             @relation("LoanCollector")
+  movements         Movement[]
+  uploadedPhotos    ItemPhoto[]
+  unitChecks        UnitCheck[]
 }
 
 model Session {
@@ -165,42 +168,49 @@ model PasswordReset {
 /// Dimensions and positions are in centimetres and optional until the container is measured.
 /// They feed the future 3D view.
 model Container {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  widthCm     Int?
-  depthCm     Int?
-  heightCm    Int?
-  doorSide    DoorSide @default(FRONT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String    @id @default(cuid())
+  /// Permanent code printed on the container's QR label (constitution Principle I).
+  code           String    @unique
+  /// When a keeper confirmed the label was printed.
+  labelPrintedAt DateTime?
+  name           String
+  description    String?
+  widthCm        Int?
+  depthCm        Int?
+  heightCm       Int?
+  doorSide       DoorSide  @default(FRONT)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   boxes Box[]
 }
 
 model Box {
-  id          String   @id @default(cuid())
+  id             String    @id @default(cuid())
   /// Value encoded in the QR code label.
-  code        String   @unique
-  label       String
-  description String?
-  kind        BoxKind  @default(PLASTIC_BOX)
-  containerId String
+  code           String    @unique
+  label          String
+  description    String?
+  kind           BoxKind   @default(PLASTIC_BOX)
+  containerId    String
   /// Free-text position for humans, e.g. "Left shelf, top".
-  shelf       String?
-  posXCm      Int?
-  posYCm      Int?
-  posZCm      Int?
-  widthCm     Int?
-  depthCm     Int?
-  heightCm    Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  shelf          String?
+  posXCm         Int?
+  posYCm         Int?
+  posZCm         Int?
+  widthCm        Int?
+  depthCm        Int?
+  heightCm       Int?
+  /// When a keeper confirmed a printed sheet containing this unit's label.
+  labelPrintedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  container     Container  @relation(fields: [containerId], references: [id], onDelete: Restrict)
+  container     Container   @relation(fields: [containerId], references: [id], onDelete: Restrict)
   items         Item[]
-  movementsFrom Movement[] @relation("MovementFromBox")
-  movementsTo   Movement[] @relation("MovementToBox")
+  checks        UnitCheck[]
+  movementsFrom Movement[]  @relation("MovementFromBox")
+  movementsTo   Movement[]  @relation("MovementToBox")
 
   @@index([containerId])
 }
@@ -221,7 +231,7 @@ model Item {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  box       Box?           @relation(fields: [boxId], references: [id], onDelete: SetNull)
+  box       Box?            @relation(fields: [boxId], references: [id], onDelete: SetNull)
   photos    ItemPhoto[]
   embedding ItemEmbedding?
   tags      ItemTag[]
@@ -362,13 +372,34 @@ model Movement {
   userId        String?
   createdAt     DateTime       @default(now())
 
-  item    Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  loan    Loan? @relation(fields: [loanId], references: [id], onDelete: SetNull)
-  fromBox Box?  @relation("MovementFromBox", fields: [fromBoxId], references: [id], onDelete: SetNull)
-  toBox   Box?  @relation("MovementToBox", fields: [toBoxId], references: [id], onDelete: SetNull)
-  user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  item        Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  loan        Loan?      @relation(fields: [loanId], references: [id], onDelete: SetNull)
+  fromBox     Box?       @relation("MovementFromBox", fields: [fromBoxId], references: [id], onDelete: SetNull)
+  toBox       Box?       @relation("MovementToBox", fields: [toBoxId], references: [id], onDelete: SetNull)
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// The contents check that found the piece missing (MISSING movements).
+  unitCheckId String?
+  unitCheck   UnitCheck? @relation(fields: [unitCheckId], references: [id], onDelete: SetNull)
 
   @@index([itemId, createdAt])
+}
+
+/// A dated check of a storage unit's contents.
+model UnitCheck {
+  id            String   @id @default(cuid())
+  boxId         String
+  userId        String?
+  checkedAt     DateTime @default(now())
+  /// Pieces the app listed in the unit.
+  expectedCount Int
+  /// Pieces confirmed present.
+  foundCount    Int
+
+  box       Box        @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  movements Movement[]
+
+  @@index([boxId, checkedAt])
 }
 
 /// A phone or browser that receives reminders (Web Push). Its language is the app's language

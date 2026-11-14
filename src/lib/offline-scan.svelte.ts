@@ -13,12 +13,20 @@ export type ScanBox = {
 	shelf: string | null;
 	_count: { items: number };
 };
+export type ScanContainer = { id: string; code: string; name: string };
+
 export type ScanResult =
 	| { type: 'item'; item: ItemCard }
 	| { type: 'box'; box: ScanBox }
+	| { type: 'container'; container: ScanContainer }
 	| { type: 'unknown'; code: string };
 
-type Catalogue = { items: ItemCard[]; boxes: ScanBox[]; savedAt: string };
+type Catalogue = {
+	items: ItemCard[];
+	boxes: ScanBox[];
+	containers?: ScanContainer[];
+	savedAt: string;
+};
 
 export type QueuedAction = {
 	id: string;
@@ -83,7 +91,19 @@ class OfflineScan {
 		if (item) return { type: 'item', item };
 		const box = this.catalogue?.boxes.find((candidate) => candidate.code === code);
 		if (box) return { type: 'box', box };
+		const container = this.catalogue?.containers?.find((candidate) => candidate.code === code);
+		if (container) return { type: 'container', container };
 		return { type: 'unknown', code };
+	}
+
+	/** A unit's pieces from the phone's copy (offline unit view). */
+	piecesIn(boxId: string): ItemCard[] {
+		return this.catalogue?.items.filter((item) => item.box?.id === boxId) ?? [];
+	}
+
+	/** Pieces on loan from the phone's copy (offline put in → Returns). */
+	get lentPieces(): ItemCard[] {
+		return this.catalogue?.items.filter((item) => item.loan) ?? [];
 	}
 
 	enqueue(action: QueuedAction['action'], form: FormData) {

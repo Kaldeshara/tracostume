@@ -41,7 +41,7 @@ async function main() {
 		return;
 	}
 
-	const container = await prisma.container.create({ data: { name: 'Container' } });
+	const container = await prisma.container.create({ data: { name: 'Container', code: 'C-DEMO1' } });
 	const boxes = await Promise.all(
 		[
 			// Positions in cm from the back-left floor corner (see the 3D map).

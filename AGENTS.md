@@ -25,9 +25,18 @@ before relying on SvelteKit 2 habits. Differences met so far:
 
 - Every location or condition change goes through `src/lib/server/inventory.ts` so the `Movement`
   history stays complete. Form actions for it live in `src/lib/server/stock-actions.ts` and are
-  reused by the item, selection and scan pages.
+  reused by the item, selection, unit (`/boxes/[id]`) and scan pages.
+- Labels go on storage units and the container only (constitution Principle I); pieces keep an
+  internal code and `/q/<code>` still resolves piece → unit → container
+  (`src/lib/server/scan-resolve.ts`). The unit page is the stock entry point: take out, put in and
+  the contents check. Choosing which pieces to take or to mark missing is pure, tested logic in
+  `src/lib/unit-contents.ts` (`pickPieces`, `missingFromCheck`, grouped like the gallery with
+  `groupKey`); the UI posts the chosen IDs to the stock actions. A check is a `UnitCheck` row and
+  missing pieces get a `MISSING` movement and the `LOST` condition (`recordUnitCheck`).
 - Access: `hooks.server.ts` requires a session everywhere except `/login` and `/register`, and
-  blocks role-restricted pages (users, container, labels, boxes, map, item creation/edit).
+  blocks role-restricted pages with `canOpenPage` (`#lib/roles.ts`, tested): users, container,
+  labels, the list of units, map, sets and shows, item creation/edit. A single unit page is open to
+  every member (anyone can scan its label); its actions check their own access.
   Capabilities live in `#lib/roles.ts` (`canManageStock`, `canCheckOut`, `canCollect`,
   `canSetCondition`, `isRepairer`…); server code guards with `requireRole` (keeper ladder) or
   `requireCapability(event, predicate)`. Repairers only see pieces in `REPAIR_CONDITIONS`.
@@ -48,8 +57,10 @@ before relying on SvelteKit 2 habits. Differences met so far:
 - Prisma 7: `prisma migrate dev` does not regenerate the client; run `npm run db:generate`.
 - Sets and show lists are `ItemList` + `ItemListEntry` (`/lists`); they reuse the selection for
   bulk actions rather than having their own.
-- Offline scanner: `#lib/offline-scan.svelte.ts` (browser state: catalogue from `/scan/catalogue`,
-  queue of actions). The service worker caches only the `/scan` page and its data (network first).
+- Offline scanner: `#lib/offline-scan.svelte.ts` (browser state: catalogue from `/scan/catalogue`
+  with pieces, units and containers, queue of actions). The service worker caches only the `/scan`
+  page and its data (network first); offline, a scanned unit renders in `/scan` with the same
+  `UnitContents`, `TakeOutSheet` and `PutInSheet` components as the unit page.
   Queued actions post `offlineAt`; `actionTime()` in `stock-actions.ts` turns it into the movement
   time, so inventory functions take an optional `at`.
 - Push reminders: `src/lib/server/web-push.ts` (RFC 8291/8292 with node:crypto, no dependency),
