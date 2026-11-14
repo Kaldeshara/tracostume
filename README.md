@@ -1,6 +1,6 @@
-# Tracostume
+# TRACostume
 
-Tracostume manages the costumes of a dance troupe: a photo gallery you can search in plain words,
+TRACostume manages the costumes of a dance troupe: a photo gallery you can search in plain words,
 a QR code on every piece of clothing and every box, and a record of what goes in and out of the
 container and who has it.
 

@@ -1,4 +1,4 @@
-# Working on Tracostume
+# Working on TRACostume
 
 Read `README.md` for features and setup, and `FEATURES.md` for what is planned.
 

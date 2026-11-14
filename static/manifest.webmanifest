@@ -1,6 +1,6 @@
 {
-	"name": "Tracostume",
-	"short_name": "Tracostume",
+	"name": "TRACostume",
+	"short_name": "TRACostume",
 	"description": "Costume inventory for the dance troupe",
 	"start_url": "/",
 	"scope": "/",

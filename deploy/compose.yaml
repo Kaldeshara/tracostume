@@ -1,4 +1,4 @@
-# Tracostume production on the VPS: tailnet only, through its own Tailscale node
+# TRACostume production on the VPS: tailnet only, through its own Tailscale node
 # (https://tracostume.<tailnet>.ts.net), so the installed web app has its own origin.
 #   deploy/deploy.sh              build, migrate, restart
 #   deploy/deploy.sh tools <cmd>  run a command in the tools image (e.g. the Drive import)
@@ -60,7 +60,7 @@ services:
         condition: service_completed_successfully
     environment:
       DATABASE_URL: *database_url
-      PUBLIC_APP_NAME: ${PUBLIC_APP_NAME:-Tracostume}
+      PUBLIC_APP_NAME: ${PUBLIC_APP_NAME:-TRACostume}
       REGISTERING_PASSWORD: ${REGISTERING_PASSWORD:-}
       BODY_SIZE_LIMIT: 10M
       TZ: Europe/Paris

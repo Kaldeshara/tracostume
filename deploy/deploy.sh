@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds Tracostume from this checkout and (re)starts it on the VPS.
+# Builds TRACostume from this checkout and (re)starts it on the VPS.
 #   deploy/deploy.sh               build, migrate, restart
 #   deploy/deploy.sh tools <cmd>   run a one-off command against production (e.g. the import)
 #   deploy/deploy.sh backup        dump the database to deploy/backups/

@@ -13,7 +13,7 @@ export const variables = defineEnvVars({
 	PUBLIC_APP_NAME: {
 		public: true,
 		description: 'Product name shown in the header, page titles and the installed app.',
-		schema: (value) => value?.trim() || 'Tracostume'
+		schema: (value) => value?.trim() || 'TRACostume'
 	},
 	UPLOADS_DIR: {
 		description: 'Directory for photos when no S3 bucket is configured.',

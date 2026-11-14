@@ -80,7 +80,7 @@ self.addEventListener('fetch', (event) => {
 
 // Loan reminders (Web Push, see #lib/server/reminders.ts).
 self.addEventListener('push', (event) => {
-	let message = { title: 'Tracostume', body: '', url: '/' };
+	let message = { title: 'TRACostume', body: '', url: '/' };
 	try {
 		message = { ...message, ...event.data?.json() };
 	} catch {
