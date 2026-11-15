@@ -2,7 +2,7 @@
 // (same scheme as Tracster). "system" follows the device's light/dark setting.
 
 export type ThemePreference = 'system' | 'light' | 'dark';
-export type SeasonalTheme = 'autumn';
+export type SeasonalTheme = 'autumn' | 'christmas';
 
 export const THEME_COOKIE = 'tracostume_theme';
 export const SEASONAL_COOKIE = 'tracostume_seasonal';
@@ -21,11 +21,18 @@ export function isAutumnSeason(date: Date): boolean {
 	return (month === 9 && date.getDate() >= 15) || month === 10;
 }
 
+/** 1 December – 6 January (local calendar), as in Tracster. */
+export function isChristmasSeason(date: Date): boolean {
+	const month = date.getMonth();
+	return month === 11 || (month === 0 && date.getDate() <= 6);
+}
+
 export function seasonalTheme(
 	date: Date,
 	seasonalCookie: string | undefined
 ): SeasonalTheme | null {
 	if (seasonalCookie === 'off') return null;
+	if (isChristmasSeason(date)) return 'christmas';
 	return isAutumnSeason(date) ? 'autumn' : null;
 }
 

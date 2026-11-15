@@ -18,6 +18,7 @@
 	import NavIcon, { type NavIconName } from '#lib/components/NavIcon.svelte';
 	import ThemeToggle from '#lib/components/ThemeToggle.svelte';
 	import AutumnAccent from '#lib/components/AutumnAccent.svelte';
+	import ChristmasLights from '#lib/components/ChristmasLights.svelte';
 	import AppSidebar from '#lib/components/AppSidebar.svelte';
 	import BackButton from '#lib/components/BackButton.svelte';
 	import { cameFromApp, hasBackButton, parentPath } from '#lib/back.svelte.ts';
@@ -29,11 +30,13 @@
 	type NavLink = { href: string; label: string; icon: NavIconName; badge?: number };
 
 	const user = $derived(data.user);
-	const autumn = $derived(data.season === 'autumn');
-	// Header, tab bar and page background follow the season, as in Tracster.
-	const barClass = $derived(
-		autumn ? 'autumn-header border-amber-300/80' : 'border-stone-200 bg-white/95'
-	);
+	// Header, tab bar, sidebar and page background follow the season, as in Tracster.
+	const SEASON_CLASSES = {
+		autumn: { bar: 'autumn-header border-amber-300/80', surface: 'autumn-surface' },
+		christmas: { bar: 'festive-header border-red-200/80', surface: 'festive-surface' }
+	} as const;
+	const seasonClasses = $derived(data.season ? SEASON_CLASSES[data.season] : null);
+	const barClass = $derived(seasonClasses?.bar ?? 'border-stone-200 bg-white/95');
 
 	function toggleSeasonalStyle(event: Event & { currentTarget: HTMLInputElement }) {
 		rememberSeasonalStyle(event.currentTarget.checked);
@@ -138,7 +141,7 @@
 </svelte:head>
 
 <div
-	class="flex min-h-dvh flex-col text-stone-900 {autumn ? 'autumn-surface' : 'bg-stone-50'} {user
+	class="flex min-h-dvh flex-col text-stone-900 {seasonClasses?.surface ?? 'bg-stone-50'} {user
 		? 'app-frame'
 		: ''}"
 >
@@ -151,7 +154,7 @@
 			theme={data.theme}
 			seasonalEnabled={data.seasonalEnabled}
 			initialCollapsed={data.sidebarCollapsed}
-			barClass={autumn ? 'autumn-header border-amber-300/80' : 'border-stone-200 bg-white'}
+			barClass={seasonClasses?.bar ?? 'border-stone-200 bg-white'}
 			onSeasonalChange={toggleSeasonalStyle}
 			onSignOut={signOut}
 		/>
@@ -256,7 +259,8 @@
 					</div>
 				{/if}
 			</header>
-			{#if autumn}<AutumnAccent />{/if}
+			{#if data.season === 'autumn'}<AutumnAccent
+				/>{:else if data.season === 'christmas'}<ChristmasLights />{/if}
 		</div>
 	{/if}
 

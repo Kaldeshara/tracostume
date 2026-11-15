@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	htmlAttributes,
 	isAutumnSeason,
+	isChristmasSeason,
 	parseSidebarCollapsed,
 	parseThemePreference,
 	seasonalTheme,
@@ -30,6 +31,17 @@ describe('autumn season', () => {
 		expect(seasonalTheme(november, undefined)).toBe('autumn');
 		expect(seasonalTheme(november, 'off')).toBeNull();
 		expect(seasonalTheme(new Date(2026, 5, 1), undefined)).toBeNull();
+	});
+});
+
+describe('christmas season', () => {
+	it('runs from 1 December to 6 January and comes after autumn', () => {
+		expect(isChristmasSeason(new Date(2026, 10, 30))).toBe(false);
+		expect(isChristmasSeason(new Date(2026, 11, 1))).toBe(true);
+		expect(isChristmasSeason(new Date(2027, 0, 6))).toBe(true);
+		expect(isChristmasSeason(new Date(2027, 0, 7))).toBe(false);
+		expect(seasonalTheme(new Date(2026, 11, 24), undefined)).toBe('christmas');
+		expect(seasonalTheme(new Date(2026, 11, 24), 'off')).toBeNull();
 	});
 });
 
